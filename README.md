@@ -1,8 +1,15 @@
-# React + Vite
+# Projekt Aplikacji Liternik - gry logicznej nawiązującej do Scrabble
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+06.03.2024 - 13.03.2024
+    * Utworzenie projektu w oparciu o react-vite
+    * Dodano zależności:
+        - react
+        - react-dom
+        - react-router-dom
+    * Utworzenie podstawowych komponentów gry:
+        - Board.jsx
+        - ChatBlock.jsx
+        - ScoreBoard.jsx
+        - Header.jsx
+        - UserPanel.jsx
+        - WordsBlock.jsx
