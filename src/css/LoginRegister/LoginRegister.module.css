@@ -1,0 +1,176 @@
+* {
+    margin: 0;
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: conic-gradient(at top right, rgb(219, 209, 209), white);
+}
+.main-container{
+    background-color: whitesmoke;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.7);
+    border-radius: 20px;
+    width: 800px;
+    height: 500px;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+    "login-container game-rules";
+}
+
+
+.game-rules{
+    grid-area: game-rules;
+    border-radius: 60px 20px 20px 60px;
+    background: conic-gradient(at top right, rgb(21, 69, 96), rgb(1, 121, 190));
+    text-align: center;
+    padding:15px;
+    display:grid;
+    grid-template-rows: 0.5fr 2.3fr 0.2fr;
+    grid-template-areas: 
+    "header"
+    "list-rules"
+    "rules-footer";
+}
+
+.header{
+    grid-area: header;
+    font-size: 50px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color:white;
+}
+
+.header > span{
+    border-bottom: 2px solid;
+    color:white;
+}
+.list-rules{
+    grid-area: list-rules;
+    color:white;
+    font-weight:400;
+    text-align: left;
+    margin:10px;
+}
+
+.list-rules li{
+    margin-bottom: 15px;
+}
+
+.rules-footer{
+    grid-area: rules-footer;
+    font-weight: 700;
+    color:white;
+    font-size: 25px;
+    text-align: right;
+}
+
+.login-container{
+    grid-area: login-container;
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.4fr 0.2fr 0.2fr 0.1fr;
+    grid-template-areas: 
+    "login-header"
+    "login-menu"
+    "register-message"
+    "button-container";
+}
+
+.login-header{
+    grid-area: login-header;
+    text-align: center;
+    margin:100px 5px 40px;
+    font-size: 35px;
+    font-weight: 700;
+}.register-message
+
+.login-menu {
+    grid-area: login-menu;
+    justify-items: center;
+    align-items: center; 
+}
+
+.login-menu > form {
+    display: grid;
+    justify-content: center;
+}
+
+.register-message a{
+    color:black;
+
+}
+
+.register-message{
+    grid-area:register-message;
+    font-size:13px;
+    text-align: center;
+    color:black;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.button-container{
+    grid-area: button-container;
+    display: grid;
+    justify-content: center;
+}
+
+.input-user-name-box, .input-password-box{
+    position:relative;
+}
+
+.input-user-name-box input, .input-password-box input{
+    width: 250px;
+    height: 30px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-color: #eee;
+    outline: none;
+    border: 2px solid #c6c3c3;
+    padding: 5px 32px 5px 15px;
+    font-weight: 500;
+}
+
+.input-user-name-box i, .input-password-box i{
+    position:absolute;
+    top: 37%;
+    right: 15px; 
+    transform: translateY(-50%);
+}
+
+
+.button-38 {
+    background-color: rgb(1, 121, 190);
+    border: 0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    color: #111827;
+    font-size: .875rem;
+    font-weight: 600;
+    line-height: 20px;
+    padding: .75rem 1rem;
+    text-align: center;
+    text-decoration: none #D1D5DB solid;
+    text-decoration-thickness: auto;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    border: 1px solid rgb(1, 121, 190);
+    color:white;
+    width: 150px;
+}
+
+.button-38:hover {
+  background-color: rgb(249,250,251);
+  color:black;
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
+  border: 2px solid;
+}
+
