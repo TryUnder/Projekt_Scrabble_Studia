@@ -1,0 +1,326 @@
+* {
+    margin: 0;
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: conic-gradient(at top right, rgb(219, 209, 209), white);
+}
+
+.main-container{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas: 
+    "player-panel game-panel";
+    width: 1300px;
+    max-height: 550px;
+    gap: 150px;
+}
+.player-panel{
+    background-color: whitesmoke;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.7);
+    border-radius: 20px;
+    display:grid;
+    grid-template-rows: 0.8fr  0.2fr 1.5fr;
+    grid-template-areas: 
+    "player-panel-header"
+    "date-sign-in"
+    "player-panel-stats";
+    justify-content: center;
+    align-items: center;
+}
+
+.date-sign-in{
+    grid-area: date-sign-in;
+    margin: 25px 20px 25px 20px;
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid black; 
+    border-bottom: 1px solid black;
+}
+
+.date-sign-in > span{
+    font-weight: 300;
+    font-size: 18px;
+    font-style: italic;
+}
+
+.player-panel-header{
+    grid-area: player-panel-header;
+    padding: 35px 20px 35px 20px;
+    text-align: left;
+}
+
+.player-panel-header > span{
+    font-weight: 500;
+    font-size: 50px;
+}
+
+.game-panel{
+    box-shadow: 0 2px 4px rgba(0,0,0,0.7);
+    border-radius: 20px 0px 0px 20px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-areas: 
+    "create-game-panel available-players-panel";
+}
+
+.create-game-panel{
+    grid-area: create-game-panel;
+    background: conic-gradient(at top right, rgb(21, 69, 96), rgb(1, 121, 190));
+    border-radius: 20px 60px 60px 20px;
+    display:grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: 
+    "create-game-header"
+    "create-game-menu"
+    "create-game-button";
+}
+
+.create-game-header{
+    grid-area:create-game-header;
+    padding: 100px 15px 10px 15px;
+    text-align: center;
+}
+
+.create-game-header > span {
+    font-size:50px;
+    color:white;
+    font-weight: 500;
+}
+
+.create-game-menu{
+    grid-area:create-game-menu;
+    display: grid;
+    grid-template-rows: 0.3fr 0.3fr 0.3fr;
+    grid-template-areas: 
+    "language-menu"
+    "board-menu"
+    "time-menu";
+    grid-gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.language-menu {
+    grid-area:language-menu;
+    border-radius: 5px;
+    padding: 10px;
+    background-color:whitesmoke;
+    display: grid;
+    grid-template-columns: 0.6fr 0.4fr;
+    align-items: center;
+    min-height: 4vh;
+    min-width: 20vw;
+}
+
+.language-menu > select, .time-menu > select, .board-menu > select {
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
+.time-menu{
+    grid-area:time-menu;
+    border-radius: 5px;
+    padding: 10px;
+    background-color:whitesmoke;
+    display: grid;
+    grid-template-columns: 0.6fr 0.4fr;
+    align-items: center;
+    min-height: 4vh;
+}
+
+.board-menu{
+    grid-area:board-menu;
+    border-radius: 5px;
+    padding: 10px;
+    background-color:whitesmoke;
+    display: grid;
+    grid-template-columns: 0.55fr 0.45fr;
+    align-items: center;
+    min-height: 4vh;
+}
+
+.language-menu label, .time-menu label, .board-menu label{
+    font-size: 1rem;
+    padding-right: 10px;
+    font-weight:500;
+}
+
+.language-menu select, .time-menu select, .board-menu select{
+    font-size: 0.9rem;
+    padding: 2px 5px;
+    align-items: right;
+}
+
+.player-panel-stats{
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom:80px;
+}
+
+.player-stats{
+    display:grid;
+    grid-template-columns: 0.5fr 0.5fr 0.5fr;
+    grid-template-areas: 
+    "all-games won-games lose-games";
+}
+
+.all-player-games{
+    margin-bottom:50px;
+}
+
+.all-player-games > span{
+    font-weight: 400;
+    font-size:20px;
+}
+
+.all-games{
+    grid-area: all-games;
+    border-right: 1px solid black;
+}
+
+.all-games > span {
+    font-size:45px;
+    font-weight: 700;
+}
+
+.all-games-header{
+    font-weight: 700;
+}
+
+.won-games{
+    grid-area:won-games;
+    border-right: 1px solid black;
+}
+
+.won-games > span {
+    font-size:45px;
+    color:green;
+    font-weight: 700;
+}
+
+.won-games-header{
+    font-weight: 700;
+    color:green;
+}
+
+.lose-games{
+    grid-area:lose-games;
+}
+
+.lose-games > span {
+    font-size:45px;
+    color:red;
+    font-weight: 700;
+}
+
+.lose-games-header{
+    font-weight: 700;
+    color:red;
+}
+
+.available-players-panel{
+    grid-area: available-players-panel;
+    background-color: whitesmoke;
+    border-radius: 0px 20px 20px 0px;
+    display:grid;
+    grid-template-rows: 1fr 4fr;
+    grid-template-areas: 
+    "panel-header"
+    "available-players-list";
+    /* overflow-y:scroll;
+    max-height: 80vh; */
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+}
+
+::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background: rgba(0,0,0,0.4);
+}
+
+::-webkit-scrollbar-thumb:active{
+    background: rgba(0,0,0,.9);
+}
+
+.available-players-list{
+    margin:0px 20px 20px 20px;
+    overflow-y: auto;
+    max-height: 450px;
+}
+
+.panel-header{
+    padding: 25px 10px 25px 10px;
+    text-align: center;
+}
+
+.panel-header > span {
+    font-weight: 500;
+    font-size: 35px;
+    border-bottom: 1px solid black;
+}
+
+p,label {
+  font-size:18px;
+}
+
+input {
+  margin: 0.4rem;
+}
+
+.create-game-button{
+    grid-area:create-game-button;
+    justify-self: center;
+    align-self: center;
+    margin-bottom: 60px;
+}
+
+.button-4 {
+  appearance: none;
+  background-color: #FAFBFC;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  box-sizing: border-box;
+  color: #24292E;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 26px;
+  list-style: none;
+  padding: 6px 16px;
+  position: relative;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+}
+
+.button-4:hover {
+  background-color: #F3F4F6;
+  text-decoration: none;
+  transition-duration: 0.1s;
+}
+

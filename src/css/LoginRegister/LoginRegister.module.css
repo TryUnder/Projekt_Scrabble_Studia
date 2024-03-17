@@ -59,6 +59,8 @@ body {
 
 .list-rules li{
     margin-bottom: 15px;
+    font-size: 15.5px;
+    font-style: italic;
 }
 
 .rules-footer{
@@ -87,7 +89,7 @@ body {
     margin:100px 5px 40px;
     font-size: 35px;
     font-weight: 700;
-}.register-message
+}
 
 .login-menu {
     grid-area: login-menu;
