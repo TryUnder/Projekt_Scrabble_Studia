@@ -10,7 +10,7 @@ app.use(express.static('dist'));
 
 
 app.get('*', (req, res) => {
-  res.send('/')
+  
 })
 
 app.listen(port, () => {
