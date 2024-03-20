@@ -1,0 +1,95 @@
+.chat-block {
+    display: grid;
+    grid-template-areas:
+    "chat-header chat-header chat-header"
+    "message-container message-container message-container"
+    "button-container button-container button-container";
+    grid-gap: 5px;
+    grid-template-columns: auto;
+    grid-template-rows: 0.12fr 1fr 0.11fr;
+    background-color: rgba(237, 231, 225, 0.7);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin: 10px;
+    border: 4px solid rgb(237, 231, 225, 0.7);
+}
+
+.message-container {
+    grid-area: message-container;
+    margin: 5px;
+    display: grid;
+    grid-auto-rows: 0.09fr;
+    grid-gap: 10px;
+}
+
+.button-container { 
+    grid-area: button-container;
+    display: grid;
+    grid-template-columns: 85% 15%;
+    border-top: 4px solid rgb(237, 231, 225, 0.7);
+}
+
+.writing-area > input {
+    width: 95%;
+    height: 75%;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.button-area > button {
+   margin-top: 4px;
+   height: 85%;
+   width: 95%;
+   background-color: whitesmoke;
+   border-radius: 5px;
+}
+
+.chat-header {
+    grid-area: chat-header;
+    text-align: center;
+    border-bottom: 4px solid rgb(237, 231, 225, 1.0);
+}
+
+.span-chat-header {
+    font-size: 36px;
+    font-weight: 900;
+    position: relative;
+    top: 10%;
+}
+
+.left-message, .right-message {
+    font-size: 18px;
+    font-weight: 400;
+    max-width: 75%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.left-message {
+    justify-self: left;
+    background-color: pink;
+}
+
+.right-message {
+    justify-self: right;
+    background-color: whitesmoke;
+}
+
+.left-message-info {
+    justify-self: left;
+}
+
+.left-message-info, .right-message-info {
+    font-size: 12px;
+    font-style: italic;
+}
+
+.right-message-info {
+    justify-self: right;
+    
+}
+
+.chat-block {
+    grid-area: chat-block;
+}

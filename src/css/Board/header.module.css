@@ -1,0 +1,17 @@
+.header {
+    grid-area: header;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: whitesmoke;
+    margin: 5px;
+}
+
+.game-name {
+    font-weight: 900;
+    letter-spacing: 7px;
+    font-size: 36px;
+    font-style: normal;
+    text-align: center;
+    position: relative;
+    top: 10%;
+}
