@@ -1,13 +1,43 @@
 import React from "react"
+import axios from 'axios'
 import style from '../../css/LoginRegister/LoginRegister.module.css'
 import { useState } from "react"
+
 
 const LoginRegister = () => {
     const [ currentPageState, setPageState ] = useState({
         headerName : "Liternik - rejestracja",
         loginPageState : "Posiadsz konto? Zaloguj się!",
         buttonState : "Zarejestruj",
+    });
+
+    const [ formData, setFormData] = useState({
+        login: "",
+        password: ""
     })
+
+    const handleChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name]: event.target.value
+        });
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        try {
+            const response = await axios.post('/api/users', formData)
+            console.log(response.data)
+
+            setFormData({
+                login: "",
+                password: ""
+            });
+        } catch (error) {
+            console.error("Błąd podczas wysyłania danych do backendu: ", error)
+        }
+    }
 
     const changeLoginState = (event) => {
         event.preventDefault()
@@ -29,19 +59,19 @@ const LoginRegister = () => {
                 <span id="login-header-span">{currentPageState.headerName}</span> 
             </div>
             <div className={style["login-menu"]}>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className={style["input-user-name-box"]}>
-                        <input type="text" placeholder="Nazwa użytkownika" required />
+                        <input type="text" name="login" value={formData.login} onChange={handleChange} placeholder="Nazwa użytkownika" required />
                         <i className="fa-solid fa-user"></i>
                     </div>
                     <div className={style["input-password-box"]}>
-                        <input type="password" placeholder="Hasło" required />
+                        <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Hasło" required />
                         <i className="fa-solid fa-lock"></i>
                     </div>
+                    <div className={style["button-container"]}>
+                        <button type="submit" className={style["button-38"]} role="button" id="button-confirm">{currentPageState.buttonState}</button>
+                    </div>
                 </form>
-            </div>
-            <div className={style["button-container"]}>
-                <button className={style["button-38"]} role="button" id="button-confirm">{currentPageState.buttonState}</button>
             </div>
             <div className={style["register-message"]}>
                 <a onClick={changeLoginState} id="register-message-id">{currentPageState.loginPageState}</a>

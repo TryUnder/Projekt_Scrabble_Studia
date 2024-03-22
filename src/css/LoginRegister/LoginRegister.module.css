@@ -71,6 +71,10 @@ body {
     text-align: right;
 }
 
+#register-message-id {
+    position: fixed;
+}
+
 .login-container{
     grid-area: login-container;
     display:grid;
@@ -116,10 +120,13 @@ body {
     margin-bottom: 25px;
 }
 
-.button-container{
-    grid-area: button-container;
-    display: grid;
-    justify-content: center;
+.button-container {
+    display: flex;
+    justify-content: center; 
+}
+
+#button-confirm {
+    border: 1px solid rgb(1, 121, 190);
 }
 
 .input-user-name-box, .input-password-box{
