@@ -23,11 +23,11 @@ const LoginRegister = () => {
         });
     };
 
-    const handleSubmit = async (event) => {
+    const handleRegisterSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = await axios.post('/api/users', formData)
+            const response = await axios.post('/api/register', formData)
             console.log(response.data)
 
             setFormData({
@@ -35,7 +35,23 @@ const LoginRegister = () => {
                 password: ""
             });
         } catch (error) {
-            console.error("Błąd podczas wysyłania danych do backendu: ", error)
+            console.error("Błąd podczas wysyłania danych do backendu (rejestracja): ", error)
+        }
+    }
+
+    const handleLoginSubmit = async (event) => {
+        event.preventDefault();
+
+        try {
+            const response = await axios.post('/api/login', formData)
+            console.log(response.data)
+
+            setFormData({
+                login: "",
+                password: ""
+            });
+        } catch (error) {
+            console.error("Błąd podczas wysyłania danych do backendu (logowanie): ", error)
         }
     }
 
@@ -59,7 +75,7 @@ const LoginRegister = () => {
                 <span id="login-header-span">{currentPageState.headerName}</span> 
             </div>
             <div className={style["login-menu"]}>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={ currentPageState.buttonState === "Zarejestruj" ? handleRegisterSubmit : handleLoginSubmit}>
                     <div className={style["input-user-name-box"]}>
                         <input type="text" name="login" value={formData.login} onChange={handleChange} placeholder="Nazwa użytkownika" required />
                         <i className="fa-solid fa-user"></i>
