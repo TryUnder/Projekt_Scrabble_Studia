@@ -2,10 +2,12 @@ const express = require('express');
 const path = require('path');
 const fileURLToPath =  require('url');
 const usersRoutes = require('./routes/usersRoutes.js')
-
+const cookieParser = require('cookie-parser')
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 app.use(express.static('dist'));
 
 app.use(express.json());

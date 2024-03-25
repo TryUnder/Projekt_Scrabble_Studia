@@ -39,7 +39,7 @@ const loginUser = async (login, plainTextPassword) => {
         }
 
         const token = jwt.sign( { login }, process.env.JWT_SECRET, {
-            expiresIn: Math.floor(Date.now() / 1000) + (30 * 60)
+            expiresIn: 3600
         });
         return token;
 

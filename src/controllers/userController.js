@@ -1,3 +1,5 @@
+const { verifyToken } = require('../VerifyToken')
+
 const User = require('../models/userModel')
 
 const addUser = async(req, res) => {
@@ -18,8 +20,10 @@ const loginUser = async(req, res) => {
     try {
         const token = await User.loginUser(login, password);
         if (token) {
-            res.status(201).json({ message: "Użytkownik został zalogowany." })
-            console.log(token)
+            res.cookie("token", token, {
+                httpOnly: false
+            });
+            return res.redirect("/user-profile");
         }
 
     } catch (error) {
@@ -28,4 +32,15 @@ const loginUser = async(req, res) => {
     }
 }
 
-module.exports = { addUser, loginUser } 
+const logoutUser = async(req, res) => {
+    try {
+        verifyToken(req, res, async () => {
+            console.log("udane?")
+        });
+    } catch (error) {
+        console.error("Błąd podczas wylogowywania użytkownika", error)
+        res.status(500).json({ message: "błąd" })
+    }
+}
+
+module.exports = { addUser, loginUser, logoutUser } 

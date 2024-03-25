@@ -2,9 +2,11 @@ import React from "react"
 import axios from 'axios'
 import style from '../../css/LoginRegister/LoginRegister.module.css'
 import { useState } from "react"
-
+import { useNavigate } from "react-router-dom"
 
 const LoginRegister = () => {
+    const navigate = useNavigate();
+
     const [ currentPageState, setPageState ] = useState({
         headerName : "Liternik - rejestracja",
         loginPageState : "Posiadsz konto? Zaloguj się!",
@@ -50,6 +52,8 @@ const LoginRegister = () => {
                 login: "",
                 password: ""
             });
+
+            navigate("/user-profile")
         } catch (error) {
             console.error("Błąd podczas wysyłania danych do backendu (logowanie): ", error)
         }

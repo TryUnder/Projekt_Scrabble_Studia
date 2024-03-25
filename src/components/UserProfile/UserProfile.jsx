@@ -1,6 +1,31 @@
 import style from '../../css/UserProfile/UserProfile.module.css'
+import axios from 'axios'
 
 const UserProfile = () => {
+
+    const handleLogout = async (event) => {
+        event.preventDefault();
+
+        const cookies = document.cookie.split(';').map(cookie => cookie.trim())
+        const tokenCookie = cookies.find(cookie => cookie.startsWith('token='))
+        console.log(tokenCookie)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${tokenCookie}`;
+
+        try {
+            const response = await axios.post('/api/logout')
+            const removing = browser.cookies.remove({
+                name: "token"
+            })
+            removing.then(()=> {console.log("essa")})
+            console.log("pomyślnie wylogowano")
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            window.location.reload();
+        } catch (error) {
+            console.log("Błąd podczas wylogowania", error)
+        }
+
+    }
+
     return (
         <div className={style["main-container"]}>
             <div className={style["player-panel"]}>
@@ -33,6 +58,9 @@ const UserProfile = () => {
                             </div>
                             <span>69</span>
                         </div>
+                        <div className={style["button-logout"]}>
+                            <button type="submit" role="button" id="button-logout" onClick={handleLogout}></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -46,7 +74,7 @@ const UserProfile = () => {
                             <label>Wybierz język gry</label>
                             <select name="language" id="language-select" className={style["language-menu-select"]}>
                                 <option value="     "> </option>
-                                <option value="Polski">Polski</option>
+                                <option value="Polski"></option>
                                 <option value="Angielski">Angielski</option>
                             </select>
                         </div>

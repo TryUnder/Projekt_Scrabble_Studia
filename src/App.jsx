@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 import Header from './components/Board/Header'
 import UserPanel from './components/Board/UserPanel'
@@ -15,9 +16,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/userProfile" element = { <UserProfile /> } />
-        <Route path="/" element = { <MainGamePage /> } />
-        <Route path="/login" element = { <LoginRegister /> } />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/game" element = { <MainGamePage /> } />
+          <Route path="/user-profile" element = { <UserProfile /> } />
+        </Route>
+        
+        <Route path="/login-register" element = { <LoginRegister /> } />
       </Routes>
     </BrowserRouter>
   );
