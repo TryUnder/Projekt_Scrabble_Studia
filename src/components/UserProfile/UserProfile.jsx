@@ -97,6 +97,9 @@ const UserProfile = () => {
                     <div className={style["create-game-button"]}>
                         <button className={style["button-4"]} role="button">Rozpocznij grę</button>
                     </div>
+                    <div>
+                        <button onClick={handleLogout}>Wyloguj</button>
+                    </div>
                 </div>
                 <div className={style["available-players-panel"]}>
                     <div className={style["panel-header"]}>
