@@ -2,7 +2,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     background-color: whitesmoke;
-    margin: 7px;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
@@ -11,6 +10,7 @@
     grid-area: user-panel;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
 }
 
 .user-name-first, .user-name-second, .user-time-first, .user-time-second {

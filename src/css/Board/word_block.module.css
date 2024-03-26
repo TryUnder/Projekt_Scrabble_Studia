@@ -3,6 +3,24 @@
     background-color: rgba(237, 231, 225, 0.7);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: grid;
-    grid-template-columns: repeat(9,1fr);
-    border: 4px solid rgb(237, 231, 225, 0.7);  
+    grid-template-columns: repeat(10,1fr);
+    border: 4px solid rgb(237, 231, 225, 0.7);
+    grid-gap: 3px;
+}
+
+.letter-style {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 50.5px;
+    width: 50.5px;
+    border-radius: 5px;
+    background-color: #fdeb37;
+}
+
+.span-style {
+    font-size: 20px;
+    font-weight: 900;
 }

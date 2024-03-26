@@ -11,8 +11,8 @@ body {
     display: grid;
     height: 98.5vh;
     width: 98.5vw;
-    grid-template-columns: 0.5fr 0.35fr 0.35fr 0.5fr;
-    grid-auto-rows: 0.1fr 0.1fr 0.4fr 0.5fr 0.1fr;
+    grid-template-columns: 0.5fr 0.4fr 0.30fr 0.5fr;
+    grid-auto-rows: 0.15fr 0.2fr 0.9fr 0.9fr 0.1fr;
     grid-gap: 5px;
     grid-template-areas: 
     "header header header header"
@@ -71,9 +71,13 @@ body {
     border: 1px solid black;
 }
 
+.normal-tile, .triple-word-score-tile, .double-letter-score-tile, .triple-letter-score-tile, .double-word-score-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .triple-word-score-span, .double-letter-score-span, .double-word-score-span , .start-span, .triple-letter-score-span{
     font-weight: 900;
     font-size: 7px;
-    display: inline-block;
-    margin-top: 6px;
 }

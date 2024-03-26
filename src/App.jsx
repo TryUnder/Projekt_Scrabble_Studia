@@ -18,10 +18,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/*<Route element={<ProtectedRoutes />}>*/}
+        <Route element={<ProtectedRoutes />}>
           <Route path="/game" element = { <MainGamePage /> } />
           <Route path="/user-profile" element = { <UserProfile /> } />
-        {/*</Route>*/}
+        </Route>
         
         <Route path="/login-register" element = { <LoginRegister /> } />
         <Route path="/extended-rules" element = { <ExtendedRules /> } />

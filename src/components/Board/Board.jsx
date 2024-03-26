@@ -2,7 +2,6 @@ import react from 'react'
 import style from '../../css/Board/style_main_view.module.css'
 
 function Board() {
-
     const boardData = [
         ['TW', '', '', 'DL', '', '', '', 'TW', '', '', '', 'DL', '', '', 'TW'],
         ['', 'DW', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'DW', ''],
