@@ -14,8 +14,20 @@
         - UserPanel.jsx 
         - WordsBlock.jsx 
 
-## 13-03-2024 - 20.03.2024 <br />
+## 13.03.2024 - 20.03.2024 <br />
     * Utworzenie komponentu (LoginRegister.jsx) dla widoku logowania/rejestracji
         - Dodanie pliku modułowego ze stylami LoginRegister.module.css i aktualizacja komponentu.
     * Utworzenie komponentu (UserProfile.jsx) dla widoku związanego z wyświetlaniem użytkownikowi       statystyk i możliwością utworzenia gry
         - Dodanie pliku modułowego ze stylami UserProfile.module.css i aktualizacja komponentu.
+
+## 21.03.2024 - 27.03.2024 <br />
+    * Utworzenie komponentu widoku ExtendedRules.jsx do wyświetlania szczegółowych zasad gry.
+        - Dodanie pliku modułowego ze stylami ExtendedRules.module.css
+    * Dodanie stylowania dla utworzonych wcześniej komponentów gry:
+        - chat_block.module.css
+        - header.module.css
+        - score_board.module.css
+        - style_main_view.module.css
+        - user_panel.module.css
+        - word_block.module.css
+        
