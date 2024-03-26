@@ -8,18 +8,14 @@ const UserProfile = () => {
 
         const cookies = document.cookie.split(';').map(cookie => cookie.trim())
         const tokenCookie = cookies.find(cookie => cookie.startsWith('token='))
-        console.log(tokenCookie)
+        //console.log(tokenCookie)
         axios.defaults.headers.common['Authorization'] = `Bearer ${tokenCookie}`;
 
         try {
             const response = await axios.post('/api/logout')
-            const removing = browser.cookies.remove({
-                name: "token"
-            })
-            removing.then(()=> {console.log("essa")})
             console.log("pomyślnie wylogowano")
-            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            window.location.reload();
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+            //window.location.reload();
         } catch (error) {
             console.log("Błąd podczas wylogowania", error)
         }
@@ -58,9 +54,9 @@ const UserProfile = () => {
                             </div>
                             <span>69</span>
                         </div>
-                        <div className={style["button-logout"]}>
+                        {/* <div className={style["button-logout"]}>
                             <button type="submit" role="button" id="button-logout" onClick={handleLogout}></button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

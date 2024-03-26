@@ -10,6 +10,8 @@ import ChatBlock from "./components/Board/ChatBlock"
 import LoginRegister from "./components/LoginRegister/LoginRegister"
 import UserProfile from './components/UserProfile/UserProfile'
 
+import ExtendedRules from './components/LoginRegister/ExtendedRules'
+
 import styleMainView from './css/Board/style_main_view.module.css'
 
 function App() {
@@ -22,6 +24,7 @@ function App() {
         </Route>
         
         <Route path="/login-register" element = { <LoginRegister /> } />
+        <Route path="/extended-rules" element = { <ExtendedRules /> } />
       </Routes>
     </BrowserRouter>
   );

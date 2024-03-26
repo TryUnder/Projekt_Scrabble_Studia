@@ -72,6 +72,8 @@ const LoginRegister = () => {
         })
     }
 
+    const handleDisplayRules = (event) => navigate("/extended-rules")
+
     return (
         <div className={style["main-container"]}>
             <div className={style["login-container"]}>
@@ -106,6 +108,7 @@ const LoginRegister = () => {
                     <li><span>Układaj wyrazy przechodzące przez pola x2 i x3, które zapewniają premię na cały wyraz.</span></li>
                     <li><span>Pierwszy wyraz musi przechodzić przed środek kafelek planszy.</span></li>
                     <li><span>Rywalizuj z drugim graczem na czas. Wygrywa ten, kto zdobędzie więcej punktów.</span></li>
+                    <a onClick={handleDisplayRules} className={style["text-decoration"]}>Wyświetl zasady szczegółowe</a>
                 </ol>
                 <div className={style["rules-footer"]}>
                     <span>Powodzenia!</span>

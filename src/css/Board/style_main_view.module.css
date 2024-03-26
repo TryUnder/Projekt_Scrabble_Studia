@@ -11,12 +11,12 @@ body {
     display: grid;
     height: 98.5vh;
     width: 98.5vw;
-    grid-template-columns: 0.5fr 0.28fr 0.28fr 0.5fr;
+    grid-template-columns: 0.5fr 0.35fr 0.35fr 0.5fr;
     grid-auto-rows: 0.1fr 0.1fr 0.4fr 0.5fr 0.1fr;
     grid-gap: 5px;
     grid-template-areas: 
     "header header header header"
-    "user-panel user-panel user-panel user-panel"
+    "chat-block board board user-panel"
     "chat-block board board points"
     "chat-block board board points"
     "chat-block words-block words-block points";
@@ -34,12 +34,13 @@ body {
     min-width: 0;
     text-align: center; 
     border: 2px solid black;
+    padding: 1px;
 }
 
 .normal-tile {
-    background-color: rgb(152, 144, 127);
+    background-color: #EAE6E4;
     overflow: hidden;
-    border: 1.5px solid black;
+    border: 1px solid black;
 }
 
 .triple-word-score-tile {
@@ -67,6 +68,7 @@ body {
     background-color: rgb(227, 136, 152);
     overflow: hidden;
     min-width: 0;
+    border: 1px solid black;
 }
 
 .triple-word-score-span, .double-letter-score-span, .double-word-score-span , .start-span, .triple-letter-score-span{

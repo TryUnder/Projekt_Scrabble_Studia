@@ -49,4 +49,8 @@ const loginUser = async (login, plainTextPassword) => {
     }
 }
 
-module.exports = { addUser, loginUser }; 
+const getUserDataFromDB = async() => {
+    
+}
+
+module.exports = { addUser, loginUser, getUserDataFromDB }; 
