@@ -38,10 +38,17 @@ const loginUser = async (login, plainTextPassword) => {
             })
         }
 
+        const id = await conn.query("SELECT id FROM user WHERE login = (?)", login)
+        
         const token = jwt.sign( { login }, process.env.JWT_SECRET, {
             expiresIn: 3600
         });
-        return token;
+
+        const user = {
+            userId: id,
+            userToken: token
+        }
+        return user;
 
     } catch (error) {
         console.error("Błąd podczas logowania użytkownika")
@@ -49,8 +56,15 @@ const loginUser = async (login, plainTextPassword) => {
     }
 }
 
-const getUserDataFromDB = async() => {
-    
+const getUserDataFromDB = async(id) => {
+    try {
+        const conn = await pool.getConnection();
+        const userInfo = await conn.query("SELECT Login, CreationDate, LiczbaRozegranychPartii, UkonczoneGry, WygraneGry, PrzegraneGry FROM user WHERE id = (?)", id);
+        return userInfo;
+    } catch (error) {
+        console.error("Błąd podczas pobierania danych o użytkowniku z bazy danych.")
+        throw error;
+    }
 }
 
 module.exports = { addUser, loginUser, getUserDataFromDB }; 

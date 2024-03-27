@@ -1,13 +1,38 @@
 import style from '../../css/UserProfile/UserProfile.module.css'
 import axios from 'axios'
+import { useEffect, useState } from 'react'
+
+const getTokenCookie = () => {
+    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+    const tokenCookie = cookies.find(cookie => cookie.startsWith('token='));
+
+    if (tokenCookie) {
+        return tokenCookie.split('=')[1];
+    }
+    return null;
+}
+
+const getUserIdCookie = () => {
+    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+    const idCookie = cookies.find(cookie => cookie.startsWith('id='));
+    const cookie = idCookie.split('=')[1]
+    if (idCookie) {
+        const cookieDecoded = JSON.parse(decodeURIComponent(cookie).substring(2))
+        const userId = cookieDecoded[0].id
+        return userId
+    }
+    return null;
+}
 
 const UserProfile = () => {
+    const [ userInfo, setUserInfo ] = useState(null)
 
     const handleLogout = async (event) => {
         event.preventDefault();
 
-        const cookies = document.cookie.split(';').map(cookie => cookie.trim())
-        const tokenCookie = cookies.find(cookie => cookie.startsWith('token='))
+        // const cookies = document.cookie.split(';').map(cookie => cookie.trim())
+        // const tokenCookie = cookies.find(cookie => cookie.startsWith('token='))
+        const tokenCookie = getTokenCookie();
         //console.log(tokenCookie)
         axios.defaults.headers.common['Authorization'] = `Bearer ${tokenCookie}`;
 
@@ -22,11 +47,32 @@ const UserProfile = () => {
 
     }
 
+    useEffect(() => {
+        const getUserInfo = async() => {
+            try {
+                const response = await axios.get("/api/getUserData", {
+                    headers: {
+                        Authorization: `Bearer ${getTokenCookie()}`
+                    },
+                    params: {
+                        userId: getUserIdCookie()
+                    }
+                    
+                });
+                setUserInfo(response.data[0])
+            } catch (error) {
+                console.error("Błąd na etapie pobierania danych użytkownika (front-end). ", error)
+            }
+        }
+
+        getUserInfo();
+    }, [])
+
     return (
         <div className={style["main-container"]}>
             <div className={style["player-panel"]}>
                 <div className={style["player-panel-header"]}>
-                    <span>Witaj <i className={style["fa-regular fa-face-smile"]}></i>nazwagracza</span>
+                    <span>Witaj <i className={style["fa-regular fa-face-smile"]}></i>x</span>
                 </div>
                 <div className={style["date-sign-in"]}>
                     <span>Konto utworzone dnia: 16.03.2024</span>
@@ -97,9 +143,9 @@ const UserProfile = () => {
                     <div className={style["create-game-button"]}>
                         <button className={style["button-4"]} role="button">Rozpocznij grę</button>
                     </div>
-                    <div>
+                    {/* <div>
                         <button onClick={handleLogout}>Wyloguj</button>
-                    </div>
+                    </div> */}
                 </div>
                 <div className={style["available-players-panel"]}>
                     <div className={style["panel-header"]}>

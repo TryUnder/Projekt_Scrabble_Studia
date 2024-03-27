@@ -18,13 +18,19 @@ const loginUser = async(req, res) => {
     const { login, password } = req.body
 
     try {
-        const token = await User.loginUser(login, password);
-        if (token) {
-            res.cookie("token", token, {
+        const user = await User.loginUser(login, password);
+        if (user.userToken) {
+            res.cookie("token", user.userToken, {
                 httpOnly: false,
                 maxAge: 3600 * 1000,
                 secure: false
             });
+            res.cookie("id", user.userId, {
+                httpOnly: false,
+                maxAge: 3600 * 1000,
+                secure: false
+            });
+            console.log(user.userId)
             return res.redirect("/user-profile");
         }
 
@@ -59,7 +65,12 @@ const getToken = async (req, res) => {
 
 const getUserData = async (req, res) => {
     try {
-        const userData = await getUserDataFromDB();
+        verifyToken(req, res, async() => {
+            const userId = req.query.userId;
+            console.log(userId)
+            const userData = await User.getUserDataFromDB(userId);
+            res.status(200).json(userData)
+        })
     } catch (error) {
         console.error("Błąd podczas pobierania danych użytkownika. ", error)
         res.status(500).json({ message: "Błąd kontrolera" })

@@ -19,7 +19,7 @@ function verifyToken(req, res, next) {
     //     return res.status(401).json({ message: 'Brak autoryzacji.' })
     // }
 
-    jwt.verify(token.trim(), process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
             return res.status(401).json({ message: 'Nieprawidłowy token. '})
         }
