@@ -44,7 +44,7 @@ const logoutUser = async(req, res) => {
     try {
         verifyToken(req, res, async () => {
             res.clearCookie('token', {httpOnly: false, value: 'token'});
-            console.log("udane?")
+            res.status(200).json({ message: "użytkownik został pomyślnie wylogowany. "})
         });
     } catch (error) {
         console.error("Błąd podczas wylogowywania użytkownika", error)

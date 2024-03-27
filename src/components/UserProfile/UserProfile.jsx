@@ -1,5 +1,6 @@
 import style from '../../css/UserProfile/UserProfile.module.css'
 import axios from 'axios'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 
 const getTokenCookie = () => {
@@ -30,17 +31,14 @@ const UserProfile = () => {
     const handleLogout = async (event) => {
         event.preventDefault();
 
-        // const cookies = document.cookie.split(';').map(cookie => cookie.trim())
-        // const tokenCookie = cookies.find(cookie => cookie.startsWith('token='))
         const tokenCookie = getTokenCookie();
-        //console.log(tokenCookie)
         axios.defaults.headers.common['Authorization'] = `Bearer ${tokenCookie}`;
 
         try {
             const response = await axios.post('/api/logout')
             console.log("pomyślnie wylogowano")
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-            //window.location.reload();
+            document.location.reload();
         } catch (error) {
             console.log("Błąd podczas wylogowania", error)
         }
@@ -72,38 +70,38 @@ const UserProfile = () => {
         <div className={style["main-container"]}>
             <div className={style["player-panel"]}>
                 <div className={style["player-panel-header"]}>
-                    <span>Witaj <i className={style["fa-regular fa-face-smile"]}></i>x</span>
+                    <span>Witaj <i className={style["fa-regular fa-face-smile"]}></i>{ userInfo ? userInfo.Login : "Ładowanie" }</span>
                 </div>
                 <div className={style["date-sign-in"]}>
-                    <span>Konto utworzone dnia: 16.03.2024</span>
+                    <span>Konto utworzone dnia: { userInfo ? moment(userInfo.CreationDate).format('DD-MM-YYYY') : "Ładowanie" }</span>
                 </div>
                 <div className={style["player-panel-stats"]}>
                     <div className={style["all-player-games"]}>
-                        <span>Liczba rozegranych partii: 200</span>
+                        <span>Rozegrano: { userInfo ? userInfo.LiczbaRozegranychPartii : "Ładowanie" } gier</span>
                     </div>
                     <div className={style["player-stats"]}>
                         <div className={style["all-games"]}>
                             <div className={style["all-games-header"]}>
                                 Ukończone gry
                             </div>
-                            <span>169</span>
+                            <span>{ userInfo ? userInfo.UkonczoneGry : "Ładowanie" }</span>
                         </div>
                         <div className={style["won-games"]}>
                             <div className={style["won-games-header"]}>
                                 Wygrane
                             </div>
-                            <span>100</span>
+                            <span>{ userInfo ? userInfo.WygraneGry : "Ładowanie"}</span>
                         </div>
                         <div className={style["lose-games"]}>
                             <div className={style["lose-games-header"]}>
                                 Przegrane
                             </div>
-                            <span>69</span>
+                            <span>{ userInfo ? userInfo.PrzegraneGry : "Ładowanie" }</span>
                         </div>
-                        {/* <div className={style["button-logout"]}>
-                            <button type="submit" role="button" id="button-logout" onClick={handleLogout}></button>
-                        </div> */}
                     </div>
+                </div>
+                <div className={style["button-logout"]}>
+                    <button type="submit" role="button" id="button-logout" className={style["button-5"]} onClick={handleLogout}>Wyloguj</button>
                 </div>
             </div>
             <div className={style["game-panel"]}>
@@ -143,9 +141,6 @@ const UserProfile = () => {
                     <div className={style["create-game-button"]}>
                         <button className={style["button-4"]} role="button">Rozpocznij grę</button>
                     </div>
-                    {/* <div>
-                        <button onClick={handleLogout}>Wyloguj</button>
-                    </div> */}
                 </div>
                 <div className={style["available-players-panel"]}>
                     <div className={style["panel-header"]}>
