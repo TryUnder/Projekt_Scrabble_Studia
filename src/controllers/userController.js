@@ -6,8 +6,12 @@ const addUser = async(req, res) => {
     const { login, password } = req.body;
 
     try {
-        await User.addUser(login, password);
-        res.status(201).json({ message: "Użytkownik został dodany." })
+        const user = await User.addUser(login, password);
+        if (user) {
+            res.status(201).json({ message: "Użytkownik został dodany." })
+        } else {
+            res.status(409).json({ message: "Użytkownik istnieje już w bazie danych." })
+        }
     } catch (error) {
         console.error("Błąd podczas dodawania użytkownika: ", error);
         res.status(500).json({ message: "Wystąpił błąd podczas dodawania użytkownika."})

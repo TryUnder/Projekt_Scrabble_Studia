@@ -38,6 +38,8 @@ const LoginRegister = () => {
             });
         } catch (error) {
             console.error("Błąd podczas wysyłania danych do backendu (rejestracja): ", error)
+            alert("Podany login został już wykorzystany.")
+            document.location.reload()
         }
     }
 

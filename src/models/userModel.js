@@ -7,8 +7,13 @@ const { response } = require('express');
 const addUser = async (login, password) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-
+    
         const conn = await pool.getConnection();
+        const dbLogins = await conn.query("SELECT login FROM user");
+        const loginExists = dbLogins.some(dbLogin => dbLogin.login === login);
+        if (loginExists) {
+            return null;
+        }
         const rows = await conn.query("INSERT INTO user (login, password, CreationDate, LiczbaRozegranychPartii, UkonczoneGry, WygraneGry, PrzegraneGry) VALUES (?, ?, ?, ?, ?, ?, ?)",
             [login, hashedPassword, new Date(), 0, 0, 0, 0])
         conn.release()
