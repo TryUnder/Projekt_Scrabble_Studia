@@ -56,6 +56,7 @@ const LoginRegister = () => {
             navigate("/user-profile")
         } catch (error) {
             console.error("Błąd podczas wysyłania danych do backendu (logowanie): ", error)
+            document.location.reload()
         }
     }
 

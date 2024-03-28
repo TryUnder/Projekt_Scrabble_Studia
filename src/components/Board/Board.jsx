@@ -1,7 +1,13 @@
 import react from 'react'
 import style from '../../css/Board/style_main_view.module.css'
+import style2 from '../../css/Board/word_block.module.css'
+import { useEffect, useState } from 'react'
 
 function Board() {
+    const [ dragged, setDragged ] = useState(null);
+
+    const words = ["S", "W", "P", "Ź", "A", "Ż", "O", "icon", "icon", "icon"]
+
     const boardData = [
         ['TW', '', '', 'DL', '', '', '', 'TW', '', '', '', 'DL', '', '', 'TW'],
         ['', 'DW', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'DW', ''],
@@ -19,12 +25,28 @@ function Board() {
         ['', 'DW', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'DW', ''],
         ['TW', '', '', 'DL', '', '', '', 'TW', '', '', '', 'DL', '', '', 'TW']
     ];
+    const handleDrop = (event) => {
+        event.preventDefault();
+
+        if (event.target.classList.contains("dropzone")) {
+            dragged.parentNode.removeChild(dragged)
+            event.target.innerText = "x"
+        }
+    }
 
     const renderBoardTiles = () => {
         return boardData.map((row, rowIndex) => (
             row.map((col, colIndex) => (
-                <div key={`row-${rowIndex} col-${colIndex}`} className={style[getTileClass(col)]}>
-                    <span className={style[getTileClassSpan(col)]}>{getPolishTileClass(col)}</span>
+                <div 
+                    key={`row-${rowIndex} col-${colIndex}`} 
+                    className={style[getTileClass(col)] + ' dropzone'}
+                    onDragOver={(event) => {event.preventDefault();}}
+                    onDrop={(event) => handleDrop(event)}
+                    >
+
+                    <span 
+                        className={style[getTileClassSpan(col)]}>{getPolishTileClass(col)}
+                    </span>
                 </div>
             ))
         ))
@@ -73,10 +95,34 @@ function Board() {
         }
     }
 
+    const handleDragStart = (event) => {
+        setDragged(event.target);
+    }
+
+    useEffect(() => {
+        console.log(dragged)
+    }, [dragged])
+
     return(
-        <div className={style['board']}>
-            {renderBoardTiles()}
-        </div>
+        <>
+            <div className={style['board']}>
+                {renderBoardTiles()}
+            </div>
+
+            <div className={style2['words-block']}>
+            { words.map((word, index) => (
+                <div 
+                    key={index} 
+                    id={index} 
+                    className={style2["letter-style"]} 
+                    draggable={word != "icon" ? true : false } 
+                    onDragStart={(event) => handleDragStart(event)} >
+                    
+                    <span className={style2["span-style"]}>{word}</span>
+                </div>
+            ))}
+            </div>
+        </>
     )
 }
 

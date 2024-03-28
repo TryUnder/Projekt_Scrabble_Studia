@@ -33,9 +33,8 @@ const loginUser = async (login, plainTextPassword) => {
         }
 
         if (!(login && passwordMatch)) {
-            return response.status(401).json({
-                error: 'invalid username or password'
-            })
+            console.log("Błędne dane")
+            return null;
         }
 
         const id = await conn.query("SELECT id FROM user WHERE login = (?)", login)
@@ -51,8 +50,7 @@ const loginUser = async (login, plainTextPassword) => {
         return user;
 
     } catch (error) {
-        console.error("Błąd podczas logowania użytkownika")
-        throw error;
+        console.error("Błąd podczas logowania użytkownika", error)
     }
 }
 
@@ -63,7 +61,7 @@ const getUserDataFromDB = async(id) => {
         return userInfo;
     } catch (error) {
         console.error("Błąd podczas pobierania danych o użytkowniku z bazy danych.")
-        throw error;
+        //throw error;
     }
 }
 

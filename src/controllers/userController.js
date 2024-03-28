@@ -30,8 +30,9 @@ const loginUser = async(req, res) => {
                 maxAge: 3600 * 1000,
                 secure: false
             });
-            console.log(user.userId)
             return res.redirect("/user-profile");
+        } else {
+            res.status(401).json({ message: "Błędny login lub hasło. " })
         }
 
     } catch (error) {

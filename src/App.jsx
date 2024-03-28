@@ -37,7 +37,7 @@ function MainGamePage() {
               <Header></Header>
               <UserPanel></UserPanel>
               <Board></Board>
-              <WordsBlock></WordsBlock>
+              {/* <WordsBlock></WordsBlock> */}
               <ScoreBoard></ScoreBoard>
               <ChatBlock></ChatBlock>
           </div>
