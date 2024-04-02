@@ -3,9 +3,10 @@
     background-color: rgba(237, 231, 225, 0.7);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: grid;
-    grid-template-columns: repeat(10,1fr);
+    grid-template-columns: repeat(8, 50.5px);
     border: 4px solid rgb(237, 231, 225, 0.7);
-    grid-gap: 3px;
+    grid-gap: 20px;
+    min-height: 5.7vh;
 }
 
 .letter-style {
@@ -25,9 +26,14 @@
     font-weight: 900;
 }
 
-.fa-square-check,
-.fa-square-xmark,
-.fa-rotate {
-    height: 50px;
-    width: 50px;
+.icon-style {
+    font-size: 63px;
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-self: flex-end;
+    position: absolute;
 }

@@ -77,7 +77,38 @@ body {
     align-items: center;
 }
 
+.normal-tile:hover, .triple-word-score-tile:hover, .double-letter-score-tile:hover, .triple-letter-score-tile:hover, .double-word-score-tile:hover, .test-div:hover {
+    border: 2px solid black;
+    transition: border-color 0.2s ease-in-out;
+    filter: saturate(150%);
+    transition: filter 0.2s ease-in-out;
+}
+
 .triple-word-score-span, .double-letter-score-span, .double-word-score-span , .start-span, .triple-letter-score-span{
     font-weight: 900;
     font-size: 7px;
+}
+
+.span-style {
+    font-weight: 900;
+    font-size: 7px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.test-div {
+    background-color: mediumpurple;
+    border: 1px solid black;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.span-new {
+    font-size: 24px;
+    font-weight: 900;
+    pointer-events: none;
+    user-select: none;
 }

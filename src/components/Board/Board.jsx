@@ -2,13 +2,14 @@ import react from 'react'
 import style from '../../css/Board/style_main_view.module.css'
 import style2 from '../../css/Board/word_block.module.css'
 import { useEffect, useState } from 'react'
+import cookieParser from 'cookie-parser';
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
     const [ dragged, setDragged ] = useState(null);
 
     const initializeBoardData = () => {
-        return [
+        const boardLayout = [
             ['TW', '', '', 'DL', '', '', '', 'TW', '', '', '', 'DL', '', '', 'TW'],
             ['', 'DW', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'DW', ''],
             ['', '', 'DW', '', '', '', 'DL', '', 'DL', '', '', '', 'DW', '', ''],
@@ -25,6 +26,15 @@ function Board() {
             ['', 'DW', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'DW', ''],
             ['TW', '', '', 'DL', '', '', '', 'TW', '', '', '', 'DL', '', '', 'TW']
         ];
+
+        return boardLayout.map((row, y) => {
+            return row.map((tile, x) => {
+                let classType = 'normal-tile';
+                classType = getTileClass(tile)
+
+                return { x, y, tile, classType, letter: { value: '', points: 0 }, player: null };
+            });
+        });
     } 
 
     useEffect(() => {
@@ -32,15 +42,26 @@ function Board() {
     }, [])
 
     useEffect(() => {
-        console.log(boardData)
+        //console.log(boardData)
     }, [boardData])
 
-    const handleDrop = (event) => {
+    const handleDrop = (event, x, y) => {
         event.preventDefault();
-
+        console.log("123")
+        console.log(event.target.classList)
         if (event.target.classList.contains("dropzone")) {
+            console.log(dragged.textContent)
             dragged.parentNode.removeChild(dragged)
-            event.target.innerText = "x"
+            // event.target.innerText = "x"
+            console.log(event.target)
+
+            const newBoardData = [...boardData];
+            const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
+
+            droppedTile.letter.value = dragged.textContent
+            droppedTile.classType = "test-div"
+            //console.log(droppedTile.letter.value)
+            setBoardData(newBoardData)
         }
     }
 
@@ -49,13 +70,16 @@ function Board() {
             row.map((col, colIndex) => (
                 <div 
                     key={`row-${rowIndex} col-${colIndex}`} 
-                    className={style[getTileClass(col)] + ' dropzone'}
+                    className={style[col.classType] + " dropzone"}
                     onDragOver={(event) => {event.preventDefault();}}
-                    onDrop={(event) => handleDrop(event)}
+                    onDrop={(event) => handleDrop(event, colIndex, rowIndex)}
                     >
 
                     <span 
-                        className={style[getTileClassSpan(col)]}>{getPolishTileClass(col)}
+                        className = { col.letter.value == '' ? style['span-style'] : style['span-new']}
+                    > 
+                    
+                        { col.letter.value == '' ? getPolishTileClass(col.tile) : col.letter.value }
                     </span>
                 </div>
             ))
@@ -66,31 +90,36 @@ function Board() {
         switch (type) {
             case 'TW':
                 return 'triple-word-score-tile'
+                break;
             case 'DW':
                 return 'double-word-score-tile'
+                break;
             case 'TL':
                 return 'triple-letter-score-tile'
+                break;
             case 'DL':
                 return 'double-letter-score-tile'
+                break;
             default:
                 return 'normal-tile'
+                break;
         }
     }
 
-    const getTileClassSpan = (type) => {
-        switch (type) {
-            case 'TW':
-                return 'triple-word-score-span'
-            case 'DW':
-                return 'double-word-score-span'
-            case 'TL':
-                return 'triple-letter-score-span'
-            case 'DL':
-                return 'double-letter-score-span'
-            default:
-                return 'normal-span'
-        }
-    }
+    // const getTileClassSpan = (type) => {
+    //     switch (type) {
+    //         case 'TW':
+    //             return 'triple-word-score-span'
+    //         case 'DW':
+    //             return 'double-word-score-span'
+    //         case 'TL':
+    //             return 'triple-letter-score-span'
+    //         case 'DL':
+    //             return 'double-letter-score-span'
+    //         default:
+    //             return 'normal-span'
+    //     }
+    // }
 
     const getPolishTileClass = (word_conv) => {
         switch (word_conv) {
@@ -110,59 +139,18 @@ function Board() {
     }
 
     useEffect(() => {
-        console.log(dragged)
+        //console.log(dragged)
     }, [dragged])
     
-    const words = ["S", "W", "P", "Ź", "A", "Ż", "O"]
+    //const words = ["S", "W", "P", "Ź", "A", "Ż", "O"]
     const letters = ["S", "W", "P", "Ź", "A", "Ż", "O"];
-    const icons = ["potwierdz", "odrzuc", "pasuj"]
-
-    const assignIcons = (word) => {
-        if (word === "potwierdz") {
-            return " fa-solid fa-square-check fa-2x"
-        } else if (word === "odrzuc") {
-            return " fa-solid fa-square-xmark"
-        } else if (word === "pasuj") {
-            return " fa-solid fa-rotate"
-        }
-        return null
-    } 
-
-    const checkWhetherIcon = (word, bool) => {
-        if (bool == true) {
-            if (word !== "potwierdz" && word !== "odrzuc" && word !== "pasuj") {
-                return true
-            }
-            return false
-            
-        } else if (bool == false) {
-            if (word !== "potwierdz" && word !== "odrzuc" && word !== "pasuj") {
-                return word
-            }
-            return null
-        }
-
-    }
+    const icons = ["potwierdz", "wymien", "pasuj"]
 
     return(
         <>
             <div className={style['board']}>
                 {renderBoardTiles()}
             </div>
-
-            {/* <div className={style2['words-block']}>
-            { words.map((word, index) => (
-                <div 
-                    key={index} 
-                    id={index} 
-                    className={`${style2["letter-style"]} ${assignIcons(word)}`} 
-                    draggable={checkWhetherIcon(word, true) ? true : false } 
-                    onDragStart={(event) => handleDragStart(event)} >
-                    
-                    <span className={style2["span-style"]}>{checkWhetherIcon(word, false)}</span>
-                </div>
-            ))}
-            </div> */}
 
             <div 
                 className = {style2['words-block']} 
@@ -183,15 +171,19 @@ function Board() {
                     </div>
                 ))}
 
-                {icons.map((icon, index) => (
-                    <div
-                        key = {index}
-                        id = {index}
-                        className = {`${style2["letter-style"]} fas fa-solid fa-square-check`}
-                    >
-
+                {
+                    <div className = {style2["icon-container"]}>
+                        <button className = {`${style2["letter-style"]}`}>
+                            <i className = {`${["fas fa-solid fa-square-check"]} ${style2["icon-style"]}`}></i>
+                        </button>
+                        <button className = {`${style2["letter-style"]}`}>
+                            <i className = {`${["fas fa-solid fa-square-poll-vertical"]} ${style2["icon-style"]}`}></i>
+                        </button>
+                        <button className = {`${style2["letter-style"]}`}>
+                            <i className = {`${["fas fa-solid fa-square-xmark"]} ${style2["icon-style"]}`}></i>
+                        </button>
                     </div>
-                ))}
+                }
             </div>
         </>
     )
