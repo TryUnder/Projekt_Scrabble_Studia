@@ -31,3 +31,12 @@
         - user_panel.module.css
         - word_block.module.css
         
+## 28.03.2024 - 03.04.2024 <br />
+    * Utworzenie komponentów umożliwiających rejestrację użytkownika po stronie backendu, zgodnie z architekturą MVC.
+    * Edycja komponentu login-register po stronie klienta, umożliwiając logowanie i rejestrację.
+    * Dodano modele:
+        - userModel.js
+    * Dodano routing:
+        - usersRoutes.js
+    * Dodano kontroler:
+        - userController.js
