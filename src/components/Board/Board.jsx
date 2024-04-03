@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 function Board() {
     const [ boardData, setBoardData] = useState([]);
     const [ dragged, setDragged ] = useState(null);
+    const [ previousBoardElements, setPreviousBoardElements ] = useState([])
 
     const initializeBoardData = () => {
         const boardLayout = [
@@ -42,26 +43,27 @@ function Board() {
     }, [])
 
     useEffect(() => {
-        //console.log(boardData)
-    }, [boardData])
+        console.log(previousBoardElements)
+    }, [previousBoardElements])
 
     const handleDrop = (event, x, y) => {
         event.preventDefault();
-        console.log("123")
-        console.log(event.target.classList)
-        if (event.target.classList.contains("dropzone")) {
-            console.log(dragged.textContent)
-            dragged.parentNode.removeChild(dragged)
-            // event.target.innerText = "x"
-            console.log(event.target)
 
+        if (event.target.classList.contains("dropzone")) {
             const newBoardData = [...boardData];
             const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
 
-            droppedTile.letter.value = dragged.textContent
-            droppedTile.classType = "test-div"
-            //console.log(droppedTile.letter.value)
-            setBoardData(newBoardData)
+            if (droppedTile.letter.value === "") {
+                const newPreviousBoardElements = [...previousBoardElements]
+                const newObj = JSON.parse(JSON.stringify(droppedTile))
+                newPreviousBoardElements.push(newObj)
+                setPreviousBoardElements(newPreviousBoardElements)
+                dragged.parentNode.removeChild(dragged)
+
+                droppedTile.letter.value = dragged.textContent
+                droppedTile.classType = "test-div"
+                setBoardData(newBoardData)
+            }
         }
     }
 
