@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 function Board() {
     const [ boardData, setBoardData] = useState([]);
     const [ dragged, setDragged ] = useState(null);
+    const [ draggedMain, setDraggedMain ] = useState(null);
     const [ previousBoardElements, setPreviousBoardElements ] = useState([])
 
     const initializeBoardData = () => {
@@ -67,6 +68,20 @@ function Board() {
         }
     }
 
+    const handleDropMain = (event) => {
+        event.preventDefault();
+
+        if (event.target.classList.contains("dropzone")) {
+            console.log(event.target)
+            if (draggedMain.classList[0].includes("test-div")) {
+                console.log("contains test div")
+                var div = document.createElement("div")
+                div.textContent = event.target.textContent;
+                draggedMain.appendChild(div);
+            }
+        }
+    }
+
     const renderBoardTiles = () => {
         return boardData.map((row, rowIndex) => (
             row.map((col, colIndex) => (
@@ -75,6 +90,9 @@ function Board() {
                     className={style[col.classType] + " dropzone"}
                     onDragOver={(event) => {event.preventDefault();}}
                     onDrop={(event) => handleDrop(event, colIndex, rowIndex)}
+
+                    draggable = { true }
+                    onDragStart = { (event) => handleDragStartMain(event) }
                     >
 
                     <span 
@@ -140,6 +158,10 @@ function Board() {
         setDragged(event.target);
     }
 
+    const handleDragStartMain = (event) => {
+        setDraggedMain(event.target);
+    }
+
     useEffect(() => {
         //console.log(dragged)
     }, [dragged])
@@ -155,7 +177,9 @@ function Board() {
             </div>
 
             <div 
-                className = {style2['words-block']} 
+                className = {style2['words-block'] + " dropzone"} 
+                onDragOver = { (event) => event.preventDefault() }
+                onDrop = { (event) => handleDropMain(event) }
             >
                 {letters.map((letter, index) => (
                     <div
