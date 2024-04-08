@@ -9,6 +9,7 @@ function Board() {
     const [ dragged, setDragged ] = useState(null);
     const [ draggedMain, setDraggedMain ] = useState(null);
     const [ previousBoardElements, setPreviousBoardElements ] = useState([])
+    const [ wordBlockLetters, setWordBlockLetters ] = useState([])
 
     const initializeBoardData = () => {
         const boardLayout = [
@@ -37,10 +38,19 @@ function Board() {
                 return { x, y, tile, classType, letter: { value: '', points: 0 }, player: null };
             });
         });
-    } 
+    }
+    
+    const initializeBlockLetters = () => {
+        const initialWordBlockLetters = ["S", "W", "P", "Ź", "A", "Z", "Ż"]
+        return initialWordBlockLetters
+    }
 
     useEffect(() => {
         setBoardData(initializeBoardData());
+    }, [])
+
+    useEffect(() => {
+        setWordBlockLetters(initializeBlockLetters())
     }, [])
 
     useEffect(() => {
@@ -59,11 +69,15 @@ function Board() {
                 const newObj = JSON.parse(JSON.stringify(droppedTile))
                 newPreviousBoardElements.push(newObj)
                 setPreviousBoardElements(newPreviousBoardElements)
-                dragged.parentNode.removeChild(dragged)
+                //dragged.parentNode.removeChild(dragged)
 
                 droppedTile.letter.value = dragged.textContent
                 droppedTile.classType = "test-div"
                 setBoardData(newBoardData)
+                
+                const newWordBlockLetters = wordBlockLetters.filter(letter => letter !== dragged.textContent)
+                setWordBlockLetters(newWordBlockLetters)
+                
             }
         }
     }
@@ -74,10 +88,19 @@ function Board() {
         if (event.target.classList.contains("dropzone")) {
             console.log(event.target)
             if (draggedMain.classList[0].includes("test-div")) {
-                console.log("contains test div")
-                var div = document.createElement("div")
-                div.textContent = event.target.textContent;
-                draggedMain.appendChild(div);
+                const newWordBlockLetters = [...wordBlockLetters]
+                newWordBlockLetters.push(draggedMain.textContent)
+                setWordBlockLetters(newWordBlockLetters)
+                
+                const droppedElement = previousBoardElements.find(element => element.letter.value === draggedMain.textContent)
+                console.log(droppedElement.x)
+                if (droppedElement) {
+                    const newBoardData = [...boardData]
+                    droppedElement.letter.value = "";
+                    newBoardData[droppedElement.y][droppedElement.x] = droppedElement
+                    
+                    setBoardData(newBoardData);
+                }
             }
         }
     }
@@ -92,7 +115,7 @@ function Board() {
                     onDrop={(event) => handleDrop(event, colIndex, rowIndex)}
 
                     draggable = { true }
-                    onDragStart = { (event) => handleDragStartMain(event) }
+                    onDragStart = { (event) => handleDragStartMain(event, col, row) }
                     >
 
                     <span 
@@ -105,6 +128,20 @@ function Board() {
             ))
         ))
     };
+
+    const renderWordBlocksLetters = () => {
+        return wordBlockLetters.map((letter, index) => (
+            <div 
+                key = {index}
+                id = {index}
+                className = {style2["letter-style"]}
+                draggable = { true }
+                onDragStart = { (event) => handleDragStart(event) }
+            >
+                <span className = {style2["span-style"]}>{letter}</span>
+            </div>
+        ))
+    }
 
     const getTileClass = (type) => {
         switch (type) {
@@ -126,21 +163,6 @@ function Board() {
         }
     }
 
-    // const getTileClassSpan = (type) => {
-    //     switch (type) {
-    //         case 'TW':
-    //             return 'triple-word-score-span'
-    //         case 'DW':
-    //             return 'double-word-score-span'
-    //         case 'TL':
-    //             return 'triple-letter-score-span'
-    //         case 'DL':
-    //             return 'double-letter-score-span'
-    //         default:
-    //             return 'normal-span'
-    //     }
-    // }
-
     const getPolishTileClass = (word_conv) => {
         switch (word_conv) {
             case 'TW':
@@ -158,8 +180,10 @@ function Board() {
         setDragged(event.target);
     }
 
-    const handleDragStartMain = (event) => {
+    const handleDragStartMain = (event, x, y) => {
         setDraggedMain(event.target);
+        event.target.dataset.x = x;
+        event.target.dataset.y = y;
     }
 
     useEffect(() => {
@@ -181,21 +205,8 @@ function Board() {
                 onDragOver = { (event) => event.preventDefault() }
                 onDrop = { (event) => handleDropMain(event) }
             >
-                {letters.map((letter, index) => (
-                    <div
-                        key = {index}
-                        id = {index}
-                        className = {style2["letter-style"]}
-                        draggable = { true }
-                        onDragStart = { (event) => handleDragStart(event) }
-                    >
-                        <span
-                            className = {style2["span-style"]}
-                            >
-                            {letter} 
-                        </span>
-                    </div>
-                ))}
+                
+                    {renderWordBlocksLetters()}
 
                 {
                     <div className = {style2["icon-container"]}>
