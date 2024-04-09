@@ -57,13 +57,28 @@ function Board() {
         console.log(previousBoardElements)
     }, [previousBoardElements])
 
+    useEffect(() => {
+        console.log(boardData)
+    }, [boardData])
+
     const handleDrop = (event, x, y) => {
         event.preventDefault();
 
         if (event.target.classList.contains("dropzone")) {
+            if (draggedMain !== null) {
+                if (draggedMain.event.classList[0].includes("test-div")) {
+                    setDraggedMain(null)
+                    return
+                }
+            }
             const newBoardData = [...boardData];
             const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
-
+            if (draggedMain != null) {
+                console.log(draggedMain.event.classList)
+                if (draggedMain.event.classList[0].includes("test-div")) {
+                    console.log("contains")
+                }
+            }
             if (droppedTile.letter.value === "") {
                 const newPreviousBoardElements = [...previousBoardElements]
                 const newObj = JSON.parse(JSON.stringify(droppedTile))
@@ -79,7 +94,7 @@ function Board() {
                 setWordBlockLetters(newWordBlockLetters)
                 
             }
-        }
+        } 
     }
 
     const handleDropMain = (event) => {
@@ -87,19 +102,27 @@ function Board() {
 
         if (event.target.classList.contains("dropzone")) {
             console.log(event.target)
-            if (draggedMain.classList[0].includes("test-div")) {
-                const newWordBlockLetters = [...wordBlockLetters]
-                newWordBlockLetters.push(draggedMain.textContent)
-                setWordBlockLetters(newWordBlockLetters)
+            if (draggedMain.event.classList[0].includes("test-div")) {
+                const x = draggedMain.x
+                const y = draggedMain.y
+
+                console.log("X:", x, "Y:", y);
                 
-                const droppedElement = previousBoardElements.find(element => element.letter.value === draggedMain.textContent)
-                console.log(droppedElement.x)
+                const droppedElement = previousBoardElements.find(tile => tile.x === x && tile.y === y)
+                console.log("Previous Board Elements: ", previousBoardElements)
+                console.log("Dropped Element: ", droppedElement)
+
                 if (droppedElement) {
                     const newBoardData = [...boardData]
-                    droppedElement.letter.value = "";
-                    newBoardData[droppedElement.y][droppedElement.x] = droppedElement
-                    
-                    setBoardData(newBoardData);
+                    newBoardData[y][x] = droppedElement
+                    setBoardData(newBoardData)
+
+                    const newWordBlockLetters = [...wordBlockLetters]
+                    newWordBlockLetters.push(draggedMain.event.textContent)
+                    setWordBlockLetters(newWordBlockLetters)
+
+                    const newPreviousBoardElements = previousBoardElements.filter(element => !(element.x === x && element.y === y))
+                    setPreviousBoardElements(newPreviousBoardElements)
                 }
             }
         }
@@ -115,7 +138,7 @@ function Board() {
                     onDrop={(event) => handleDrop(event, colIndex, rowIndex)}
 
                     draggable = { true }
-                    onDragStart = { (event) => handleDragStartMain(event, col, row) }
+                    onDragStart = { (event) => handleDragStartMain(event, colIndex, rowIndex) }
                     >
 
                     <span 
@@ -181,14 +204,12 @@ function Board() {
     }
 
     const handleDragStartMain = (event, x, y) => {
-        setDraggedMain(event.target);
-        event.target.dataset.x = x;
-        event.target.dataset.y = y;
+        setDraggedMain({event: event.target, x: x, y: y});
     }
 
     useEffect(() => {
-        //console.log(dragged)
-    }, [dragged])
+        console.log(draggedMain)
+    }, [draggedMain])
     
     //const words = ["S", "W", "P", "Ź", "A", "Ż", "O"]
     const letters = ["S", "W", "P", "Ź", "A", "Ż", "O"];
