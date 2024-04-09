@@ -40,3 +40,11 @@
         - usersRoutes.js
     * Dodano kontroler:
         - userController.js
+
+## 04.04.2024 <br />
+    * Kontynuacja pracy nad back-endem.
+    * Walidacja formularzy po stronie klienta.
+    * Dodanie mechanizmu tokenów przechowywanych w ciasteczkach przeglądarki.
+    * Dodanie mechanizmu logowania użytkowników w oparciu o token.
+    * Mechanizm wylogowywania w oparciu o usuwanie tokenu z ciasteczek przeglądarki.
+    * Operacje po stronie backendu w oparciu o sprawdzenie poprawności tokenu.
