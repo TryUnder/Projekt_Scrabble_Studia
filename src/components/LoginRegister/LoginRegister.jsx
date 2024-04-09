@@ -25,13 +25,50 @@ const LoginRegister = () => {
         });
     };
 
+    const validateLogin = () => {
+        const regexLogin = /^[a-zA-Z0-9]{6,}$/
+            if (regexLogin.test(formData.login)) {
+                return true
+            }
+            else {
+                return false
+            }
+    }
+
+    const validatePassword = () => {
+        const regexPassword = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W)[a-zA-Z0-9\W]{6,}/
+        if (regexPassword.test(formData.password)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     const handleRegisterSubmit = async (event) => {
         event.preventDefault();
+        try {
+            if (!validateLogin()) {
+                throw "Błędny login"
+            } 
 
+        } catch (error) {
+            alert("Nazwa użytkownika nie spełnia wymagań. Login powinien składać się z min. 6 znaków.", error)
+            return null
+        }
+
+        try {
+            if (!validatePassword()) {
+                throw "Błędne hasło"
+            }
+        } catch (error) {
+            alert("Hasło użytkownika nie spełnia wymagań. Hasło powinno składać się z minimum 6 znaków (w tym: 1 małej litery, 1 dużej litery, 1 cyfry, 1 znaku specjalnego.")
+            return null
+        }
+        
         try {
             const response = await axios.post('/api/register', formData)
             console.log(response.data)
-
+            alert("Konto zostało pomyślnie utworzone.")
             setFormData({
                 login: "",
                 password: ""
