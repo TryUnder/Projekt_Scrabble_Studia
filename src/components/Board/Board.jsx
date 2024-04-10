@@ -61,6 +61,14 @@ function Board() {
         console.log("Board Data: ", boardData)
     }, [boardData])
 
+    useEffect(() => {
+        console.log("dragged Main: ", draggedMain)
+    }, [draggedMain])
+
+    useEffect(() => {
+        console.log("Dragged: ", dragged)
+    }, [dragged])
+
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
         const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
@@ -82,7 +90,7 @@ function Board() {
 
                     const changedBoardData = [...boardData]
                     const changedPreviousBoardElements = [...previousBoardElements]
-                    console.log("changed prev board: (first) wwww", changedPreviousBoardElements)
+                    //console.log("changed prev board: (first) wwww", changedPreviousBoardElements)
 
                     const moveTile = boardData.flat().find(tile => tile.x === prevX && tile.y === prevY)
                     const deepTileCopy = JSON.parse(JSON.stringify(moveTile))
@@ -90,14 +98,14 @@ function Board() {
                     deepTileCopy.y = docY
                     changedBoardData[y][x] = deepTileCopy
 
-                    console.log("changed prev board: wwww", changedPreviousBoardElements)
+                    //console.log("changed prev board: wwww", changedPreviousBoardElements)
                     const loadPrevTile = previousBoardElements.find(prevElem => prevElem.x === prevX && prevElem.y === prevY)
                     changedBoardData[prevY][prevX] = JSON.parse(JSON.stringify(loadPrevTile))
                     setBoardData(changedBoardData)
 
-                    console.log("Prev: ", prevX, prevY)
-                    console.log("Doc: ", docX, docY)
-                    console.log("changed prev board: ", changedPreviousBoardElements)
+                    //console.log("Prev: ", prevX, prevY)
+                    //console.log("Doc: ", docX, docY)
+                    //console.log("changed prev board: ", changedPreviousBoardElements)
 
                     setPreviousBoardElements(elem => elem.filter(elem => !(elem.x === prevX && elem.y === prevY)))                    
                     
@@ -105,19 +113,15 @@ function Board() {
                 setDraggedMain(null)
                 return
             }
+            setDraggedMain(null)
             const newBoardData = [...boardData];
             const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
 
             if (droppedTile.letter.value === "") {
-                const newPreviousBoardElements = [...previousBoardElements]
-                const newObj = JSON.parse(JSON.stringify(droppedTile))
-                newPreviousBoardElements.push(newObj)
-                setPreviousBoardElements(newPreviousBoardElements)
-                //dragged.parentNode.removeChild(dragged)
+                modifyPreviousBoardElements(x, y);
 
                 droppedTile.letter.value = dragged.textContent
                 droppedTile.classType = "test-div"
-                setBoardData(newBoardData)
                 
                 const newWordBlockLetters = wordBlockLetters.filter(letter => letter !== dragged.textContent)
                 setWordBlockLetters(newWordBlockLetters)
