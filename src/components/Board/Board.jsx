@@ -82,9 +82,19 @@ function Board() {
         event.preventDefault();
 
         if (event.target.classList.contains("dropzone")) {
+            if (draggedMain !== null && !draggedMain.event.classList[0].includes("test-div")) {
+                setDraggedMain(null)
+            }
             if (draggedMain !== null && draggedMain.event.classList[0].includes("test-div")) {
                 const [ docX, docY ] = [ x, y ]
                 const [ prevX, prevY ] = [ draggedMain.x, draggedMain.y ]
+                
+                const docTile = boardData.flat().find(tile => tile.x === docX && tile.y === docY)
+                if ((docX === prevX && docY === prevY) || docTile.classType === "test-div") {
+                    setDraggedMain(null)
+                    return
+                }
+
                 modifyPreviousBoardElements(docX, docY)
 
                 const changedBoardData = [...boardData]
@@ -118,7 +128,7 @@ function Board() {
             const newBoardData = [...boardData];
             const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
 
-            if (droppedTile.letter.value === "") {
+            if (droppedTile.letter.value === "" && draggedMain === null) {
                 modifyPreviousBoardElements(x, y);
 
                 droppedTile.letter.value = dragged.textContent
@@ -157,6 +167,8 @@ function Board() {
 
                     const newPreviousBoardElements = previousBoardElements.filter(element => !(element.x === x && element.y === y))
                     setPreviousBoardElements(newPreviousBoardElements)
+
+                    setDraggedMain(null)
                 }
             }
         }
