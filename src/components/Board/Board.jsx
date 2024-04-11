@@ -82,38 +82,39 @@ function Board() {
         event.preventDefault();
 
         if (event.target.classList.contains("dropzone")) {
-            if (draggedMain !== null) {
-                if (draggedMain.event.classList[0].includes("test-div")) {
-                    const [ docX, docY ] = [ x, y ]
-                    const [ prevX, prevY ] = [ draggedMain.x, draggedMain.y ]
-                    modifyPreviousBoardElements(docX, docY)
+            if (draggedMain !== null && draggedMain.event.classList[0].includes("test-div")) {
+                const [ docX, docY ] = [ x, y ]
+                const [ prevX, prevY ] = [ draggedMain.x, draggedMain.y ]
+                modifyPreviousBoardElements(docX, docY)
 
-                    const changedBoardData = [...boardData]
-                    const changedPreviousBoardElements = [...previousBoardElements]
-                    //console.log("changed prev board: (first) wwww", changedPreviousBoardElements)
+                const changedBoardData = [...boardData]
+                const changedPreviousBoardElements = [...previousBoardElements]
+                //console.log("changed prev board: (first) wwww", changedPreviousBoardElements)
 
-                    const moveTile = boardData.flat().find(tile => tile.x === prevX && tile.y === prevY)
-                    const deepTileCopy = JSON.parse(JSON.stringify(moveTile))
-                    deepTileCopy.x = docX
-                    deepTileCopy.y = docY
-                    changedBoardData[y][x] = deepTileCopy
+                const moveTile = boardData.flat().find(tile => tile.x === prevX && tile.y === prevY)
+                const deepTileCopy = JSON.parse(JSON.stringify(moveTile))
+                deepTileCopy.x = docX
+                deepTileCopy.y = docY
+                changedBoardData[y][x] = deepTileCopy
 
-                    //console.log("changed prev board: wwww", changedPreviousBoardElements)
-                    const loadPrevTile = previousBoardElements.find(prevElem => prevElem.x === prevX && prevElem.y === prevY)
-                    changedBoardData[prevY][prevX] = JSON.parse(JSON.stringify(loadPrevTile))
-                    setBoardData(changedBoardData)
+                //console.log("changed prev board: wwww", changedPreviousBoardElements)
+                const loadPrevTile = previousBoardElements.find(prevElem => prevElem.x === prevX && prevElem.y === prevY)
+                changedBoardData[prevY][prevX] = JSON.parse(JSON.stringify(loadPrevTile))
+                setBoardData(changedBoardData)
 
-                    //console.log("Prev: ", prevX, prevY)
-                    //console.log("Doc: ", docX, docY)
-                    //console.log("changed prev board: ", changedPreviousBoardElements)
+                //console.log("Prev: ", prevX, prevY)
+                //console.log("Doc: ", docX, docY)
+                //console.log("changed prev board: ", changedPreviousBoardElements)
 
-                    setPreviousBoardElements(elem => elem.filter(elem => !(elem.x === prevX && elem.y === prevY)))                    
-                    
-                }
+                setPreviousBoardElements(elem => elem.filter(elem => !(elem.x === prevX && elem.y === prevY)))                    
+
                 setDraggedMain(null)
                 return
             }
-            setDraggedMain(null)
+            // if (draggedMain !== null) {
+            //     setDraggedMain(null)
+            //     return
+            // }
             const newBoardData = [...boardData];
             const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
 
