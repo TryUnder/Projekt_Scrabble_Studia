@@ -138,19 +138,22 @@ function Board() {
                 setWordBlockLetters(newWordBlockLetters)
                 
             }
-        } 
+        }
     }
 
     const handleDropMain = (event) => {
         event.preventDefault();
+        
+        // if (event.target.classList[0].includes("span-style") || event.target.classList[0].includes("letter-style")) {
+        //     console.log("test: ", event.target)
+        //     event.target.style.pointerEvents = "none";
+        // }
 
         if (event.target.classList.contains("dropzone")) {
             console.log(event.target)
             if (draggedMain.event.classList[0].includes("test-div")) {
                 const x = draggedMain.x
                 const y = draggedMain.y
-
-                console.log("X:", x, "Y:", y);
                 
                 const droppedElement = previousBoardElements.find(tile => tile.x === x && tile.y === y)
                 console.log("Previous Board Elements: ", previousBoardElements)
@@ -172,6 +175,17 @@ function Board() {
                 }
             }
         }
+        event.target.style.pointerEvents = "all";
+    }
+
+    const setPointerEvents = (event) => {
+        event.preventDefault();
+        // event.target.style.pointerEvents = "none"
+    }
+
+    const setPointerEventsOn = (event) => {
+        event.preventDefault();
+        // event.target.style.pointerEvents = "all"
     }
 
     const renderBoardTiles = () => {
@@ -205,7 +219,10 @@ function Board() {
                 id = {index}
                 className = {style2["letter-style"]}
                 draggable = { true }
+                onClick= { (event) => setPointerEventsOn(event) }
                 onDragStart = { (event) => handleDragStart(event) }
+                onDragOver = { (event) => setPointerEvents(event) }
+                //onDrop = { (event) =>  setPointerEvents(event)  }
             >
                 <span className = {style2["span-style"]}>{letter}</span>
             </div>
@@ -247,6 +264,7 @@ function Board() {
 
     const handleDragStart = (event) => {
         setDragged(event.target);
+        event.target.style.pointerEvents = "all"; 
     }
 
     const handleDragStartMain = (event, x, y) => {

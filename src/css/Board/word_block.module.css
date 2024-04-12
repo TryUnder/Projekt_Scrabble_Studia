@@ -19,6 +19,15 @@
     width: 50.5px;
     border-radius: 5px;
     background-color: #fdeb37;
+    cursor: pointer;
+    pointer-events: fill;
+}
+
+.letter-style:hover {
+    border: 2px solid black;
+    filter: saturate(150%);
+    transition: filter 0.2s ease-in-out;
+    transition: border-color 0.2s ease-in-out;
 }
 
 .span-style {
