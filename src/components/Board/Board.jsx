@@ -135,7 +135,7 @@ function Board() {
 
     useEffect(() => {
         console.log(wordBlockLetters.size)
-        while(wordBlockLetters.size < 4 || wordBlockLetters.size == undefined) {
+        if(wordBlockLetters.length < 4 || wordBlockLetters.length == undefined) {
             initializeBlockLetters();
         }
     }, [letterMap])
