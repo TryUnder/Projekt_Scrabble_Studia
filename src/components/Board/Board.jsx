@@ -10,7 +10,8 @@ function Board() {
     const [ draggedMain, setDraggedMain ] = useState(null);
     const [ previousBoardElements, setPreviousBoardElements ] = useState([])
     const [ wordBlockLetters, setWordBlockLetters ] = useState([])
-    const [ letterMap, setLetterMep ] = useState(null)
+    const [ letterMap, setLetterMap ] = useState(new Map(null))
+    //const [ letterArray, setLetterArray ] = useState([])
 
     const initializeBoardData = () => {
         const boardLayout = [
@@ -40,10 +41,42 @@ function Board() {
             });
         });
     }
+
+    // const setArray = () => {
+    //     const localArray = []
+    //     for (const [key, value] of myLetterMap) {
+    //         const i = value.count
+    //         for (let x = 0; x < i; x++) {
+    //             localArray.push(key)
+    //         }
+    //     }
+    //     setLetterArray(localArray)
+    // }
     
     const initializeBlockLetters = () => {
-        const initialWordBlockLetters = ["S", "W", "P", "Ź", "A", "Z", "Ż"]
-        return initialWordBlockLetters
+        const initialWordBlockLetters = wordBlockLetters !== null ? structuredClone(wordBlockLetters) : []
+        const letterMapCopy = structuredClone(letterMap)
+        console.log("LetterMapCopy: ", letterMapCopy)
+        const letterMapSizeCopy = letterMapCopy.size - 1
+        if (letterMapSizeCopy <= 0) {
+            console.log("MyLetterMapSize <= 0")
+            return
+        }
+
+        const randomNumber = Math.floor(Math.random() * letterMapSizeCopy)
+        const randomLetter = Array.from(letterMapCopy.keys())[randomNumber]
+
+        const count = letterMapCopy.get(randomLetter).count
+        if (count <= 0) {
+            console.log("count <= 0")
+            return
+        }
+
+        initialWordBlockLetters.push(randomLetter)  
+        letterMapCopy.get(randomLetter).count - 1
+
+        setWordBlockLetters(initialWordBlockLetters)
+        setLetterMap(letterMapCopy)
     }
 
     const initializeLetterMap = () => {
@@ -91,30 +124,20 @@ function Board() {
         return myLetterMap;
     }
 
+    const generateLetter = () => {
+
+    }
+
     useEffect(() => {
         setBoardData(initializeBoardData());
-        setWordBlockLetters(initializeBlockLetters());
-        setLetterMep(initializeLetterMap());
+        setLetterMap(initializeLetterMap());
     }, [])
 
     useEffect(() => {
-        console.log("Tablica Zapisanych Prev: ", previousBoardElements)
-    }, [previousBoardElements])
-
-    useEffect(() => {
-        console.log("Board Data: ", boardData)
-    }, [boardData])
-
-    useEffect(() => {
-        console.log("dragged Main: ", draggedMain)
-    }, [draggedMain])
-
-    useEffect(() => {
-        console.log("Dragged: ", dragged)
-    }, [dragged])
-
-    useEffect(() => {
-        console.log("literMap: ", letterMap)
+        console.log(wordBlockLetters.size)
+        while(wordBlockLetters.size < 4 || wordBlockLetters.size == undefined) {
+            initializeBlockLetters();
+        }
     }, [letterMap])
 
     const modifyPreviousBoardElements = (x, y) => {
@@ -338,7 +361,7 @@ function Board() {
                 onDrop = { (event) => handleDropMain(event) }
             >
                 
-                    {renderWordBlocksLetters()}
+                    {wordBlockLetters ?  renderWordBlocksLetters() : null}
 
                 {
                     <div className = {style2["icon-container"]}>
