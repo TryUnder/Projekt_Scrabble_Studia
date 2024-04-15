@@ -135,7 +135,7 @@ function Board() {
 
     useEffect(() => {
         console.log(wordBlockLetters.size)
-        if(wordBlockLetters.length < 4 || wordBlockLetters.length == undefined) {
+        if(wordBlockLetters.length < 7 || wordBlockLetters.length == undefined) {
             initializeBlockLetters();
         }
     }, [letterMap])
@@ -259,6 +259,8 @@ function Board() {
         // event.target.style.pointerEvents = "all"
     }
 
+    
+
     const renderBoardTiles = () => {
         return boardData.map((row, rowIndex) => (
             row.map((col, colIndex) => (
@@ -346,7 +348,7 @@ function Board() {
     }, [draggedMain])
     
     //const words = ["S", "W", "P", "Ź", "A", "Ż", "O"]
-    const letters = ["S", "W", "P", "Ź", "A", "Ż", "O"];
+   // const letters = ["S", "W", "P", "Ź", "A", "Ż", "O"];
     const icons = ["potwierdz", "wymien", "pasuj"]
 
     return(
@@ -365,14 +367,14 @@ function Board() {
 
                 {
                     <div className = {style2["icon-container"]}>
-                        <button className = {`${style2["letter-style"]}`}>
-                            <i className = {`${["fas fa-solid fa-square-check"]} ${style2["icon-style"]}`}></i>
+                        <button className = {`${style2["letter-style-change"]}`}>
+                            <i className = {`${["fas fa-solid fa-check"]} ${style2["icon-style"]}`}></i>
                         </button>
-                        <button className = {`${style2["letter-style"]}`}>
-                            <i className = {`${["fas fa-solid fa-square-poll-vertical"]} ${style2["icon-style"]}`}></i>
+                        <button className = {`${style2["letter-style-change"]}`}>
+                            <i className = {`${["fas fa-solid fa-arrows-spin"]} ${style2["icon-style"]}`}></i>
                         </button>
-                        <button className = {`${style2["letter-style"]}`}>
-                            <i className = {`${["fas fa-solid fa-square-xmark"]} ${style2["icon-style"]}`}></i>
+                        <button className = {`${style2["letter-style-change"]}`}>
+                            <i className = {`${["fas fa-solid fa-xmark"]} ${style2["icon-style"]}`}></i>
                         </button>
                     </div>
                 }

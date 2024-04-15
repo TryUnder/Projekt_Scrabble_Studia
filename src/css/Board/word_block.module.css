@@ -36,7 +36,8 @@
 }
 
 .icon-style {
-    font-size: 63px;
+    font-size: 40px;
+    color: #fdeb37
 }
 
 .icon-container {
@@ -45,4 +46,25 @@
     gap: 20px;
     justify-self: flex-end;
     position: absolute;
+}
+
+.letter-style-change{
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 50.5px;
+    width: 50.5px;
+    border-radius: 5px;
+    background-color: black;
+    cursor: pointer;
+    pointer-events: fill;
+}
+
+.letter-style-change:hover{
+    border: 2px solid whitesmoke;
+    filter: saturate(-150%);
+    transition: filter 0.2s ease-in-out;
+    transition: border-color 0.2s ease-in-out;
 }
