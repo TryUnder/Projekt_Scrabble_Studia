@@ -11,7 +11,7 @@ function Board() {
     const [ previousBoardElements, setPreviousBoardElements ] = useState([])
     const [ wordBlockLetters, setWordBlockLetters ] = useState([])
     const [ letterMap, setLetterMap ] = useState(new Map(null))
-    //const [ letterArray, setLetterArray ] = useState([])
+    const [ change, setChange ] = useState(false)
 
     const initializeBoardData = () => {
         const boardLayout = [
@@ -79,6 +79,10 @@ function Board() {
         setLetterMap(letterMapCopy)
     }
 
+    const handleChangeLetterClick = (event) => {
+        setChange(true)
+    }
+
     const initializeLetterMap = () => {
         const myLetterMap = new Map(Object.entries({
             'Blank': { count: 2, points: 0 },
@@ -122,10 +126,6 @@ function Board() {
         }));
 
         return myLetterMap;
-    }
-
-    const generateLetter = () => {
-
     }
 
     useEffect(() => {
@@ -254,12 +254,13 @@ function Board() {
         }
     }
 
-    const setPointerEventsOn = (event) => {
-        event.preventDefault();
-        // event.target.style.pointerEvents = "all"
+    const handleLetterChange = (event) => {
+        event.target.style.backgroundColor = "green";
+        setChange(false)
+        
     }
 
-    
+
 
     const renderBoardTiles = () => {
         return boardData.map((row, rowIndex) => (
@@ -292,7 +293,7 @@ function Board() {
                 id = {index}
                 className = {style2["letter-style"]}
                 draggable = { true }
-                onClick= { (event) => setPointerEventsOn(event) }
+                onClick = { (event) => change == true ? handleLetterChange(event) : event.preventDefault() }
                 onDragStart = { (event) => handleDragStart(event) }
                 //onDragOver = { (event) => setPointerEvents(event) }
                 onDrop = { (event) =>  setPointerEvents(event)  }
@@ -370,7 +371,9 @@ function Board() {
                         <button className = {`${style2["letter-style-change"]}`}>
                             <i className = {`${["fas fa-solid fa-check"]} ${style2["icon-style"]}`}></i>
                         </button>
-                        <button className = {`${style2["letter-style-change"]}`}>
+                        <button className = {`${style2["letter-style-change"]}`}
+                                onClick = { (event) => handleChangeLetterClick(event) }        
+                        >
                             <i className = {`${["fas fa-solid fa-arrows-spin"]} ${style2["icon-style"]}`}></i>
                         </button>
                         <button className = {`${style2["letter-style-change"]}`}>
