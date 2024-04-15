@@ -41,21 +41,10 @@ function Board() {
             });
         });
     }
-
-    // const setArray = () => {
-    //     const localArray = []
-    //     for (const [key, value] of myLetterMap) {
-    //         const i = value.count
-    //         for (let x = 0; x < i; x++) {
-    //             localArray.push(key)
-    //         }
-    //     }
-    //     setLetterArray(localArray)
-    // }
     
     const initializeBlockLetters = () => {
         const initialWordBlockLetters = wordBlockLetters !== null ? structuredClone(wordBlockLetters) : []
-        const letterMapCopy = structuredClone(letterMap)
+        const letterMapCopy = new Map(letterMap)
         console.log("LetterMapCopy: ", letterMapCopy)
         const letterMapSizeCopy = letterMapCopy.size - 1
         if (letterMapSizeCopy <= 0) {
@@ -69,11 +58,12 @@ function Board() {
         const count = letterMapCopy.get(randomLetter).count
         if (count <= 0) {
             console.log("count <= 0")
+            initializeBlockLetters();
             return
         }
 
         initialWordBlockLetters.push(randomLetter)  
-        letterMapCopy.get(randomLetter).count - 1
+        letterMapCopy.get(randomLetter).count -= 1
 
         setWordBlockLetters(initialWordBlockLetters)
         setLetterMap(letterMapCopy)
@@ -81,6 +71,38 @@ function Board() {
 
     const handleChangeLetterClick = (event) => {
         setChange(true)
+    }
+
+    const changeLetters = (event) => {
+        const arrayBcg = []
+        Array.from({ length: wordBlockLetters.length }).map((_, index) => {
+            const letterDiv = document.getElementById(index)
+            if (window.getComputedStyle(letterDiv).backgroundColor === 'rgb(0, 128, 0)') {
+                arrayBcg.push(letterDiv.textContent)
+            }
+        })
+
+        console.log(arrayBcg)
+        if (arrayBcg.length === 0) {
+            return
+        }
+
+        const wordBlockLettersCopy = [...wordBlockLetters];
+
+        const filteredWordBlockLetters = wordBlockLettersCopy.filter(letter => {
+            const index = arrayBcg.indexOf(letter);
+            if (index !== -1) {
+                arrayBcg.splice(index, 1);
+                return false;
+            }
+            return true; 
+        });
+        console.log("arraybcg: ", arrayBcg)
+        console.log("word block letters: ", wordBlockLetters)
+
+        console.log("filtered: ", filteredWordBlockLetters)
+
+        setWordBlockLetters(filteredWordBlockLetters)
     }
 
     const initializeLetterMap = () => {
@@ -134,7 +156,11 @@ function Board() {
     }, [])
 
     useEffect(() => {
-        console.log(wordBlockLetters.size)
+        console.log("WBL: ", wordBlockLetters)
+    }, [wordBlockLetters])
+
+    useEffect(() => {
+        console.log(letterMap)
         if(wordBlockLetters.length < 7 || wordBlockLetters.length == undefined) {
             initializeBlockLetters();
         }
@@ -170,7 +196,6 @@ function Board() {
 
                 const changedBoardData = [...boardData]
                 const changedPreviousBoardElements = [...previousBoardElements]
-                //console.log("changed prev board: (first) wwww", changedPreviousBoardElements)
 
                 const moveTile = boardData.flat().find(tile => tile.x === prevX && tile.y === prevY)
                 const deepTileCopy = JSON.parse(JSON.stringify(moveTile))
@@ -178,24 +203,16 @@ function Board() {
                 deepTileCopy.y = docY
                 changedBoardData[y][x] = deepTileCopy
 
-                //console.log("changed prev board: wwww", changedPreviousBoardElements)
                 const loadPrevTile = previousBoardElements.find(prevElem => prevElem.x === prevX && prevElem.y === prevY)
                 changedBoardData[prevY][prevX] = JSON.parse(JSON.stringify(loadPrevTile))
                 setBoardData(changedBoardData)
-
-                //console.log("Prev: ", prevX, prevY)
-                //console.log("Doc: ", docX, docY)
-                //console.log("changed prev board: ", changedPreviousBoardElements)
 
                 setPreviousBoardElements(elem => elem.filter(elem => !(elem.x === prevX && elem.y === prevY)))                    
 
                 setDraggedMain(null)
                 return
             }
-            // if (draggedMain !== null) {
-            //     setDraggedMain(null)
-            //     return
-            // }
+
             const newBoardData = [...boardData];
             const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
 
@@ -214,18 +231,14 @@ function Board() {
 
     const handleDropMain = (event) => {
         event.preventDefault();
-        console.log("EVENT HDM: ", event.target.parentElement.parentElement)
 
         if (event.target.classList.contains("dropzone") || event.target.parentElement.classList[0].includes("words-block") 
             || event.target.parentElement.parentElement.classList[0].includes("words-block")) {
-            console.log("HDM: ", event.target)
             if (draggedMain.event.classList[0].includes("test-div")) {
                 const x = draggedMain.x
                 const y = draggedMain.y
                 
                 const droppedElement = previousBoardElements.find(tile => tile.x === x && tile.y === y)
-                console.log("Previous Board Elements: ", previousBoardElements)
-                console.log("Dropped Element: ", droppedElement)
 
                 if (droppedElement) {
                     const newBoardData = [...boardData]
@@ -248,7 +261,6 @@ function Board() {
 
     const setPointerEvents = (event) => {
         event.preventDefault();
-        console.log("CL: ", event.target.parentElement.classList)
         if (event.target.parentElement.classList[0].includes("words-block")) {
             handleDragStart(event.target.parentElement)
         }
@@ -259,8 +271,6 @@ function Board() {
         setChange(false)
         
     }
-
-
 
     const renderBoardTiles = () => {
         return boardData.map((row, rowIndex) => (
@@ -295,7 +305,6 @@ function Board() {
                 draggable = { true }
                 onClick = { (event) => change == true ? handleLetterChange(event) : event.preventDefault() }
                 onDragStart = { (event) => handleDragStart(event) }
-                //onDragOver = { (event) => setPointerEvents(event) }
                 onDrop = { (event) =>  setPointerEvents(event)  }
             >
                 <span className = {style2["span-style"]}>{letter}</span>
@@ -348,8 +357,6 @@ function Board() {
         console.log(draggedMain)
     }, [draggedMain])
     
-    //const words = ["S", "W", "P", "Ź", "A", "Ż", "O"]
-   // const letters = ["S", "W", "P", "Ź", "A", "Ż", "O"];
     const icons = ["potwierdz", "wymien", "pasuj"]
 
     return(
@@ -368,7 +375,9 @@ function Board() {
 
                 {
                     <div className = {style2["icon-container"]}>
-                        <button className = {`${style2["letter-style-change"]}`}>
+                        <button className = {`${style2["letter-style-change"]}`}
+                            onClick = { (event) => changeLetters(event) }
+                        >
                             <i className = {`${["fas fa-solid fa-check"]} ${style2["icon-style"]}`}></i>
                         </button>
                         <button className = {`${style2["letter-style-change"]}`}
