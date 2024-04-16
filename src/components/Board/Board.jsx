@@ -68,6 +68,13 @@ function Board() {
         setLetterMap(letterMapCopy)
     }
 
+    const manageDraggableProperty = (condition) => {
+        Array.from( {length: wordBlockLetters.length } ).map((_, index) => {
+            const letterDiv = document.getElementById(index);
+            condition === true ? letterDiv.draggable = false : letterDiv.draggable = true
+        })
+    }
+
     const handleChangeLetterClick = (event) => {
         setChange(true)
     }
@@ -76,14 +83,15 @@ function Board() {
         const letterMapCopy = new Map(letterMap)
         const count = letterMapCopy.get(letter).count
 
-        if (count > 0) {
+        if (count >= 0) {
             letterMapCopy.get(letter).count += 1;
             setLetterMap(letterMapCopy)
         } 
     }
 
     const changeLetters = (event) => {
-        if (previousBoardElements.length > 0) {
+        if (previousBoardElements.length > 0 || change === false) {
+            setChange(false)
             return
         }
         const arrayBcg = []
@@ -92,11 +100,12 @@ function Board() {
             const letterDiv = document.getElementById(index)
             if (window.getComputedStyle(letterDiv).backgroundColor === 'rgb(0, 128, 0)') {
                 arrayBcg.push(letterDiv.textContent)
+                letterDiv.style.backgroundColor = "#fdeb37";
             }
         })
 
-        console.log(arrayBcg)
         if (arrayBcg.length === 0) {
+            setChange(false)
             return
         }
         arrayBcgCopy = structuredClone(arrayBcg)
@@ -111,15 +120,14 @@ function Board() {
             }
             return true; 
         });
-        console.log("arraybcgcopy: ", arrayBcgCopy)
-        console.log("word block letters: ", wordBlockLetters)
 
-        console.log("filtered: ", filteredWordBlockLetters)
         arrayBcgCopy.forEach(letter => {
             increaseLetterCount(letter)
         })
 
         setWordBlockLetters(filteredWordBlockLetters)
+        setChange(false)
+        //manageDraggableProperty(false)
     }
 
     const initializeLetterMap = () => {
@@ -173,18 +181,20 @@ function Board() {
     }, [])
 
     useEffect(() => {
-        console.log("WBL: ", wordBlockLetters);
         if (wordBlockLetters.length < 7 && change) {
             if (previousBoardElements.length + wordBlockLetters.length < 7) {
                 initializeBlockLetters();
-                setChange(false); // Zresetowanie flagi change po dodaniu nowych kafelków
+                setChange(false);
             }
         }
     }, [wordBlockLetters, change]);
     
     useEffect(() => {
-        console.log("prev: ", previousBoardElements)
     }, [previousBoardElements])
+
+    useEffect(() => {
+        manageDraggableProperty(change)
+    }, [change])
 
     useEffect(() => {
         console.log("Letter Map: ", letterMap)
@@ -192,6 +202,10 @@ function Board() {
             initializeBlockLetters();
         }
     }, [letterMap])
+
+    useEffect(() => {
+        console.log("Board Data: ", boardData)
+    }, [boardData])
 
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
@@ -294,9 +308,13 @@ function Board() {
     }
 
     const handleLetterChange = (event) => {
-        event.target.style.backgroundColor = "green";
-        setChange(false)
-        
+        if (event.target.tagName === "DIV") {
+            if (event.target.style.backgroundColor === "green") {
+                event.target.style.backgroundColor = "#fdeb37"
+                return
+            }
+            event.target.style.backgroundColor = "green";
+        }
     }
 
     const renderBoardTiles = () => {
@@ -381,7 +399,6 @@ function Board() {
     }
 
     useEffect(() => {
-        console.log(draggedMain)
     }, [draggedMain])
     
     const icons = ["potwierdz", "wymien", "pasuj"]
