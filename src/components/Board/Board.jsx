@@ -3,7 +3,9 @@ import style from '../../css/Board/style_main_view.module.css'
 import style2 from '../../css/Board/word_block.module.css'
 import { useEffect, useState } from 'react'
 import cookieParser from 'cookie-parser';
+
 import WordBlockLetters from "./WordsBlock"
+import { getTileClass, getPolishTileClass } from "./BoardUtils"
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
@@ -337,44 +339,10 @@ function Board() {
                 letter = { letter }
                 index = { index }
                 change = { change }
-//                handleLetterChange = { handleLetterChange }
                 handleDragStart = { handleDragStart }
                 setPointerEvents = { setPointerEvents }
             />
         ))
-    }
-
-    const getTileClass = (type) => {
-        switch (type) {
-            case 'TW':
-                return 'triple-word-score-tile'
-                break;
-            case 'DW':
-                return 'double-word-score-tile'
-                break;
-            case 'TL':
-                return 'triple-letter-score-tile'
-                break;
-            case 'DL':
-                return 'double-letter-score-tile'
-                break;
-            default:
-                return 'normal-tile'
-                break;
-        }
-    }
-
-    const getPolishTileClass = (word_conv) => {
-        switch (word_conv) {
-            case 'TW':
-                return 'POTRÓJNA PREMIA SŁOWNA'
-            case 'DW':
-                return 'PODWÓJNA PREMIA SŁOWNA'
-            case 'TL':
-                return 'POTRÓJNA PREMIA LITEROWA'
-            case 'DL':
-                return 'PODWÓJNA PREMIA LITEROWA'
-        }
     }
 
     const handleDragStart = (event) => {
