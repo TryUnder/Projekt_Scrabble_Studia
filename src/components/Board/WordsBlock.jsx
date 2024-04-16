@@ -1,8 +1,18 @@
 import React from 'react'
 import style2 from '../../css/Board/word_block.module.css'
 
-
-const UserBlockLetters = ({ letter, index, change, handleLetterChange, handleDragStart, setPointerEvents }) => {
+const UserBlockLetters = ({ letter, index, change, handleDragStart, setPointerEvents }) => {
+    
+    const handleLetterChange = (event) => {
+        if (event.target.tagName === "DIV") {
+            if (event.target.style.backgroundColor === "green") {
+                event.target.style.backgroundColor = "#fdeb37"
+                return
+            }
+            event.target.style.backgroundColor = "green";
+        }
+    }
+    
     return (
         <div
             key = { index }

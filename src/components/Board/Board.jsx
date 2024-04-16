@@ -307,16 +307,6 @@ function Board() {
         }
     }
 
-    const handleLetterChange = (event) => {
-        if (event.target.tagName === "DIV") {
-            if (event.target.style.backgroundColor === "green") {
-                event.target.style.backgroundColor = "#fdeb37"
-                return
-            }
-            event.target.style.backgroundColor = "green";
-        }
-    }
-
     const renderBoardTiles = () => {
         return boardData.map((row, rowIndex) => (
             row.map((col, colIndex) => (
@@ -341,28 +331,13 @@ function Board() {
         ))
     };
 
-    // const renderWordBlocksLetters = () => {
-    //     return wordBlockLetters.map((letter, index) => (
-    //         <div 
-    //             key = {index}
-    //             id = {index}
-    //             className = {style2["letter-style"]}
-    //             draggable = { true }
-    //             onClick = { (event) => change == true ? handleLetterChange(event) : event.preventDefault() }
-    //             onDragStart = { (event) => handleDragStart(event) }
-    //             onDrop = { (event) =>  setPointerEvents(event)  }
-    //         >
-    //             <span className = {style2["span-style"]}>{letter}</span>
-    //         </div>
-    //     ))
-    // }
     const renderUserBlockLetters = () => {
         return wordBlockLetters.map((letter, index) => (
             <WordBlockLetters 
                 letter = { letter }
                 index = { index }
                 change = { change }
-                handleLetterChange = { handleLetterChange }
+//                handleLetterChange = { handleLetterChange }
                 handleDragStart = { handleDragStart }
                 setPointerEvents = { setPointerEvents }
             />
