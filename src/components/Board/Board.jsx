@@ -45,7 +45,6 @@ function Board() {
     const initializeBlockLetters = () => {
         const initialWordBlockLetters = wordBlockLetters !== null ? structuredClone(wordBlockLetters) : []
         const letterMapCopy = new Map(letterMap)
-        console.log("LetterMapCopy: ", letterMapCopy)
         const letterMapSizeCopy = letterMapCopy.size - 1
         if (letterMapSizeCopy <= 0) {
             console.log("MyLetterMapSize <= 0")
@@ -73,8 +72,22 @@ function Board() {
         setChange(true)
     }
 
+    const increaseLetterCount = (letter) => {
+        const letterMapCopy = new Map(letterMap)
+        const count = letterMapCopy.get(letter).count
+
+        if (count > 0) {
+            letterMapCopy.get(letter).count += 1;
+            setLetterMap(letterMapCopy)
+        } 
+    }
+
     const changeLetters = (event) => {
+        if (previousBoardElements.length > 0) {
+            return
+        }
         const arrayBcg = []
+        var arrayBcgCopy = null
         Array.from({ length: wordBlockLetters.length }).map((_, index) => {
             const letterDiv = document.getElementById(index)
             if (window.getComputedStyle(letterDiv).backgroundColor === 'rgb(0, 128, 0)') {
@@ -86,6 +99,7 @@ function Board() {
         if (arrayBcg.length === 0) {
             return
         }
+        arrayBcgCopy = structuredClone(arrayBcg)
 
         const wordBlockLettersCopy = [...wordBlockLetters];
 
@@ -97,10 +111,13 @@ function Board() {
             }
             return true; 
         });
-        console.log("arraybcg: ", arrayBcg)
+        console.log("arraybcgcopy: ", arrayBcgCopy)
         console.log("word block letters: ", wordBlockLetters)
 
         console.log("filtered: ", filteredWordBlockLetters)
+        arrayBcgCopy.forEach(letter => {
+            increaseLetterCount(letter)
+        })
 
         setWordBlockLetters(filteredWordBlockLetters)
     }
@@ -156,11 +173,21 @@ function Board() {
     }, [])
 
     useEffect(() => {
-        console.log("WBL: ", wordBlockLetters)
-    }, [wordBlockLetters])
+        console.log("WBL: ", wordBlockLetters);
+        if (wordBlockLetters.length < 7 && change) {
+            if (previousBoardElements.length + wordBlockLetters.length < 7) {
+                initializeBlockLetters();
+                setChange(false); // Zresetowanie flagi change po dodaniu nowych kafelków
+            }
+        }
+    }, [wordBlockLetters, change]);
+    
+    useEffect(() => {
+        console.log("prev: ", previousBoardElements)
+    }, [previousBoardElements])
 
     useEffect(() => {
-        console.log(letterMap)
+        console.log("Letter Map: ", letterMap)
         if(wordBlockLetters.length < 7 || wordBlockLetters.length == undefined) {
             initializeBlockLetters();
         }
