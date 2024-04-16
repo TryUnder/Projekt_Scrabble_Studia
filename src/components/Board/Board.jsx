@@ -3,6 +3,7 @@ import style from '../../css/Board/style_main_view.module.css'
 import style2 from '../../css/Board/word_block.module.css'
 import { useEffect, useState } from 'react'
 import cookieParser from 'cookie-parser';
+import WordBlockLetters from "./WordsBlock"
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
@@ -340,19 +341,31 @@ function Board() {
         ))
     };
 
-    const renderWordBlocksLetters = () => {
+    // const renderWordBlocksLetters = () => {
+    //     return wordBlockLetters.map((letter, index) => (
+    //         <div 
+    //             key = {index}
+    //             id = {index}
+    //             className = {style2["letter-style"]}
+    //             draggable = { true }
+    //             onClick = { (event) => change == true ? handleLetterChange(event) : event.preventDefault() }
+    //             onDragStart = { (event) => handleDragStart(event) }
+    //             onDrop = { (event) =>  setPointerEvents(event)  }
+    //         >
+    //             <span className = {style2["span-style"]}>{letter}</span>
+    //         </div>
+    //     ))
+    // }
+    const renderUserBlockLetters = () => {
         return wordBlockLetters.map((letter, index) => (
-            <div 
-                key = {index}
-                id = {index}
-                className = {style2["letter-style"]}
-                draggable = { true }
-                onClick = { (event) => change == true ? handleLetterChange(event) : event.preventDefault() }
-                onDragStart = { (event) => handleDragStart(event) }
-                onDrop = { (event) =>  setPointerEvents(event)  }
-            >
-                <span className = {style2["span-style"]}>{letter}</span>
-            </div>
+            <WordBlockLetters 
+                letter = { letter }
+                index = { index }
+                change = { change }
+                handleLetterChange = { handleLetterChange }
+                handleDragStart = { handleDragStart }
+                setPointerEvents = { setPointerEvents }
+            />
         ))
     }
 
@@ -414,7 +427,7 @@ function Board() {
                 onDrop = { (event) => handleDropMain(event) }
             >
                 
-                    {wordBlockLetters ?  renderWordBlocksLetters() : null}
+                    {wordBlockLetters ?  renderUserBlockLetters() : null}
 
                 {
                     <div className = {style2["icon-container"]}>
