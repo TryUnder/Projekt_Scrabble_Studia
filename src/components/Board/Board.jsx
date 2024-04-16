@@ -204,7 +204,6 @@ function Board() {
 
     useEffect(() => {
         console.log("Board Data: ", boardData)
-        console.log("WYPISUJ KURWO JEBANA SZMATO PIERDOILONA")
     }, [boardData])
 
     const modifyPreviousBoardElements = (x, y) => {
