@@ -197,7 +197,6 @@ function Board() {
     }, [change])
 
     useEffect(() => {
-        console.log("Letter Map: ", letterMap)
         if(wordBlockLetters.length < 7 || wordBlockLetters.length == undefined) {
             initializeBlockLetters();
         }
@@ -205,6 +204,7 @@ function Board() {
 
     useEffect(() => {
         console.log("Board Data: ", boardData)
+        console.log("WYPISUJ KURWO JEBANA SZMATO PIERDOILONA")
     }, [boardData])
 
     const modifyPreviousBoardElements = (x, y) => {
