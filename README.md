@@ -41,10 +41,21 @@
     * Dodano kontroler:
         - userController.js
 
-## 04.04.2024 <br />
+## 04.04.2024 - 10.04.2024 <br />
     * Kontynuacja pracy nad back-endem.
     * Walidacja formularzy po stronie klienta.
     * Dodanie mechanizmu tokenów przechowywanych w ciasteczkach przeglądarki.
     * Dodanie mechanizmu logowania użytkowników w oparciu o token.
     * Mechanizm wylogowywania w oparciu o usuwanie tokenu z ciasteczek przeglądarki.
     * Operacje po stronie backendu w oparciu o sprawdzenie poprawności tokenu.
+
+## 11.04.2024 - 16.04.2024 <br />
+    * Rozpoczęcie pracy nad częścią projektu poświęconą logice gry.
+        - Realizacja umieszczania liter na planszy i ściągania ich.
+        - Dodanie funkcjonalności przesuwania liter po planszy.
+    * Wprowadzenie mechanizmu wymiany liter:
+        - Przydzielenie graczowi na początku rozgrywki 7 liter wybranych losowo.
+        - Obsługa wymiany liter poprzez naciśnięcie przycisku, a następnie określenie
+        przez gracza liter do wymiany i potwierdzenie decyzji drugim przyciskiem.
+    * Wstępne dodanie Timera ograniczającego czas trwania rozgrywki.
+            
