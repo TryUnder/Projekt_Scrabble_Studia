@@ -1,7 +1,6 @@
-import react from 'react'
 import style from '../../css/Board/style_main_view.module.css'
 import style2 from '../../css/Board/word_block.module.css'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cookieParser from 'cookie-parser';
 
 import WordBlockLetters from "./WordsBlock"
@@ -191,9 +190,6 @@ function Board() {
             }
         }
     }, [wordBlockLetters, change]);
-    
-    useEffect(() => {
-    }, [previousBoardElements])
 
     useEffect(() => {
         manageDraggableProperty(change)
