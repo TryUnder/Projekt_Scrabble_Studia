@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import cookieParser from 'cookie-parser';
 
 import WordBlockLetters from "./WordsBlock"
-import { getTileClass, getPolishTileClass } from "./BoardUtils"
+import { getTileClass, getPolishTileClass, initializeBoardData, initializeLetterMap } from "./BoardUtils"
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
@@ -14,35 +14,6 @@ function Board() {
     const [ wordBlockLetters, setWordBlockLetters ] = useState([])
     const [ letterMap, setLetterMap ] = useState(new Map(null))
     const [ change, setChange ] = useState(false)
-
-    const initializeBoardData = () => {
-        const boardLayout = [
-            ['TW', '', '', 'DL', '', '', '', 'TW', '', '', '', 'DL', '', '', 'TW'],
-            ['', 'DW', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'DW', ''],
-            ['', '', 'DW', '', '', '', 'DL', '', 'DL', '', '', '', 'DW', '', ''],
-            ['DL', '', '', 'DW', '', '', '', 'DL', '', '', '', 'DW', '', '', 'DL'],
-            ['', '', '', '', 'DW', '', '', '', '', '', 'DW', '', '', '', ''],
-            ['', 'TL', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'TL', ''],
-            ['', '', 'DL', '', '', '', 'DL', '', 'DL', '', '', '', 'DL', '', ''],
-            ['TW', '', '', 'DL', '', '', '', 'DW', '', '', '', 'DL', '', '', 'TW'],
-            ['', '', 'DL', '', '', '', 'DL', '', 'DL', '', '', '', 'DL', '', ''],
-            ['', 'TL', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'TL', ''],
-            ['', '', '', '', 'DW', '', '', '', '', '', 'DW', '', '', '', ''],
-            ['DL', '', '', 'DW', '', '', '', 'DL', '', '', '', 'DW', '', '', 'DL'],
-            ['', '', 'DW', '', '', '', 'DL', '', 'DL', '', '', '', 'DW', '', ''],
-            ['', 'DW', '', '', '', 'TL', '', '', '', 'TL', '', '', '', 'DW', ''],
-            ['TW', '', '', 'DL', '', '', '', 'TW', '', '', '', 'DL', '', '', 'TW']
-        ];
-
-        return boardLayout.map((row, y) => {
-            return row.map((tile, x) => {
-                let classType = 'normal-tile';
-                classType = getTileClass(tile)
-
-                return { x, y, tile, classType, letter: { value: '', points: 0 }, player: null };
-            });
-        });
-    }
     
     const initializeBlockLetters = () => {
         const initialWordBlockLetters = wordBlockLetters !== null ? structuredClone(wordBlockLetters) : []
@@ -91,11 +62,50 @@ function Board() {
         } 
     }
 
-    const changeLetters = (event) => {
+    const findWords = () => {
+        const words = [];
+        boardData.map((row, x) => {
+            let word = '';
+            row.map((column, y) => {
+                const tile = boardData[x][y]
+                if (tile.letter.value !== '') {
+                    word += tile.letter.value;
+                } else {
+                    if (word.length > 1) {
+                        words.push(word);
+                    }
+                    word = '';
+                }
+            })
+        })
+
+        boardData.map((row, x) => {
+            let word = '';
+            row.map((column, y) => {
+                const tile = boardData[y][x]
+                if (tile.letter.value !== '') {
+                    word += tile.letter.value;
+                } else {
+                    if (word.length > 1) {
+                        words.push(word);
+                    }
+                    word = '';
+                }
+            })
+        })
+        return words
+    }
+
+    const changeLettersCheckWords = (event) => {
+        //CheckBoard   
         if (previousBoardElements.length > 0 || change === false) {
+            const words = findWords();
+            console.log(words)
             setChange(false)
             return
         }
+
+        // Exchange letters
         const arrayBcg = []
         var arrayBcgCopy = null
         Array.from({ length: wordBlockLetters.length }).map((_, index) => {
@@ -130,51 +140,6 @@ function Board() {
         setWordBlockLetters(filteredWordBlockLetters)
         setChange(false)
         //manageDraggableProperty(false)
-    }
-
-    const initializeLetterMap = () => {
-        const myLetterMap = new Map(Object.entries({
-            'Blank': { count: 2, points: 0 },
-
-            'A': { count: 9, points: 1 },
-            'E': { count: 7, points: 1 },
-            'I': { count: 8, points: 1 },
-            'N': { count: 5, points: 1 },
-            'O': { count: 6, points: 1 },
-            'R': { count: 4, points: 1 },
-            'S': { count: 4, points: 1 },
-            'W': { count: 4, points: 1 },
-            'Z': { count: 5, points: 1 },
-
-            'C': { count: 3, points: 2 },
-            'D': { count: 3, points: 2 },
-            'K': { count: 3, points: 2 },
-            'L': { count: 3, points: 2 },
-            'M': { count: 3, points: 2 },
-            'P': { count: 3, points: 2 },
-            'T': { count: 3, points: 2 },
-            'Y': { count: 4, points: 2 },
-
-            'B': { count: 2, points: 3 },
-            'G': { count: 2, points: 3 },
-            'H': { count: 2, points: 3 },
-            'J': { count: 2, points: 3 },
-            'Ł': { count: 2, points: 3 },
-            'U': { count: 2, points: 3 },
-
-            'Ą': { count: 1, points: 5 },
-            'Ę': { count: 1, points: 5 },
-            'F': { count: 1, points: 5 },
-            'Ó': { count: 1, points: 5 },
-            'Ś': { count: 1, points: 5 },
-            'Ż': { count: 1, points: 5 },
-
-            'Ć': { count: 1, points: 6 },
-            'Ń': { count: 1, points: 7 },
-            'Ź': { count: 1, points: 9 },
-        }));
-
-        return myLetterMap;
     }
 
     useEffect(() => {
@@ -371,7 +336,7 @@ function Board() {
                 {
                     <div className = {style2["icon-container"]}>
                         <button className = {`${style2["letter-style-change"]}`}
-                            onClick = { (event) => changeLetters(event) }
+                            onClick = { (event) => changeLettersCheckWords(event) }
                         >
                             <i className = {`${["fas fa-solid fa-check"]} ${style2["icon-style"]}`}></i>
                         </button>
