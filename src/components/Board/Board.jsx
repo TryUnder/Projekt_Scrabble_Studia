@@ -52,6 +52,89 @@ function Board() {
         setChange(true)
     }
 
+    const checkNeighbourhood = (words) => {
+        let allAdjacent = true;
+    
+        // Pętla po wszystkich wyrazach
+        for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+    
+            // Pętla po literach w danym wyrazie
+            for (let j = 0; j < word.length; j++) {
+                const letter = word[j];
+    
+                // Znajdź kafelek na planszy zawierający daną literę
+                const tile = findTileByLetter(boardData, letter);
+    
+                if (!tile) {
+                    // Jeśli nie znaleziono kafelka, ustaw flagę na false i przerwij pętlę
+                    allAdjacent = false;
+                    break;
+                }
+    
+                // Sprawdź, czy istnieje sąsiadujący kafelek z literą z innego wyrazu
+                let foundAdjacent = false;
+    
+                for (let k = 0; k < words.length; k++) {
+                    if (k !== i) {
+                        const otherWord = words[k];
+    
+                        for (let l = 0; l < otherWord.length; l++) {
+                            const otherLetter = otherWord[l];
+                            const otherTile = findTileByLetter(boardData, otherLetter);
+    
+                            if (areAdjacent(tile, otherTile)) {
+                                foundAdjacent = true;
+                                break;
+                            }
+                        }
+    
+                        if (foundAdjacent) {
+                            break;
+                        }
+                    }
+                }
+    
+                // Jeśli nie znaleziono sąsiadującego kafelka, ustaw flagę na false i przerwij pętlę
+                if (!foundAdjacent) {
+                    allAdjacent = false;
+                    break;
+                }
+            }
+    
+            // Jeśli flaga została ustawiona na false, przerwij pętlę
+            if (!allAdjacent) {
+                break;
+            }
+        }
+    
+        // Zwróć wynik sprawdzania
+        if (allAdjacent) {
+            console.log("Wszystkie wyrazy są obok siebie");
+        } else {
+            console.log("Nie wszystkie wyrazy są obok siebie");
+        }
+    }
+    
+    // Funkcja pomocnicza do znalezienia kafelka na planszy na podstawie litery
+    const findTileByLetter = (boardData, letter) => {
+        for (let i = 0; i < boardData.length; i++) {
+            for (let j = 0; j < boardData[i].length; j++) {
+                if (boardData[i][j].letter.value === letter) {
+                    return boardData[i][j];
+                }
+            }
+        }
+        return null;
+    }
+    
+    // Funkcja pomocnicza do sprawdzenia, czy dwa kafelki sąsiadują ze sobą
+    const areAdjacent = (tile1, tile2) => {
+        const dx = Math.abs(tile1.x - tile2.x);
+        const dy = Math.abs(tile1.y - tile2.y);
+        return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
+    }
+
     const increaseLetterCount = (letter) => {
         const letterMapCopy = new Map(letterMap)
         const count = letterMapCopy.get(letter).count
@@ -93,14 +176,22 @@ function Board() {
                 }
             })
         })
-        return words
+
+        if (boardData[7][7].letter.value !== '') {
+            return words
+        } else {
+            alert("Słowo musi przechodzić przez środek planszy!")
+            return
+        }
     }
 
     const changeLettersCheckWords = (event) => {
         //CheckBoard   
         if (previousBoardElements.length > 0 || change === false) {
+
             const words = findWords();
             console.log(words)
+            checkNeighbourhood(words)
             setChange(false)
             return
         }
@@ -169,6 +260,10 @@ function Board() {
     useEffect(() => {
         console.log("Board Data: ", boardData)
     }, [boardData])
+
+    useEffect(() => {
+        console.log("Dragged", dragged)
+    }, [dragged])
 
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
