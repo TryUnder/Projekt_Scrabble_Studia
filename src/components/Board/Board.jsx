@@ -314,14 +314,18 @@ function Board() {
 
             const newBoardData = [...boardData];
             const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
-
+            
             if (droppedTile.letter.value === "" && draggedMain === null) {
                 modifyPreviousBoardElements(x, y);
 
                 droppedTile.letter.value = dragged.textContent
                 droppedTile.classType = "test-div"
                 
-                const newWordBlockLetters = wordBlockLetters.filter(letter => letter !== dragged.textContent)
+                const newWordBlockLetters = [...wordBlockLetters];
+                const indexToRemove = newWordBlockLetters.indexOf(dragged.textContent);
+                if (indexToRemove !== -1) {
+                    newWordBlockLetters.splice(indexToRemove, 1);
+                }
                 setWordBlockLetters(newWordBlockLetters)
                 
             }

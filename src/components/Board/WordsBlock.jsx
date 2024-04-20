@@ -19,7 +19,7 @@ const UserBlockLetters = ({ letter, index, change, handleDragStart, setPointerEv
             id = { index }
             className = { style2["letter-style"] }
             draggable = { true }
-            onClick = { (event) => change? handleLetterChange(event) : event.preventDefault() }
+            onClick = { (event) => change ? handleLetterChange(event) : event.preventDefault() }
             onDragStart = { (event) => handleDragStart(event) }
             onDrop = { (event) => setPointerEvents(event) }
         >
