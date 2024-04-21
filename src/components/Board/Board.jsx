@@ -131,6 +131,10 @@ function Board() {
         }
     }
 
+    const updateAcceptedProperty = (words) => {
+        
+    }
+
     const changeLettersCheckWords = (event) => {
         //CheckBoard   
         if (previousBoardElements.length > 0 || change === false) {
