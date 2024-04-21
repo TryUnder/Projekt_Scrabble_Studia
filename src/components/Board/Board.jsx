@@ -126,17 +126,38 @@ function Board() {
     const sendWordsToServer = async (words) => {
         try {
             const response = await axios.post("/api/checkWords", words)
-            console.log("response: ", response.data)
+            const responseData = response.data
+            console.log("response: ", responseData)
+            return responseData
         } catch (error) {
             console.error("Błąd podczas wysyłania words na serwer: ", error)
         }
     }
 
     const updateAcceptedProperty = (words) => {
-        
+        const boardDataCopy = [...boardData]
+
+        words.forEach(word => {
+            [...word].forEach(letter => {
+                boardDataCopy.flat().forEach(cell => {
+                    if (cell.letter.value === letter) {
+                        console.log("cell: ", cell)
+                        cell.isAccepted = true;
+                    }
+                });
+            });
+        });
+    
+        setBoardData(boardDataCopy)
     }
 
-    const changeLettersCheckWords = (event) => {
+    const addLetters = () => {
+        console.log("przed: ", letterMap.size)
+        initializeBlockLetters();
+        console.log("po: ", letterMap.size)
+    }
+
+    const changeLettersCheckWords = async (event) => {
         //CheckBoard   
         if (previousBoardElements.length > 0 || change === false) {
 
@@ -151,7 +172,12 @@ function Board() {
                     console.log("words.length = 1");
                     
                 }
-                sendWordsToServer(words)
+                const existInDb = await sendWordsToServer(words)
+                if (existInDb === true) {
+                    console.log("exis", existInDb)
+                    updateAcceptedProperty(words)
+                    addLetters();
+                }
             }
             setChange(false)
             return
@@ -339,7 +365,7 @@ function Board() {
                     onDragOver={(event) => {event.preventDefault();}}
                     onDrop={(event) => handleDrop(event, colIndex, rowIndex)}
 
-                    draggable = { true }
+                    draggable = { !col.isAccepted }
                     onDragStart = { (event) => handleDragStartMain(event, colIndex, rowIndex) }
                     >
 
