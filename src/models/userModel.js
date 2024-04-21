@@ -2,7 +2,6 @@ const pool = require('../utils/db.js')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv')
-const { response } = require('express');
 
 const addUser = async (login, password) => {
     try {
@@ -70,15 +69,4 @@ const getUserDataFromDB = async(id) => {
     }
 }
 
-const verifyWords = async(words) => {
-    try {
-        const conn = await pool.getConnection();
-        words.array.forEach(async (word) => {
-            const wordInfo = await conn.query("SELECT word FROM words WHERE word LIKE (?)", word)
-        });
-    } catch (error) {
-
-    }
-}
-
-module.exports = { addUser, loginUser, getUserDataFromDB, verifyWords }; 
+module.exports = { addUser, loginUser, getUserDataFromDB }; 
