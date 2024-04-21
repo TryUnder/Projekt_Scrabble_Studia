@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import WordBlockLetters from "./WordsBlock"
 import { getTileClass, getPolishTileClass, initializeBoardData, initializeLetterMap } from "./BoardUtils"
+import axios from 'axios';
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
@@ -52,69 +53,6 @@ function Board() {
         setChange(true)
     }
 
-    const checkNeighbourhood = (words) => {
-        let allAdjacent = true;
-    
-        // Pętla po wszystkich wyrazach
-        for (let i = 0; i < words.length; i++) {
-            const word = words[i];
-    
-            // Pętla po literach w danym wyrazie
-            for (let j = 0; j < word.length; j++) {
-                const letter = word[j];
-    
-                // Znajdź kafelek na planszy zawierający daną literę
-                const tile = findTileByLetter(boardData, letter);
-    
-                if (!tile) {
-                    // Jeśli nie znaleziono kafelka, ustaw flagę na false i przerwij pętlę
-                    allAdjacent = false;
-                    break;
-                }
-    
-                // Sprawdź, czy istnieje sąsiadujący kafelek z literą z innego wyrazu
-                let foundAdjacent = false;
-    
-                for (let k = 0; k < words.length; k++) {
-                    if (k !== i) {
-                        const otherWord = words[k];
-    
-                        for (let l = 0; l < otherWord.length; l++) {
-                            const otherLetter = otherWord[l];
-                            const otherTile = findTileByLetter(boardData, otherLetter);
-    
-                            if (areAdjacent(tile, otherTile)) {
-                                foundAdjacent = true;
-                                break;
-                            }
-                        }
-    
-                        if (foundAdjacent) {
-                            break;
-                        }
-                    }
-                }
-    
-                // Jeśli nie znaleziono sąsiadującego kafelka, ustaw flagę na false i przerwij pętlę
-                if (!foundAdjacent) {
-                    allAdjacent = false;
-                    break;
-                }
-            }
-    
-            // Jeśli flaga została ustawiona na false, przerwij pętlę
-            if (!allAdjacent) {
-                break;
-            }
-        }
-    
-        // Zwróć wynik sprawdzania
-        if (allAdjacent) {
-            console.log("Wszystkie wyrazy są obok siebie");
-        } else {
-            console.log("Nie wszystkie wyrazy są obok siebie");
-        }
-    }
     
     // Funkcja pomocnicza do znalezienia kafelka na planszy na podstawie litery
     const findTileByLetter = (boardData, letter) => {
@@ -185,13 +123,31 @@ function Board() {
         }
     }
 
+    const sendWordsToServer = async (words) => {
+        try {
+            const response = await axios.post("/api/checkWords", words)
+        } catch (error) {
+            console.error("Błąd podczas wysyłania words na serwer: ", error)
+        }
+    }
+
     const changeLettersCheckWords = (event) => {
         //CheckBoard   
         if (previousBoardElements.length > 0 || change === false) {
 
             const words = findWords();
             console.log(words)
-            checkNeighbourhood(words)
+            if (!boardData[7][7].isAccepted === false) {
+                //checkNeighbourhood(words)
+                console.log("Check Neighbourhood")
+            } else if (boardData[7][7].isAccepted === false) {
+                console.log("IsAccepted: false")
+                if (words.length === 1) {
+                    console.log("words.length = 1");
+                    
+                }
+                sendWordsToServer(words)
+            }
             setChange(false)
             return
         }

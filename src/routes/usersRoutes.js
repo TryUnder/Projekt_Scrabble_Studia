@@ -7,5 +7,6 @@ router.post('/login', usersController.loginUser)
 router.post('/logout', usersController.logoutUser)
 router.get('/verifyToken', usersController.getToken)
 router.get('/getUserData', usersController.getUserData)
+router.post('/checkWords', usersController.checkWords)
 
 module.exports = router;

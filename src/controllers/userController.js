@@ -73,7 +73,6 @@ const getUserData = async (req, res) => {
     try {
         verifyToken(req, res, async() => {
             const userId = req.query.userId;
-            console.log(userId)
             const userData = await User.getUserDataFromDB(userId);
             res.status(200).json(userData)
         })
@@ -83,4 +82,16 @@ const getUserData = async (req, res) => {
     }
 }
 
-module.exports = { addUser, loginUser, logoutUser, getToken, getUserData } 
+const checkWords = async (req, res) => {
+    try {
+        const words = req.body
+        console.log("WORDSY: ", words)
+        const verifiedWords = await User.verifyWords(words)
+        res.status(200).json(verifiedWords)
+    } catch (error) {
+        console.error("Błąd podczas obsługi w kontrolerze słów", error)
+        res.status(500).json( { message: "Błąd kontrolera" })
+    }
+}
+
+module.exports = { addUser, loginUser, logoutUser, getToken, getUserData, checkWords } 

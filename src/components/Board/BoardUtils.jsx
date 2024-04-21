@@ -100,7 +100,7 @@ export const initializeBoardData = () => {
             let classType = 'normal-tile';
             classType = getTileClass(tile)
 
-            return { x, y, tile, classType, letter: { value: '', points: 0 }, player: null };
+            return { x, y, tile, classType, letter: { value: '', points: 0 }, player: null, isAccepted: false };
         });
     });
 }
