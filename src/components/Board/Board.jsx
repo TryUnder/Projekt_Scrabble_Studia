@@ -126,6 +126,7 @@ function Board() {
     const sendWordsToServer = async (words) => {
         try {
             const response = await axios.post("/api/checkWords", words)
+            console.log("response: ", response.data)
         } catch (error) {
             console.error("Błąd podczas wysyłania words na serwer: ", error)
         }
