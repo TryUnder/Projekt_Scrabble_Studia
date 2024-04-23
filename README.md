@@ -65,3 +65,11 @@
     * Możliwość zatwierdzania utworzonych słów przez użytkowników na planszy.
     * Naprawa funkcjonalności wymiany liter.
     * Naprawa funkcjonalności przeciągania liter, gdy użytkownik wylosuje dwie te same litery.
+
+    TO DO:
+    * Blank
+        - Wybór litery
+    * Pojedyncze litery na planszę
+        - Funkcja z sąsiedztwa nie wykrywa pojedynczych liter na planszy
+    * Punktacja (całość)
+    * Ściągnięcie liter po tym, jak utworzone słowo nie znajduje się w bazie.
