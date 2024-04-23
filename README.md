@@ -58,4 +58,10 @@
         - Obsługa wymiany liter poprzez naciśnięcie przycisku, a następnie określenie
         przez gracza liter do wymiany i potwierdzenie decyzji drugim przyciskiem.
     * Wstępne dodanie Timera ograniczającego czas trwania rozgrywki.
-            
+
+## 17.04.2024 - 23.04.2024 <br />
+    * Utworzenie funkcjonalności po stronie backendu realizujące możliwość sprawdzenia poprawności słów w bazie danych.
+        - Stworzenie nowego modelu, routingu i kontrolera dla Board.jsx
+    * Możliwość zatwierdzania utworzonych słów przez użytkowników na planszy.
+    * Naprawa funkcjonalności wymiany liter.
+    * Naprawa funkcjonalności przeciągania liter, gdy użytkownik wylosuje dwie te same litery.
