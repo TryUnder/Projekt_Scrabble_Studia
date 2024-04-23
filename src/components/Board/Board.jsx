@@ -171,8 +171,10 @@ function Board() {
     
         if (allNeighbours === true) {
             console.log("true")
+            return true
         } else {
             console.log("false")
+            return false
         }
     };
 
