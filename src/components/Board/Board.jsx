@@ -53,26 +53,6 @@ function Board() {
         setChange(true)
     }
 
-    
-    // Funkcja pomocnicza do znalezienia kafelka na planszy na podstawie litery
-    const findTileByLetter = (boardData, letter) => {
-        for (let i = 0; i < boardData.length; i++) {
-            for (let j = 0; j < boardData[i].length; j++) {
-                if (boardData[i][j].letter.value === letter) {
-                    return boardData[i][j];
-                }
-            }
-        }
-        return null;
-    }
-    
-    // Funkcja pomocnicza do sprawdzenia, czy dwa kafelki sąsiadują ze sobą
-    const areAdjacent = (tile1, tile2) => {
-        const dx = Math.abs(tile1.x - tile2.x);
-        const dy = Math.abs(tile1.y - tile2.y);
-        return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
-    }
-
     const increaseLetterCount = (letter) => {
         const letterMapCopy = new Map(letterMap)
         const count = letterMapCopy.get(letter).count
@@ -141,7 +121,6 @@ function Board() {
             [...word].forEach(letter => {
                 boardDataCopy.flat().forEach(cell => {
                     if (cell.letter.value === letter) {
-                        console.log("cell: ", cell)
                         cell.isAccepted = true;
                     }
                 });
@@ -152,20 +131,69 @@ function Board() {
     }
 
     const addLetters = () => {
-        console.log("przed: ", letterMap.size)
         initializeBlockLetters();
-        console.log("po: ", letterMap.size)
     }
+
+    const checkNeighbourhood = (words) => {
+        // Pobieramy współrzędne już zaakceptowanych liter
+        const acceptedCoords = [];
+        boardData.forEach((row, rowIndex) => {
+            row.forEach((col, colIndex) => {
+                if (col.isAccepted) {
+                    acceptedCoords.push([colIndex, rowIndex]);
+                }
+            });
+        });
+    
+        // Iterujemy przez nowo ułożone litery
+        const allNeighbours = words.every(word => {
+            const lettersCoords = [];
+    
+            // Pobieramy współrzędne nowo ułożonych liter
+            boardData.forEach((row, rowIndex) => {
+                row.forEach((col, colIndex) => {
+                    if (col.letter.value !== '' && word.includes(col.letter.value)) {
+                        lettersCoords.push([colIndex, rowIndex]);
+                    }
+                });
+            });
+    
+            // Sprawdzamy czy współrzędne nowo ułożonych liter sąsiadują z zaakceptowanymi współrzędnymi
+            return lettersCoords.some(coord => {
+                return acceptedCoords.some(acceptedCoord => {
+                    const [x1, y1] = coord;
+                    const [x2, y2] = acceptedCoord;
+                    // Sprawdzamy czy współrzędne różnią się tylko o jeden na osi x lub y, czyli sąsiadują tylko poziomo lub pionowo
+                    return (Math.abs(x1 - x2) === 1 && y1 === y2) || (x1 === x2 && Math.abs(y1 - y2) === 1);
+                });
+            });
+        });
+    
+        if (allNeighbours === true) {
+            console.log("true")
+        } else {
+            console.log("false")
+        }
+    };
 
     const changeLettersCheckWords = async (event) => {
         //CheckBoard   
-        if (previousBoardElements.length > 0 || change === false) {
+        if (previousBoardElements.length > 0 && change === false) {
 
             const words = findWords();
-            console.log(words)
+            console.log("words: ", words)
             if (!boardData[7][7].isAccepted === false) {
-                //checkNeighbourhood(words)
-                console.log("Check Neighbourhood")
+                if (checkNeighbourhood(words)) {
+                    console.log("Words: ", words)
+                    const existInDb = await sendWordsToServer(words)
+                    if (existInDb === true) {
+                        console.log("exis", existInDb)
+                        updateAcceptedProperty(words)
+                        addLetters();
+                    }
+                } else {
+                    alert("Nowe słowo musi być przyłączone do już istniejących")
+                }
             } else if (boardData[7][7].isAccepted === false) {
                 console.log("IsAccepted: false")
                 if (words.length === 1) {
@@ -181,42 +209,50 @@ function Board() {
             }
             setChange(false)
             return
+        } else {
+            // Exchange letters
+            const ifExists = ifIsAcceptedFalseExist();
+            if (ifExists !== undefined) {
+                alert("Nie można wymienić liter podczas gdy inne znajdują się już na planszy")
+                setChange(false)
+                return
+            }
+                const arrayBcg = []
+                var arrayBcgCopy = null
+                Array.from({ length: wordBlockLetters.length }).map((_, index) => {
+                    const letterDiv = document.getElementById(index)
+                    if (window.getComputedStyle(letterDiv).backgroundColor === 'rgb(0, 128, 0)') {
+                        arrayBcg.push(letterDiv.textContent)
+                        letterDiv.style.backgroundColor = "#fdeb37";
+                    }
+                })
+        
+                if (arrayBcg.length === 0) {
+                    setChange(false)
+                    return
+                }
+                arrayBcgCopy = structuredClone(arrayBcg)
+        
+                const wordBlockLettersCopy = [...wordBlockLetters];
+        
+                const filteredWordBlockLetters = wordBlockLettersCopy.filter(letter => {
+                    const index = arrayBcg.indexOf(letter);
+                    if (index !== -1) {
+                        arrayBcg.splice(index, 1);
+                        return false;
+                    }
+                    return true; 
+                });
+        
+                arrayBcgCopy.forEach(letter => {
+                    increaseLetterCount(letter)
+                })
+        
+                setWordBlockLetters(filteredWordBlockLetters)
+                setChange(false)
+            
         }
 
-        // Exchange letters
-        const arrayBcg = []
-        var arrayBcgCopy = null
-        Array.from({ length: wordBlockLetters.length }).map((_, index) => {
-            const letterDiv = document.getElementById(index)
-            if (window.getComputedStyle(letterDiv).backgroundColor === 'rgb(0, 128, 0)') {
-                arrayBcg.push(letterDiv.textContent)
-                letterDiv.style.backgroundColor = "#fdeb37";
-            }
-        })
-
-        if (arrayBcg.length === 0) {
-            setChange(false)
-            return
-        }
-        arrayBcgCopy = structuredClone(arrayBcg)
-
-        const wordBlockLettersCopy = [...wordBlockLetters];
-
-        const filteredWordBlockLetters = wordBlockLettersCopy.filter(letter => {
-            const index = arrayBcg.indexOf(letter);
-            if (index !== -1) {
-                arrayBcg.splice(index, 1);
-                return false;
-            }
-            return true; 
-        });
-
-        arrayBcgCopy.forEach(letter => {
-            increaseLetterCount(letter)
-        })
-
-        setWordBlockLetters(filteredWordBlockLetters)
-        setChange(false)
         //manageDraggableProperty(false)
     }
 
@@ -225,22 +261,31 @@ function Board() {
         setLetterMap(initializeLetterMap());
     }, [])
 
-    useEffect(() => {
-        if (wordBlockLetters.length < 7 && change) {
-            if (previousBoardElements.length + wordBlockLetters.length < 7) {
-                initializeBlockLetters();
-                setChange(false);
-            }
-        }
-    }, [wordBlockLetters, change]);
+    const ifIsAcceptedFalseExist = () => {
+        const checkIsAccepted =  boardData.flat().find(tile => tile.letter.value !== '' && tile.isAccepted === false)
+        return checkIsAccepted
+    }
+
+    // useEffect(() => {
+    //     if (wordBlockLetters.length < 7 && change) {
+    //         if (previousBoardElements.length + wordBlockLetters.length < 7) {
+    //             const ifExists = ifIsAcceptedFalseExist();
+    //             console.log("If exists: ", ifExists)
+
+    //         }
+    //     }
+    // }, [wordBlockLetters, change]);
 
     useEffect(() => {
         manageDraggableProperty(change)
     }, [change])
 
     useEffect(() => {
-        if(wordBlockLetters.length < 7 || wordBlockLetters.length == undefined) {
-            initializeBlockLetters();
+        if(wordBlockLetters.length < 7) {
+            const ifExists = ifIsAcceptedFalseExist();
+            if (ifExists === undefined) {
+                initializeBlockLetters();
+            }
         }
     }, [letterMap])
 
