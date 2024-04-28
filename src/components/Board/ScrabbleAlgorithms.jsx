@@ -96,45 +96,34 @@ export const findWords = (boardData, isAccepted = false) => {
         })
     })
 
-    if (boardData[7][7].letter.value !== '') {
-        return words
-    } else {
-        alert("Słowo musi przechodzić przez środek planszy!")
-        return
-    }
-}
-
-export const findIsAcceptedWords = (boardData) => {
-    const words = [];
-    boardData.map((row, x) => {
-        let word = '';
-        row.map((column, y) => {
-            const tile = boardData[x][y]
-            if (tile.letter.value !== '' && tile.isAccepted) {
-                word += tile.letter.value;
-            } else {
-                if (word.length > 1) {
-                    words.push(word);
+    boardData.forEach((row, x) => {
+        row.forEach((column, y) => {
+            const tile = boardData[x][y];
+            if (tile.letter.value !== '') {
+                let hasNeighbor = false; // Flaga określająca, czy litera ma sąsiada
+                // Sprawdzanie sąsiadów w kierunku górnym
+                if (x > 0 && boardData[x - 1][y].letter.value !== '') {
+                    hasNeighbor = true;
                 }
-                word = '';
-            }
-        })
-    })
-
-    boardData.map((row, x) => {
-        let word = '';
-        row.map((column, y) => {
-            const tile = boardData[y][x]
-            if (tile.letter.value !== '' && tile.isAccepted) {
-                word += tile.letter.value;
-            } else {
-                if (word.length > 1) {
-                    words.push(word);
+                // Sprawdzanie sąsiadów w kierunku dolnym
+                if (x < boardData.length - 1 && boardData[x + 1][y].letter.value !== '') {
+                    hasNeighbor = true;
                 }
-                word = '';
+                // Sprawdzanie sąsiadów w kierunku lewym
+                if (y > 0 && boardData[x][y - 1].letter.value !== '') {
+                    hasNeighbor = true;
+                }
+                // Sprawdzanie sąsiadów w kierunku prawym
+                if (y < row.length - 1 && boardData[x][y + 1].letter.value !== '') {
+                    hasNeighbor = true;
+                }
+                if (!hasNeighbor) {
+                    // Jeśli litera nie ma żadnych sąsiadów, dodaj ją do tablicy oneLetter
+                    words.push(tile.letter.value);
+                }
             }
-        })
-    })
+        });
+    });
 
     if (boardData[7][7].letter.value !== '') {
         return words
