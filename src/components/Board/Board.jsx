@@ -217,7 +217,7 @@ function Board() {
                     console.log("is accepted words: ", isAcceptedWords)
                     const filteredWords = filterWords(words, isAcceptedWords)
                     console.log("FILTERED WORDS: ", filteredWords)
-                    const existInDb = await sendWordsToServer(words)
+                    const existInDb = await sendWordsToServer(filteredWords)
                     if (existInDb === true) {
                         console.log("exis", existInDb)
                         updateAcceptedProperty(words)

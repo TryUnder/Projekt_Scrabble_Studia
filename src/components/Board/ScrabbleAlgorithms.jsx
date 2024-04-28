@@ -64,6 +64,7 @@ export const findWords = (boardData, isAccepted = false) => {
             const tile = boardData[x][y]
             if (tile.letter.value !== '') {
                 if (isAccepted && tile.isAccepted) {
+                    console.log("WORD: ", word)
                     word += tile.letter.value
                 } else if (isAccepted === false) {
                     word += tile.letter.value;
@@ -71,10 +72,14 @@ export const findWords = (boardData, isAccepted = false) => {
             } else {
                 if (word.length > 1) {
                     words.push(word);
+                    console.log("PUSHOWANE")
                 }
                 word = '';
             }
         })
+        if (word.length > 1) {
+            words.push(word)
+        }
     })
 
     boardData.map((row, x) => {
@@ -94,6 +99,9 @@ export const findWords = (boardData, isAccepted = false) => {
                 word = '';
             }
         })
+        if (word.length > 1) {
+            words.push(word)
+        }
     })
 
     boardData.forEach((row, x) => {
@@ -138,17 +146,20 @@ export const filterWords = (words, isAcc) => {
 
     for (const word of words) {
         let isDifferent = true;
+        console.log("for(1) word: ", word)
 
         for (const accWord of isAcc) {
             let differences = 0;
+            console.log("for(2) accWord: ", accWord)
 
             for (let i = 0; i < word.length; i++) {
+                console.log("word[i]: ", word[i], " accWord[i]: ", accWord[i])
                 if (word[i] !== accWord[i]) {
                     differences++;
                 }
             }
 
-            if (differences <= 1) {
+            if (differences === 0) {
                 isDifferent = false;
                 break;
             }
@@ -156,6 +167,7 @@ export const filterWords = (words, isAcc) => {
 
         if (isDifferent) {
             result.push(word);
+            console.log("WORD: ", word, " result: ", result)
         }
     }
 
