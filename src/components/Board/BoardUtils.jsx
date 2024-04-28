@@ -18,19 +18,6 @@ export const getTileClass = (type) => {
     }
 }
 
-export const getPolishTileClass = (word_conv) => {
-    switch (word_conv) {
-        case 'TW':
-            return 'POTRÓJNA PREMIA SŁOWNA'
-        case 'DW':
-            return 'PODWÓJNA PREMIA SŁOWNA'
-        case 'TL':
-            return 'POTRÓJNA PREMIA LITEROWA'
-        case 'DL':
-            return 'PODWÓJNA PREMIA LITEROWA'
-    }
-}
-
 export const initializeLetterMap = () => {
     const myLetterMap = new Map(Object.entries({
         'Blank': { count: 2, points: 0 },
@@ -103,4 +90,94 @@ export const initializeBoardData = () => {
             return { x, y, tile, classType, letter: { value: '', points: 0 }, player: null, isAccepted: false };
         });
     });
+}
+
+export const initializeBlockLetters = (wordBlockLetters, letterMap, setWordBlockLetters, setLetterMap) => {
+    const initialWordBlockLetters = wordBlockLetters !== null ? structuredClone(wordBlockLetters) : []
+    const letterMapCopy = new Map(letterMap)
+    const letterMapSizeCopy = letterMapCopy.size - 1
+    if (letterMapSizeCopy <= 0) {
+        console.log("MyLetterMapSize <= 0")
+        return
+    }
+
+    const randomNumber = Math.floor(Math.random() * letterMapSizeCopy)
+    const randomLetter = Array.from(letterMapCopy.keys())[randomNumber]
+
+    const count = letterMapCopy.get(randomLetter).count
+    if (count <= 0) {
+        console.log("count <= 0")
+        initializeBlockLetters(wordBlockLetters, letterMap, setWordBlockLetters, setLetterMap);
+        return
+    }
+
+    initialWordBlockLetters.push(randomLetter)  
+    letterMapCopy.get(randomLetter).count -= 1
+
+    setWordBlockLetters(initialWordBlockLetters)
+    setLetterMap(letterMapCopy)
+}
+
+export const handleDrop = (event, x, y, dragged, draggedMain, setDraggedMain, boardData, 
+    setBoardData, previousBoardElements,setPreviousBoardElements, wordBlockLetters,
+    setWordBlockLetters, modifyPreviousBoardElements) => {
+    event.preventDefault();
+
+    if (event.target.classList.contains("dropzone")) {
+        if (draggedMain !== null && !draggedMain.event.classList[0].includes("test-div")) {
+            setDraggedMain(null)
+        }
+        if (draggedMain !== null && draggedMain.event.classList[0].includes("test-div")) {
+            const [ docX, docY ] = [ x, y ]
+            const [ prevX, prevY ] = [ draggedMain.x, draggedMain.y ]
+            
+            const docTile = boardData.flat().find(tile => tile.x === docX && tile.y === docY)
+            if ((docX === prevX && docY === prevY) || docTile.classType === "test-div") {
+                setDraggedMain(null)
+                return
+            }
+
+            modifyPreviousBoardElements(docX, docY)
+
+            const changedBoardData = [...boardData]
+            const changedPreviousBoardElements = [...previousBoardElements]
+
+            const moveTile = boardData.flat().find(tile => tile.x === prevX && tile.y === prevY)
+            const deepTileCopy = JSON.parse(JSON.stringify(moveTile))
+            deepTileCopy.x = docX
+            deepTileCopy.y = docY
+            changedBoardData[y][x] = deepTileCopy
+
+            const loadPrevTile = previousBoardElements.find(prevElem => prevElem.x === prevX && prevElem.y === prevY)
+            changedBoardData[prevY][prevX] = JSON.parse(JSON.stringify(loadPrevTile))
+            setBoardData(changedBoardData)
+
+            setPreviousBoardElements(elem => elem.filter(elem => !(elem.x === prevX && elem.y === prevY)))                    
+
+            setDraggedMain(null)
+            return
+        }
+
+        const newBoardData = [...boardData];
+        const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
+        
+        if (droppedTile.letter.value === "" && draggedMain === null) {
+            modifyPreviousBoardElements(x, y);
+
+            droppedTile.letter.value = dragged.textContent
+            droppedTile.classType = "test-div"
+            
+            const newWordBlockLetters = [...wordBlockLetters];
+            const indexToRemove = newWordBlockLetters.indexOf(dragged.textContent);
+            if (indexToRemove !== -1) {
+                newWordBlockLetters.splice(indexToRemove, 1);
+            }
+            setWordBlockLetters(newWordBlockLetters)
+            
+        }
+    }
+}
+
+export const handleDragStartMain = (event, x, y, setDraggedMain) => {
+    setDraggedMain({event: event.target, x: x, y: y});
 }
