@@ -121,16 +121,11 @@ function Board() {
                 initializeBlockLetters(wordBlockLetters, letterMap, setWordBlockLetters, setLetterMap);
             }
         }
-        console.log("Letter Map: ", letterMap)
     }, [letterMap])
 
     useEffect(() => {
         console.log("Board Data: ", boardData)
     }, [boardData])
-
-    useEffect(() => {
-        console.log("Dragged", dragged)
-    }, [dragged])
 
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
@@ -209,14 +204,16 @@ function Board() {
         event.preventDefault();
         if (change === false) {
 
-            const words = findWords(boardData);
-            //console.log("words: ", words)
+            const { words, wordObjArray } = findWords(boardData);
+            console.log("words: ", words)
+            console.log("wordObjArray: ", wordObjArray)
             if (!boardData[7][7].isAccepted === false) {
                 if (checkNeighbourhood(words, boardData)) {
                     //console.log("Words: ", words)
-                    const isAcceptedWords = findWords(boardData, true)
-                    //console.log("is accepted words: ", isAcceptedWords)
-                    const filteredWords = filterWords(words, isAcceptedWords)
+                    const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
+                    console.log("gowno jebane srane wysikane: ", wordObjAcceptedArray)
+                    console.log("is accepted words: ", isAcceptedWords)
+                    const filteredWords = filterWords(words, isAcceptedWords, wordObjArray, wordObjAcceptedArray)
                     console.log("FILTERED WORDS: ", filteredWords)
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")

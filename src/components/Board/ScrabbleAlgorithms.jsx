@@ -56,55 +56,70 @@ export const checkNeighbourhood = (words, boardData) => {
 
 export const findWords = (boardData, isAccepted = false) => {
     const words = [];
+    let wordObjArray = []
+
     boardData.map((row, x) => {
         let word = '';
+        let letterObj = []
         row.map((column, y) => {
             const tile = boardData[x][y]
             if (tile.letter.value !== '') {
                 if (isAccepted && tile.isAccepted) {
                     console.log("WORD: ", word)
                     word += tile.letter.value
+                    letterObj.push({ letter: tile.letter.value, x: tile.x, y: tile.y });
                 } else if (isAccepted === false) {
                     word += tile.letter.value;
+                    letterObj.push({ letter: tile.letter.value, x: tile.x, y: tile.y });
                 }
             } else {
                 if (word.length > 1) {
                     words.push(word);
+                    wordObjArray.push(new Array([...letterObj]));
                     console.log("PUSHOWANE")
                 }
                 word = '';
+                letterObj = []
             }
         })
         if (word.length > 1) {
             words.push(word)
+            wordObjArray.push(new Array([...letterObj]));
         }
     })
 
     boardData.map((row, x) => {
-        let word = '';
+        let word = ''
+        let letterObj = []
         row.map((column, y) => {
             const tile = boardData[y][x]
             if (tile.letter.value !== '') {
                 if (isAccepted && tile.isAccepted) {
                     word += tile.letter.value
+                    letterObj.push({ letter: tile.letter.value, x: tile.x, y: tile.y });
                 } else if (isAccepted === false) {
                     word += tile.letter.value;
+                    letterObj.push({ letter: tile.letter.value, x: tile.x, y: tile.y });
                 }
             } else {
                 if (word.length > 1) {
                     words.push(word);
+                    wordObjArray.push(new Array([...letterObj]));
                 }
                 word = '';
+                letterObj = []
             }
         })
         if (word.length > 1) {
             words.push(word)
+            wordObjArray.push(new Array([...letterObj]));
         }
     })
 
     boardData.forEach((row, x) => {
         row.forEach((column, y) => {
             const tile = boardData[x][y];
+            let letterObj = []
             if (tile.letter.value !== '') {
                 let hasNeighbor = false; // Flaga określająca, czy litera ma sąsiada
                 // Sprawdzanie sąsiadów w kierunku górnym
@@ -126,27 +141,36 @@ export const findWords = (boardData, isAccepted = false) => {
                 if (!hasNeighbor) {
                     // Jeśli litera nie ma żadnych sąsiadów, dodaj ją do tablicy oneLetter
                     words.push(tile.letter.value);
+                    letterObj = letterObj.concat({ letter: tile.letter.value, x: tile.x, y: tile.y })
+                    wordObjArray.push(new Array([...letterObj]));
                 }
             }
         });
     });
 
     if (boardData[7][7].letter.value !== '') {
-        return words
+        if (isAccepted) {
+            const isAcceptedWords = [...words]
+            const wordObjAcceptedArray = [...wordObjArray]
+            return { isAcceptedWords, wordObjAcceptedArray }
+        } else {
+            return { words, wordObjArray }
+        }
     } else {
         alert("Słowo musi przechodzić przez środek planszy!")
         return
     }
 }
 
-export const filterWords = (words, isAcc) => {
+export const filterWords = (words, isAcc, wordObjArray, wordObjAcceptedArray) => {
     const result = [];
-
-    for (var word of words) {
+    console.log("WORDS: ", words)
+    console.log("ACC OPTIMA: ", isAcc)
+    for (let word of words) {
         let isDifferent = true;
         console.log("for(1) word: ", word)
 
-        for (var accWord of isAcc) {
+        for (let accWord of isAcc) {
             let differences = 0;
             console.log("for(2) accWord: ", accWord)
 
@@ -164,6 +188,22 @@ export const filterWords = (words, isAcc) => {
             }
 
             if (differences === 0) {
+                for (let word of wordObjArray.flat()) {
+                    for (let accWord of wordObjAcceptedArray.flat()) {
+                        for (let i = 0; i < accWord.length; i++) {
+                            for (let j = 0; j < word.length; j++) {
+                                console.log("*****")
+                                console.log(word[i].letter)
+                                console.log(accWord[i].letter)
+                                console.log("*****")
+                                if (word[i].letter === accWord[i].letter && word[i].x !== accWord[i].x
+                                    && word[i].y !== accWord[i].y) {
+                                        console.log("znaleziono wyrazy")
+                                    }
+                            }
+                        }
+                    }
+                }
                 isDifferent = false;
                 break;
             }

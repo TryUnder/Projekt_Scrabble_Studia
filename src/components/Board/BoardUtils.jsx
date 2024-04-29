@@ -97,7 +97,6 @@ export const initializeBlockLetters = (wordBlockLetters, letterMap, setWordBlock
     const letterMapCopy = new Map(letterMap)
     const letterMapSizeCopy = letterMapCopy.size - 1
     if (letterMapSizeCopy <= 0) {
-        console.log("MyLetterMapSize <= 0")
         return
     }
 
@@ -106,7 +105,6 @@ export const initializeBlockLetters = (wordBlockLetters, letterMap, setWordBlock
 
     const count = letterMapCopy.get(randomLetter).count
     if (count <= 0) {
-        console.log("count <= 0")
         initializeBlockLetters(wordBlockLetters, letterMap, setWordBlockLetters, setLetterMap);
         return
     }
