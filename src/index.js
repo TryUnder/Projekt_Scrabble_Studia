@@ -23,3 +23,5 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`Aplikacja działa na http://localhost:${port}`);
 });
+
+//module.exports = server;

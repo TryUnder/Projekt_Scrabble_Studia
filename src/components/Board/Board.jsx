@@ -121,6 +121,7 @@ function Board() {
                 initializeBlockLetters(wordBlockLetters, letterMap, setWordBlockLetters, setLetterMap);
             }
         }
+        console.log("Letter Map: ", letterMap)
     }, [letterMap])
 
     useEffect(() => {
@@ -206,20 +207,24 @@ function Board() {
 
     const checkWords = async (event) => {
         event.preventDefault();
-        if (previousBoardElements.length > 0 && change === false) {
+        if (change === false) {
 
             const words = findWords(boardData);
-            console.log("words: ", words)
+            //console.log("words: ", words)
             if (!boardData[7][7].isAccepted === false) {
                 if (checkNeighbourhood(words, boardData)) {
-                    console.log("Words: ", words)
+                    //console.log("Words: ", words)
                     const isAcceptedWords = findWords(boardData, true)
-                    console.log("is accepted words: ", isAcceptedWords)
+                    //console.log("is accepted words: ", isAcceptedWords)
                     const filteredWords = filterWords(words, isAcceptedWords)
                     console.log("FILTERED WORDS: ", filteredWords)
+                    if (filteredWords.length === 0) {
+                        alert("Żadne słowo nie zostało ułożone")
+                        return
+                    }
                     const existInDb = await sendWordsToServer(filteredWords)
                     if (existInDb === true) {
-                        console.log("exis", existInDb)
+                        //console.log("exis", existInDb)
                         updateAcceptedProperty(words)
                         addLetters();
                     }
@@ -227,14 +232,14 @@ function Board() {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
                 }
             } else if (boardData[7][7].isAccepted === false) {
-                console.log("IsAccepted: false")
+                //console.log("IsAccepted: false")
                 if (words.length === 1) {
-                    console.log("words.length = 1");
+                    //console.log("words.length = 1");
                     
                 }
                 const existInDb = await sendWordsToServer(words)
                 if (existInDb === true) {
-                    console.log("exis", existInDb)
+                    //console.log("exis", existInDb)
                     updateAcceptedProperty(words)
                     addLetters();
                 }

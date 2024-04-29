@@ -48,10 +48,8 @@ export const checkNeighbourhood = (words, boardData) => {
     });
 
     if (allNeighbours === true) {
-        console.log("true")
         return true
     } else {
-        console.log("false")
         return false
     }
 };
@@ -144,16 +142,22 @@ export const findWords = (boardData, isAccepted = false) => {
 export const filterWords = (words, isAcc) => {
     const result = [];
 
-    for (const word of words) {
+    for (var word of words) {
         let isDifferent = true;
         console.log("for(1) word: ", word)
 
-        for (const accWord of isAcc) {
+        for (var accWord of isAcc) {
             let differences = 0;
             console.log("for(2) accWord: ", accWord)
 
             for (let i = 0; i < word.length; i++) {
-                console.log("word[i]: ", word[i], " accWord[i]: ", accWord[i])
+                while(word.length < accWord.length) {
+                    word = word.concat(' ')
+                }
+                while(accWord.length < word.length) {
+                    accWord = accWord.concat(' ')
+                }
+                console.log("word[i]: ", word, " accWord[i]: ", accWord)
                 if (word[i] !== accWord[i]) {
                     differences++;
                 }
@@ -166,14 +170,11 @@ export const filterWords = (words, isAcc) => {
         }
 
         if (isDifferent) {
-            result.push(word);
-            console.log("WORD: ", word, " result: ", result)
+            const newWord = word.trim()
+            result.push(newWord);
+            console.log("WORD: ", newWord, " result: ", result)
         }
     }
 
     return result;
 };
-
-const words = ["KRAM", "NAĆ"];
-const isAcc = ["KRA", "NAĆ"];
-
