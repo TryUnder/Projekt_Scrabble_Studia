@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import WordBlockLetters from "./WordsBlock"
 import { initializeBoardData, initializeLetterMap, initializeBlockLetters } from "./BoardUtils"
-import { sendWordsToServer, checkNeighbourhood, findWords, findIsAcceptedWords, filterWords, filterWords2 } from './ScrabbleAlgorithms';
+import { sendWordsToServer, checkNeighbourhood, findWords, findIsAcceptedWords, filterWords, filterWords2, findLetters } from './ScrabbleAlgorithms';
 import { Tile } from './Tile'
 import axios from 'axios';
 
@@ -208,8 +208,10 @@ function Board() {
             if (!boardData[7][7].isAccepted === false) {
                 if (checkNeighbourhood(words, boardData)) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
-                    const filteredWords = filterWords(words, isAcceptedWords, wordObjArray, wordObjAcceptedArray)
-                    const xxx = filterWords2(wordObjArray, wordObjAcceptedArray)
+                    const filteredWords = filterWords(wordObjArray, wordObjAcceptedArray)
+                    //const resultArray = filterWords2(wordObjArray, wordObjAcceptedArray)
+                    //findLetters(boardData, resultArray)
+
                     //console.log("FILTERED WORDS: ", filteredWords)
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
