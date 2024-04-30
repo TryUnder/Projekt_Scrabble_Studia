@@ -75,7 +75,7 @@ export const findWords = (boardData, isAccepted = false) => {
             } else {
                 if (word.length > 1) {
                     words.push(word);
-                    wordObjArray.push(new Array([...letterObj]));
+                    wordObjArray.push([...letterObj]);
                     console.log("PUSHOWANE")
                 }
                 word = '';
@@ -84,7 +84,7 @@ export const findWords = (boardData, isAccepted = false) => {
         })
         if (word.length > 1) {
             words.push(word)
-            wordObjArray.push(new Array([...letterObj]));
+            wordObjArray.push([...letterObj]);
         }
     })
 
@@ -104,7 +104,7 @@ export const findWords = (boardData, isAccepted = false) => {
             } else {
                 if (word.length > 1) {
                     words.push(word);
-                    wordObjArray.push(new Array([...letterObj]));
+                    wordObjArray.push([...letterObj]);
                 }
                 word = '';
                 letterObj = []
@@ -112,7 +112,7 @@ export const findWords = (boardData, isAccepted = false) => {
         })
         if (word.length > 1) {
             words.push(word)
-            wordObjArray.push(new Array([...letterObj]));
+            wordObjArray.push([...letterObj]);
         }
     })
 
@@ -142,7 +142,7 @@ export const findWords = (boardData, isAccepted = false) => {
                     // Jeśli litera nie ma żadnych sąsiadów, dodaj ją do tablicy oneLetter
                     words.push(tile.letter.value);
                     letterObj = letterObj.concat({ letter: tile.letter.value, x: tile.x, y: tile.y })
-                    wordObjArray.push(new Array([...letterObj]));
+                    wordObjArray.push([...letterObj]);
                 }
             }
         });
@@ -162,47 +162,96 @@ export const findWords = (boardData, isAccepted = false) => {
     }
 }
 
+export const filterWords2 = (wordObjArray, wordObjAcceptedArray) => {
+    const wordObjArrayFull = wordObjArray.map(wordArray =>
+        wordArray.map(word => ({ x: word.y, y: word.x }))
+    );
+    const wordObjAcceptedArrayFull = wordObjAcceptedArray.flatMap(wordArray =>
+        wordArray.map(word => ({ x: word.y, y: word.x }))
+    );
+
+    const resultArray = wordObjArrayFull.filter(wordArray =>
+        !wordArray.every(word =>
+            wordObjAcceptedArrayFull.some(acceptedWord =>
+                acceptedWord.x === word.x && acceptedWord.y === word.y
+            )
+        )
+    );
+
+    //console.log("otrzymane wspolrzedne", notAcceptedObjs); // Otrzymamy oczekiwany wynik
+        
+    console.log("WordObjArrayFull: ", wordObjArrayFull);
+    console.log("WordObjAcceptedArrayFull: ", wordObjAcceptedArrayFull);
+    console.log("Result array: ", resultArray);
+
+}; 
+
 export const filterWords = (words, isAcc, wordObjArray, wordObjAcceptedArray) => {
-    const result = [];
-    console.log("WORDS: ", words)
-    console.log("ACC OPTIMA: ", isAcc)
+    const result = new Set();
+    console.log("words: ", words)
+    console.log("isAcc: ", isAcc)
+    console.log("wordObjArray: ", wordObjArray)
+    console.log("wordObjAcceptedArray: ", wordObjAcceptedArray)
+    
+    // Funkcja sprawdzająca, czy dane słowo istnieje w obu tablicach i różni się współrzędnymi
+    const wordExistsWithDifferentCoords = (word) => {
+        for (let wordObj2 of wordObjAcceptedArray) {
+            const wordLetters2 = wordObj2.map(letterObj => letterObj.letter).join('');
+                for (let wordObj1 of wordObjArray) {
+                    const wordLetters1 = wordObj1.map(letterObj => letterObj.letter).join('');
+                    if (wordLetters1 === wordLetters2) {
+                        let coordsDiffer = false;
+                        for (let i = 0; i < wordObj1.length; i++) {
+                            console.log("wordObj1x: ", wordObj1[i].x, "wordObj1y: ", wordObj1[i].y)
+                            console.log("wordObj2x: ", wordObj2[i].x, "wordObj2y: ", wordObj2[i].y)
+                            if (wordObj1[i].x !== wordObj2[i].x || wordObj1[i].y !== wordObj2[i].y) {
+                                coordsDiffer = true;
+                                break;
+                            }
+                        }
+                        if (coordsDiffer) {
+                            return true;
+                        }
+                    }
+                }
+        }
+    
+        return false;
+    };
+
+    // const wordsPointsArray = () => {
+    //     for (let word )
+    // }
+    
+
+    // Iteracja po każdym słowie w words
     for (let word of words) {
         let isDifferent = true;
-        console.log("for(1) word: ", word)
 
+        // Iteracja po każdym słowie w isAcc
         for (let accWord of isAcc) {
             let differences = 0;
-            console.log("for(2) accWord: ", accWord)
 
+            // Dopasowanie długości słów
+            while (word.length < accWord.length) {
+                word = word.concat(' ')
+            }
+            while (accWord.length < word.length) {
+                accWord = accWord.concat(' ')
+            }
+
+            // Porównywanie liter w słowach
             for (let i = 0; i < word.length; i++) {
-                while(word.length < accWord.length) {
-                    word = word.concat(' ')
-                }
-                while(accWord.length < word.length) {
-                    accWord = accWord.concat(' ')
-                }
-                console.log("word[i]: ", word, " accWord[i]: ", accWord)
                 if (word[i] !== accWord[i]) {
                     differences++;
                 }
             }
 
+            // Jeśli słowa są identyczne, przerwij pętlę
             if (differences === 0) {
-                for (let word of wordObjArray.flat()) {
-                    for (let accWord of wordObjAcceptedArray.flat()) {
-                        for (let i = 0; i < accWord.length; i++) {
-                            for (let j = 0; j < word.length; j++) {
-                                console.log("*****")
-                                console.log(word[i].letter)
-                                console.log(accWord[i].letter)
-                                console.log("*****")
-                                if (word[i].letter === accWord[i].letter && word[i].x !== accWord[i].x
-                                    && word[i].y !== accWord[i].y) {
-                                        console.log("znaleziono wyrazy")
-                                    }
-                            }
-                        }
-                    }
+                const retx = wordExistsWithDifferentCoords(word)
+                if (retx === true) {
+                    result.add(word.trim())
                 }
                 isDifferent = false;
                 break;
@@ -211,10 +260,10 @@ export const filterWords = (words, isAcc, wordObjArray, wordObjAcceptedArray) =>
 
         if (isDifferent) {
             const newWord = word.trim()
-            result.push(newWord);
+            result.add(newWord);
             console.log("WORD: ", newWord, " result: ", result)
         }
     }
-
-    return result;
+    const arrayRet = Array.from(result)
+    return arrayRet;
 };

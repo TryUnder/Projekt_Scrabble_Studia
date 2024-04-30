@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import WordBlockLetters from "./WordsBlock"
 import { initializeBoardData, initializeLetterMap, initializeBlockLetters } from "./BoardUtils"
-import { sendWordsToServer, checkNeighbourhood, findWords, findIsAcceptedWords, filterWords } from './ScrabbleAlgorithms';
+import { sendWordsToServer, checkNeighbourhood, findWords, findIsAcceptedWords, filterWords, filterWords2 } from './ScrabbleAlgorithms';
 import { Tile } from './Tile'
 import axios from 'axios';
 
@@ -57,7 +57,7 @@ function Board() {
 
     const changeLettersCheckWords = async (event) => {
         //CheckBoard   
-        console.log("BD: ", boardData[7][7])
+        //console.log("BD: ", boardData[7][7])
         // Exchange letters
         const ifExists = ifIsAcceptedFalseExist();
         if (ifExists !== undefined) {
@@ -123,9 +123,9 @@ function Board() {
         }
     }, [letterMap])
 
-    useEffect(() => {
-        console.log("Board Data: ", boardData)
-    }, [boardData])
+    // useEffect(() => {
+    //     console.log("Board Data: ", boardData)
+    // }, [boardData])
 
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
@@ -205,23 +205,18 @@ function Board() {
         if (change === false) {
 
             const { words, wordObjArray } = findWords(boardData);
-            console.log("words: ", words)
-            console.log("wordObjArray: ", wordObjArray)
             if (!boardData[7][7].isAccepted === false) {
                 if (checkNeighbourhood(words, boardData)) {
-                    //console.log("Words: ", words)
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
-                    console.log("gowno jebane srane wysikane: ", wordObjAcceptedArray)
-                    console.log("is accepted words: ", isAcceptedWords)
                     const filteredWords = filterWords(words, isAcceptedWords, wordObjArray, wordObjAcceptedArray)
-                    console.log("FILTERED WORDS: ", filteredWords)
+                    const xxx = filterWords2(wordObjArray, wordObjAcceptedArray)
+                    //console.log("FILTERED WORDS: ", filteredWords)
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
                         return
                     }
                     const existInDb = await sendWordsToServer(filteredWords)
                     if (existInDb === true) {
-                        //console.log("exis", existInDb)
                         updateAcceptedProperty(words)
                         addLetters();
                     }
@@ -229,14 +224,12 @@ function Board() {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
                 }
             } else if (boardData[7][7].isAccepted === false) {
-                //console.log("IsAccepted: false")
                 if (words.length === 1) {
-                    //console.log("words.length = 1");
+
                     
                 }
                 const existInDb = await sendWordsToServer(words)
                 if (existInDb === true) {
-                    //console.log("exis", existInDb)
                     updateAcceptedProperty(words)
                     addLetters();
                 }
