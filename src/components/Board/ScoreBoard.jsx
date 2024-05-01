@@ -1,7 +1,13 @@
-import react from 'react'
+import { react, useState } from 'react'
 import style from '../../css/Board/score_board.module.css'
 
 function ScoreBoard() {
+    const [ userPoints, setUserPoints ] = useState(0)
+    
+    const updatePointsNumber = () => {
+    
+    }
+
     return (
         <div className={style['score-board']}>
             <div className={style['score-board-header']}>
@@ -10,7 +16,7 @@ function ScoreBoard() {
             <div className={style['first-user']}>
                 <div className={style['first-user-score']}>
                     <span className={style['first-username']}>Gracz 1: Sotoran</span>
-                    <span className={style['first-user-points']}>Suma: 60</span>
+                    <span className={style['first-user-points']}>Suma: { userPoints }</span>
                 </div>
                 <div className={style['first-user-score-friction']}>
                     <span className={style['score-header']}>Punkty Cząstkowe</span>
@@ -36,4 +42,4 @@ function ScoreBoard() {
     )
 }
 
-export default ScoreBoard
+export default ScoreBoard;

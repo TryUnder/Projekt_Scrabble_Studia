@@ -22,7 +22,7 @@ function App() {
           <Route path="/game" element = { <MainGamePage /> } />
           <Route path="/user-profile" element = { <UserProfile /> } />
         </Route>
-        
+
         <Route path="/login-register" element = { <LoginRegister /> } />
         <Route path="/extended-rules" element = { <ExtendedRules /> } />
       </Routes>

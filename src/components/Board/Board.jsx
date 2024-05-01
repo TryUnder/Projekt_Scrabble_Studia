@@ -1,13 +1,11 @@
 import style from '../../css/Board/style_main_view.module.css'
 import style2 from '../../css/Board/word_block.module.css'
 import React, { useEffect, useState } from 'react'
-import cookieParser from 'cookie-parser';
 
 import WordBlockLetters from "./WordsBlock"
 import { initializeBoardData, initializeLetterMap, initializeBlockLetters } from "./BoardUtils"
-import { sendWordsToServer, checkNeighbourhood, findWords, findIsAcceptedWords, filterWords, filterWords2, findLetters } from './ScrabbleAlgorithms';
+import { sendWordsToServer, checkNeighbourhood, findWords, filterWords, calculatePoints } from './ScrabbleAlgorithms';
 import { Tile } from './Tile'
-import axios from 'axios';
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
@@ -47,7 +45,6 @@ function Board() {
                 });
             });
         });
-    
         setBoardData(boardDataCopy)
     }
 
@@ -56,9 +53,6 @@ function Board() {
     }
 
     const changeLettersCheckWords = async (event) => {
-        //CheckBoard   
-        //console.log("BD: ", boardData[7][7])
-        // Exchange letters
         const ifExists = ifIsAcceptedFalseExist();
         if (ifExists !== undefined) {
             alert("Nie można wymienić liter podczas gdy inne znajdują się już na planszy")
@@ -122,10 +116,6 @@ function Board() {
             }
         }
     }, [letterMap])
-
-    // useEffect(() => {
-    //     console.log("Board Data: ", boardData)
-    // }, [boardData])
 
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
@@ -203,16 +193,13 @@ function Board() {
     const checkWords = async (event) => {
         event.preventDefault();
         if (change === false) {
-
             const { words, wordObjArray } = findWords(boardData);
             if (!boardData[7][7].isAccepted === false) {
                 if (checkNeighbourhood(words, boardData)) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
-                    const filteredWords = filterWords(wordObjArray, wordObjAcceptedArray)
-                    //const resultArray = filterWords2(wordObjArray, wordObjAcceptedArray)
-                    //findLetters(boardData, resultArray)
+                    const { filteredWords, wordsCoordsArray }  = filterWords(wordObjArray, wordObjAcceptedArray)
+                    const acquiredPoints = calculatePoints(wordsCoordsArray, boardData, letterMap) 
 
-                    //console.log("FILTERED WORDS: ", filteredWords)
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
                         return
@@ -228,7 +215,6 @@ function Board() {
             } else if (boardData[7][7].isAccepted === false) {
                 if (words.length === 1) {
 
-                    
                 }
                 const existInDb = await sendWordsToServer(words)
                 if (existInDb === true) {

@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import ScoreBoard from './ScoreBoard'
 
 export const sendWordsToServer = async (words) => {
     try {
@@ -13,7 +14,6 @@ export const sendWordsToServer = async (words) => {
 }
 
 export const checkNeighbourhood = (words, boardData) => {
-    // Pobieramy współrzędne już zaakceptowanych liter
     const acceptedCoords = [];
     boardData.forEach((row, rowIndex) => {
         row.forEach((col, colIndex) => {
@@ -23,11 +23,9 @@ export const checkNeighbourhood = (words, boardData) => {
         });
     });
 
-    // Iterujemy przez nowo ułożone litery
     const allNeighbours = words.every(word => {
         const lettersCoords = [];
 
-        // Pobieramy współrzędne nowo ułożonych liter
         boardData.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
                 if (col.letter.value !== '' && word.includes(col.letter.value)) {
@@ -36,12 +34,10 @@ export const checkNeighbourhood = (words, boardData) => {
             });
         });
 
-        // Sprawdzamy czy współrzędne nowo ułożonych liter sąsiadują z zaakceptowanymi współrzędnymi
         return lettersCoords.some(coord => {
             return acceptedCoords.some(acceptedCoord => {
                 const [x1, y1] = coord;
                 const [x2, y2] = acceptedCoord;
-                // Sprawdzamy czy współrzędne różnią się tylko o jeden na osi x lub y, czyli sąsiadują tylko poziomo lub pionowo
                 return (Math.abs(x1 - x2) === 1 && y1 === y2) || (x1 === x2 && Math.abs(y1 - y2) === 1);
             });
         });
@@ -121,25 +117,24 @@ export const findWords = (boardData, isAccepted = false) => {
             const tile = boardData[x][y];
             let letterObj = []
             if (tile.letter.value !== '') {
-                let hasNeighbor = false; // Flaga określająca, czy litera ma sąsiada
-                // Sprawdzanie sąsiadów w kierunku górnym
+                let hasNeighbor = false;
+
                 if (x > 0 && boardData[x - 1][y].letter.value !== '') {
                     hasNeighbor = true;
                 }
-                // Sprawdzanie sąsiadów w kierunku dolnym
+
                 if (x < boardData.length - 1 && boardData[x + 1][y].letter.value !== '') {
                     hasNeighbor = true;
                 }
-                // Sprawdzanie sąsiadów w kierunku lewym
+
                 if (y > 0 && boardData[x][y - 1].letter.value !== '') {
                     hasNeighbor = true;
                 }
-                // Sprawdzanie sąsiadów w kierunku prawym
+
                 if (y < row.length - 1 && boardData[x][y + 1].letter.value !== '') {
                     hasNeighbor = true;
                 }
                 if (!hasNeighbor) {
-                    // Jeśli litera nie ma żadnych sąsiadów, dodaj ją do tablicy oneLetter
                     words.push(tile.letter.value);
                     letterObj = letterObj.concat({ letter: tile.letter.value, x: tile.x, y: tile.y })
                     wordObjArray.push([...letterObj]);
@@ -162,33 +157,6 @@ export const findWords = (boardData, isAccepted = false) => {
     }
 }
 
-export const filterWords2 = (wordObjArray, wordObjAcceptedArray) => {
-    const wordObjArrayFull = wordObjArray.map(wordArray =>
-        wordArray.map(word => ({ x: word.y, y: word.x, letter: word.letter }))
-    );
-    const wordObjAcceptedArrayFull = wordObjAcceptedArray.flatMap(wordArray =>
-        wordArray.map(word => ({ x: word.y, y: word.x }))
-    );
-
-    const resultArray = wordObjArrayFull.filter(wordArray =>
-        !wordArray.every(word =>
-            wordObjAcceptedArrayFull.some(acceptedWord =>
-                acceptedWord.x === word.x && acceptedWord.y === word.y
-            )
-        )
-    );
-        
-    console.log("WordObjArrayFull: ", wordObjArrayFull);
-    console.log("WordObjAcceptedArrayFull: ", wordObjAcceptedArrayFull);
-    console.log("Result array: ", resultArray);
-    const wordsArray = []
-    resultArray.forEach(e => {
-        wordsArray.push(e.flatMap(letterObj => letterObj.letter).join(''))
-    });
-    console.log("wordsArray: ", wordsArray)
-    return resultArray
-}; 
-
 export const filterWords = (wordObjArray, wordObjAcceptedArray) => {
     const wordObjArrayFull = wordObjArray.map(wordArray =>
         wordArray.map(word => ({ x: word.y, y: word.x, letter: word.letter }))
@@ -197,7 +165,7 @@ export const filterWords = (wordObjArray, wordObjAcceptedArray) => {
         wordArray.map(word => ({ x: word.y, y: word.x }))
     );
 
-    const resultArray = wordObjArrayFull.filter(wordArray =>
+    const wordsCoordsArray = wordObjArrayFull.filter(wordArray =>
         !wordArray.every(word =>
             wordObjAcceptedArrayFull.some(acceptedWord =>
                 acceptedWord.x === word.x && acceptedWord.y === word.y
@@ -207,12 +175,71 @@ export const filterWords = (wordObjArray, wordObjAcceptedArray) => {
         
     console.log("WordObjArrayFull: ", wordObjArrayFull);
     console.log("WordObjAcceptedArrayFull: ", wordObjAcceptedArrayFull);
-    console.log("Result array: ", resultArray);
-    const wordsArray = []
-    resultArray.forEach(e => {
-        wordsArray.push(e.flatMap(letterObj => letterObj.letter).join(''))
+    console.log("Result array: ", wordsCoordsArray);
+    const filteredWords = []
+    wordsCoordsArray.forEach(e => {
+        filteredWords.push(e.flatMap(letterObj => letterObj.letter).join(''))
     });
-    console.log("wordsArray: ", wordsArray)
+    console.log("filteredWords: ", filteredWords)
 
-    return wordsArray
+    return { filteredWords, wordsCoordsArray }
 };
+
+export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
+    console.log("wca", "bca")
+    console.log(wordsCoordsArray)
+    console.log(boardData)
+
+    const getLetterPoints = (letter, letterMap) => {
+        return letterMap.get(letter).points
+    }
+
+    const getLetterBonuses = (x, y, boardData) => {
+        const tileClass = boardData[x][y].tile
+        switch(tileClass) {
+            case 'DL': {
+                return 2;
+            }
+            case 'TL': {
+                return 3;
+            }
+            default: {
+                return 1;
+            }
+        }
+    }
+
+    const getWordBonuses = (x, y, boardData) => {
+        const tileClass = boardData[x][y].tile
+        switch(tileClass) {
+            case 'DW': {
+                return 2;
+            }
+            case 'TW': {
+                return 3;
+            }
+            default: {
+                return 1;
+            }
+        }
+    }
+    let wordsSum = 0;
+    wordsCoordsArray.map((word, wordIndex) => {
+        console.log("xx: ", word)
+        let wordSum = 0
+        let multiplier = 1;
+        word.map((letterObj, letterIndex) => {
+            console.log("letter: ", letterObj.letter, " point: ", getLetterPoints(letterObj.letter, letterMap))
+            wordSum += (getLetterPoints(letterObj.letter, letterMap) * getLetterBonuses(letterObj.x, letterObj.y, boardData))
+            console.log("letterIndex: ", letterIndex, " word.length: ", word.length)
+            multiplier *= getWordBonuses(letterObj.x, letterObj.y, boardData)
+            if (letterIndex === word.length - 1) {
+                wordSum *= multiplier;
+                console.log("Word Sum: ", wordSum)
+                wordsSum += wordSum;
+            }
+        })
+    })
+    console.log("words Sum: ", wordsSum)
+    updatePointsNumber(wordsSum)
+}
