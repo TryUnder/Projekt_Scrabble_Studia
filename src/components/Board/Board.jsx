@@ -18,21 +18,14 @@ function Board() {
     const [ change, setChange ] = useState(false)
     const [ points, setPoints ] = useState(0)
     const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
-    //const [ isPointsUpdated, setIsPointsUpdated ] = useState(false)
     const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {points} arrayPointsMap = {arrayPointsMap} />, [points])
 
     const updatePoints = (newPoints, wordSum, words) => {
         setPoints(newPoints)
-        console.log("word sum up: ", wordSum)
-        console.log("Words: ", words)
         const wordsPointsMap = new Map()
         words.map((word, index) => wordsPointsMap.set(word, wordSum[index]))
         setArrayPointsMap(wordsPointsMap)
     }
-
-    useEffect(() => {
-        console.log("ARRAY POINTS MAP: ", arrayPointsMap)
-    }, [arrayPointsMap])
 
     const manageDraggableProperty = (condition) => {
         Array.from( {length: wordBlockLetters.length } ).map((_, index) => {
@@ -217,9 +210,7 @@ function Board() {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
                     const { filteredWords, wordsCoordsArray }  = filterWords(wordObjArray, wordObjAcceptedArray)
                     const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
-                    // console.log("filtered words: ", filteredWords)
-                    console.log("words sum na zewnatrz: ", wordSum)
-                    console.log("words na zewnatrz: ", filteredWords)
+
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
                         return
@@ -234,10 +225,6 @@ function Board() {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
                 }
             } else if (boardData[7][7].isAccepted === false) {
-                // if (words.length === 1) {
-                //     return
-                // }
-                //if (checkNeighbourhood(words, boardData)) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, false)
                     const wordsCoordsArray = mapWordsToCoords(wordObjArray)
                     const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
@@ -252,14 +239,6 @@ function Board() {
                         addLetters();
                         updatePoints(wordsSum, wordSum, wordsMapped);
                     }
-                // } else {
-                //     alert("Nowe słowo musi być przyłączone do już istniejących")
-                // }
-                // const existInDb = await sendWordsToServer(words)
-                // if (existInDb === true) {
-                //     updateAcceptedProperty(words)
-                //     addLetters();
-                // }
             }
             setChange(false)
             return
