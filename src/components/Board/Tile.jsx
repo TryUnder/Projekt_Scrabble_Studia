@@ -15,6 +15,7 @@ export const Tile = ({ col, colIndex, rowIndex, BoardElems }) => {
 
             draggable = { !col.isAccepted }
             onDragStart = { (event) => handleDragStartMain(event, colIndex, rowIndex, setDraggedMain) }
+            style = { col.isAccepted ? { border: '2px solid black' } : null }
         >
         <span
             className = { col.letter.value === '' ? style['span-style'] : style['span-new'] }

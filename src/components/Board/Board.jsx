@@ -1,11 +1,12 @@
 import style from '../../css/Board/style_main_view.module.css'
 import style2 from '../../css/Board/word_block.module.css'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 
 import WordBlockLetters from "./WordsBlock"
 import { initializeBoardData, initializeLetterMap, initializeBlockLetters } from "./BoardUtils"
-import { sendWordsToServer, checkNeighbourhood, findWords, filterWords, calculatePoints } from './ScrabbleAlgorithms';
+import { sendWordsToServer, checkNeighbourhood, findWords, filterWords, calculatePoints, mapWordsToCoords, mapToWords } from './ScrabbleAlgorithms';
 import { Tile } from './Tile'
+import { ScoreBoard } from './ScoreBoard'
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
@@ -15,6 +16,23 @@ function Board() {
     const [ wordBlockLetters, setWordBlockLetters ] = useState([])
     const [ letterMap, setLetterMap ] = useState(new Map(null))
     const [ change, setChange ] = useState(false)
+    const [ points, setPoints ] = useState(0)
+    const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
+    //const [ isPointsUpdated, setIsPointsUpdated ] = useState(false)
+    const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {points} arrayPointsMap = {arrayPointsMap} />, [points])
+
+    const updatePoints = (newPoints, wordSum, words) => {
+        setPoints(newPoints)
+        console.log("word sum up: ", wordSum)
+        console.log("Words: ", words)
+        const wordsPointsMap = new Map()
+        words.map((word, index) => wordsPointsMap.set(word, wordSum[index]))
+        setArrayPointsMap(wordsPointsMap)
+    }
+
+    useEffect(() => {
+        console.log("ARRAY POINTS MAP: ", arrayPointsMap)
+    }, [arrayPointsMap])
 
     const manageDraggableProperty = (condition) => {
         Array.from( {length: wordBlockLetters.length } ).map((_, index) => {
@@ -198,8 +216,10 @@ function Board() {
                 if (checkNeighbourhood(words, boardData)) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
                     const { filteredWords, wordsCoordsArray }  = filterWords(wordObjArray, wordObjAcceptedArray)
-                    const acquiredPoints = calculatePoints(wordsCoordsArray, boardData, letterMap) 
-
+                    const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
+                    // console.log("filtered words: ", filteredWords)
+                    console.log("words sum na zewnatrz: ", wordSum)
+                    console.log("words na zewnatrz: ", filteredWords)
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
                         return
@@ -208,19 +228,38 @@ function Board() {
                     if (existInDb === true) {
                         updateAcceptedProperty(words)
                         addLetters();
+                        updatePoints(wordsSum, wordSum, filteredWords);
                     }
                 } else {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
                 }
             } else if (boardData[7][7].isAccepted === false) {
-                if (words.length === 1) {
-
-                }
-                const existInDb = await sendWordsToServer(words)
-                if (existInDb === true) {
-                    updateAcceptedProperty(words)
-                    addLetters();
-                }
+                // if (words.length === 1) {
+                //     return
+                // }
+                //if (checkNeighbourhood(words, boardData)) {
+                    const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, false)
+                    const wordsCoordsArray = mapWordsToCoords(wordObjArray)
+                    const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
+                    const wordsMapped = mapToWords(wordsCoordsArray)
+                    if (words.length === 0) {
+                        alert("Żadne słowo nie zostało ułożone")
+                        return
+                    }
+                    const existInDb = await sendWordsToServer(words)
+                    if (existInDb === true) {
+                        updateAcceptedProperty(words)
+                        addLetters();
+                        updatePoints(wordsSum, wordSum, wordsMapped);
+                    }
+                // } else {
+                //     alert("Nowe słowo musi być przyłączone do już istniejących")
+                // }
+                // const existInDb = await sendWordsToServer(words)
+                // if (existInDb === true) {
+                //     updateAcceptedProperty(words)
+                //     addLetters();
+                // }
             }
             setChange(false)
             return
@@ -266,6 +305,7 @@ function Board() {
                     </div>
                 }
             </div>
+            { memoizedScoreBoard }
         </>
     )
 }

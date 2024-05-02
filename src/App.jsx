@@ -4,7 +4,7 @@ import ProtectedRoutes from "./components/ProtectedRoutes";
 import Header from './components/Board/Header'
 import UserPanel from './components/Board/UserPanel'
 import Board from './components/Board/Board'
-import ScoreBoard from "./components/Board/ScoreBoard"
+import { ScoreBoard } from "./components/Board/ScoreBoard"
 import WordsBlock from "./components/Board/WordsBlock"
 import ChatBlock from "./components/Board/ChatBlock"
 import LoginRegister from "./components/LoginRegister/LoginRegister"
@@ -38,7 +38,7 @@ function MainGamePage() {
               <UserPanel></UserPanel>
               <Board></Board>
               {/* <WordsBlock></WordsBlock> */}
-              <ScoreBoard></ScoreBoard>
+              
               <ChatBlock></ChatBlock>
           </div>
     </div>

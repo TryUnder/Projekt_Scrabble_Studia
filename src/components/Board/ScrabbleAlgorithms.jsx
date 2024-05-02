@@ -61,7 +61,6 @@ export const findWords = (boardData, isAccepted = false) => {
             const tile = boardData[x][y]
             if (tile.letter.value !== '') {
                 if (isAccepted && tile.isAccepted) {
-                    console.log("WORD: ", word)
                     word += tile.letter.value
                     letterObj.push({ letter: tile.letter.value, x: tile.x, y: tile.y });
                 } else if (isAccepted === false) {
@@ -72,7 +71,6 @@ export const findWords = (boardData, isAccepted = false) => {
                 if (word.length > 1) {
                     words.push(word);
                     wordObjArray.push([...letterObj]);
-                    console.log("PUSHOWANE")
                 }
                 word = '';
                 letterObj = []
@@ -157,10 +155,22 @@ export const findWords = (boardData, isAccepted = false) => {
     }
 }
 
-export const filterWords = (wordObjArray, wordObjAcceptedArray) => {
-    const wordObjArrayFull = wordObjArray.map(wordArray =>
-        wordArray.map(word => ({ x: word.y, y: word.x, letter: word.letter }))
-    );
+export const mapWordsToCoords = (wordObjArray) => {
+    const wordObjArrayFull = wordObjArray.map(wordArray => 
+        wordArray.map(word => ({ x: word.y, y: word.x, letter: word.letter })))
+    return wordObjArrayFull
+}
+export const mapToWords = (wordObjArrayFull) => {
+    const wordsJoined = []
+    wordObjArrayFull.forEach(e => {
+        wordsJoined.push(e.flatMap(letterObj => letterObj.letter).join(''))
+    });
+    return wordsJoined
+}
+
+export const filterWords = (wordObjArray, wordObjAcceptedArray, test = true) => {
+    const wordObjArrayFull = mapWordsToCoords(wordObjArray);
+
     const wordObjAcceptedArrayFull = wordObjAcceptedArray.flatMap(wordArray =>
         wordArray.map(word => ({ x: word.y, y: word.x }))
     );
@@ -223,23 +233,24 @@ export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
             }
         }
     }
-    let wordsSum = 0;
+    let wordsSum = 0
+    let wordSum = [];
     wordsCoordsArray.map((word, wordIndex) => {
-        console.log("xx: ", word)
-        let wordSum = 0
+        //console.log("xx: ", word)
+        wordSum[wordIndex] = 0
         let multiplier = 1;
         word.map((letterObj, letterIndex) => {
-            console.log("letter: ", letterObj.letter, " point: ", getLetterPoints(letterObj.letter, letterMap))
-            wordSum += (getLetterPoints(letterObj.letter, letterMap) * getLetterBonuses(letterObj.x, letterObj.y, boardData))
-            console.log("letterIndex: ", letterIndex, " word.length: ", word.length)
+            //console.log("letter: ", letterObj.letter, " point: ", getLetterPoints(letterObj.letter, letterMap))
+            wordSum[wordIndex] += (getLetterPoints(letterObj.letter, letterMap) * getLetterBonuses(letterObj.x, letterObj.y, boardData))
+            //console.log("letterIndex: ", letterIndex, " word.length: ", word.length)
             multiplier *= getWordBonuses(letterObj.x, letterObj.y, boardData)
             if (letterIndex === word.length - 1) {
-                wordSum *= multiplier;
-                console.log("Word Sum: ", wordSum)
-                wordsSum += wordSum;
+                wordSum[wordIndex] *= multiplier;
+                console.log(`Word Sum na pozycji ${wordIndex} : `, wordSum[wordIndex])
+                wordsSum += wordSum[wordIndex];
             }
         })
     })
-    console.log("words Sum: ", wordsSum)
-    updatePointsNumber(wordsSum)
+    //console.log("words Sum: ", wordsSum)
+    return { wordsSum, wordSum }
 }
