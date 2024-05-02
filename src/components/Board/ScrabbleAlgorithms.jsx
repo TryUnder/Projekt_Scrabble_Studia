@@ -183,20 +183,15 @@ export const filterWords = (wordObjArray, wordObjAcceptedArray, test = true) => 
         )
     );
         
-    console.log("WordObjArrayFull: ", wordObjArrayFull);
-    console.log("WordObjAcceptedArrayFull: ", wordObjAcceptedArrayFull);
-    console.log("Result array: ", wordsCoordsArray);
     const filteredWords = []
     wordsCoordsArray.forEach(e => {
         filteredWords.push(e.flatMap(letterObj => letterObj.letter).join(''))
     });
-    console.log("filteredWords: ", filteredWords)
 
     return { filteredWords, wordsCoordsArray }
 };
 
 export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
-    console.log("wca", "bca")
     console.log(wordsCoordsArray)
     console.log(boardData)
 
@@ -236,13 +231,10 @@ export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
     let wordsSum = 0
     let wordSum = [];
     wordsCoordsArray.map((word, wordIndex) => {
-        //console.log("xx: ", word)
         wordSum[wordIndex] = 0
         let multiplier = 1;
         word.map((letterObj, letterIndex) => {
-            //console.log("letter: ", letterObj.letter, " point: ", getLetterPoints(letterObj.letter, letterMap))
             wordSum[wordIndex] += (getLetterPoints(letterObj.letter, letterMap) * getLetterBonuses(letterObj.x, letterObj.y, boardData))
-            //console.log("letterIndex: ", letterIndex, " word.length: ", word.length)
             multiplier *= getWordBonuses(letterObj.x, letterObj.y, boardData)
             if (letterIndex === word.length - 1) {
                 wordSum[wordIndex] *= multiplier;
@@ -251,6 +243,5 @@ export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
             }
         })
     })
-    //console.log("words Sum: ", wordsSum)
     return { wordsSum, wordSum }
 }
