@@ -2,23 +2,27 @@ import { useEffect } from 'react'
 import { react, useState } from 'react'
 import style from '../../css/Board/score_board.module.css'
 
-export const ScoreBoard = ({ points = 0 , arrayPointsMap }) => {
+export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId }) => {
     const [ userPoints, setUserPoints] = useState(0)
     const [ userPointsTable, setUserPointsTable ] = useState([])
     const [ arrayPointsMapState, setArrayPointsMap ] = useState(new Map())
 
     useEffect(() => {
+        console.log("NOWY CLG: ", points)
         setUserPoints(userPoints + points)
-        const copyPointsTable = [...userPointsTable]
-        copyPointsTable.push(points)
-        setUserPointsTable(copyPointsTable);
+        // const copyPointsTable = [...userPointsTable]
+        // copyPointsTable.push(points)
+        // setUserPointsTable(copyPointsTable);
         if (arrayPointsMap.size > 0) {
             setArrayPointsMap(prevMap => new Map([...prevMap, ...arrayPointsMap]))
         }
-    }, [points])
+    }, [changeId])
 
     return (
         <>
+        {
+            console.log("z score board points: ", points)
+        }
             <div className={style['score-board']}>
                 <div className={style['score-board-header']}>
                     <span className={style['score-board-header-span']}>Tablica Wyników</span>
@@ -32,7 +36,7 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap }) => {
                         <span className={style['score-header']}>Punkty Cząstkowe</span>
                         {arrayPointsMapState.size > 0 ? Array.from(arrayPointsMapState.entries()).map(([key, value], index) => (
                             <span key={index}>
-                                {key} : {value}
+                                {key.word} : {value}
                             </span>
                         )) : null }
                     </div>

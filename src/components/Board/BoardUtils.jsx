@@ -20,7 +20,7 @@ export const getTileClass = (type) => {
 
 export const initializeLetterMap = () => {
     const myLetterMap = new Map(Object.entries({
-        'Blank': { count: 2, points: 0 },
+        ' ': { count: 2, points: 0 },
 
         'A': { count: 9, points: 1 },
         'E': { count: 7, points: 1 },

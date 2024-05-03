@@ -4,7 +4,8 @@ import React, { useEffect, useState, useMemo } from 'react'
 
 import WordBlockLetters from "./WordsBlock"
 import { initializeBoardData, initializeLetterMap, initializeBlockLetters } from "./BoardUtils"
-import { sendWordsToServer, checkNeighbourhood, findWords, filterWords, calculatePoints, mapWordsToCoords, mapToWords } from './ScrabbleAlgorithms';
+import { sendWordsToServer, checkNeighbourhood, findWords, filterWords, 
+    calculatePoints, mapWordsToCoords, mapToWords, handleBlank } from './ScrabbleAlgorithms';
 import { Tile } from './Tile'
 import { ScoreBoard } from './ScoreBoard'
 
@@ -16,14 +17,34 @@ function Board() {
     const [ wordBlockLetters, setWordBlockLetters ] = useState([])
     const [ letterMap, setLetterMap ] = useState(new Map(null))
     const [ change, setChange ] = useState(false)
-    const [ points, setPoints ] = useState(0)
+    //const [ points, setPoints ] = useState(0)
+    const [ pointsState, setPointsState ] = useState({ points: 0, changeId: 0})
     const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
-    const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {points} arrayPointsMap = {arrayPointsMap} />, [points])
+    const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} changeId = {pointsState.changeId} />, [pointsState.changeId])
+
+    useEffect(() => {
+        console.log("Use Effect Points Change: ", pointsState.points)
+        console.log("points state change id: ", pointsState.changeId)
+    }, [pointsState.changeId])
 
     const updatePoints = (newPoints, wordSum, words) => {
-        setPoints(newPoints)
+        //setPoints(newPoints);
+        
+        setPointsState(prevState => ({
+            ...prevState,
+            points: newPoints,
+            changeId: prevState.changeId + 1
+        }))
         const wordsPointsMap = new Map()
-        words.map((word, index) => wordsPointsMap.set(word, wordSum[index]))
+        words.map((word, index) => {
+            if (wordsPointsMap.size > 0) {
+                const ifExists = Array.from(wordsPointsMap.keys()).some(key => key.word === word)
+                if (ifExists) {
+                    wordsPointsMap.set({ word: word, count: count + 1 }, wordSum[index])
+                }
+            }
+            wordsPointsMap.set({ word: word, count: 1 }, wordSum[index])
+        })
         setArrayPointsMap(wordsPointsMap)
     }
 
@@ -204,6 +225,7 @@ function Board() {
     const checkWords = async (event) => {
         event.preventDefault();
         if (change === false) {
+            handleBlank(boardData, setBoardData)
             const { words, wordObjArray } = findWords(boardData);
             if (!boardData[7][7].isAccepted === false) {
                 if (checkNeighbourhood(words, boardData)) {
@@ -227,6 +249,7 @@ function Board() {
             } else if (boardData[7][7].isAccepted === false) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, false)
                     const wordsCoordsArray = mapWordsToCoords(wordObjArray)
+                    console.log("words coords array: ", wordsCoordsArray)
                     const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
                     const wordsMapped = mapToWords(wordsCoordsArray)
                     if (words.length === 0) {

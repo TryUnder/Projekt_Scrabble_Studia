@@ -50,6 +50,21 @@ export const checkNeighbourhood = (words, boardData) => {
     }
 };
 
+export const handleBlank = (boardData, setBoardData) => {
+    boardData.map((row, x) => {
+        row.map((column, y) => {
+            const tile = boardData[x][y]
+            if (tile.letter.value === ' ' && tile.isAccepted === false) {
+                const letterValue = prompt(`Znaleziono blanka na pozycji:(${y},${x}) - wprowadź literę: `)
+                const boardDataCopy = [...boardData]
+                boardDataCopy[x][y].letter.value = letterValue
+                setBoardData(boardDataCopy)
+                console.log("Letter Value: ", letterValue)
+            }
+        })
+    })
+}
+
 export const findWords = (boardData, isAccepted = false) => {
     const words = [];
     let wordObjArray = []
@@ -116,7 +131,6 @@ export const findWords = (boardData, isAccepted = false) => {
             let letterObj = []
             if (tile.letter.value !== '') {
                 let hasNeighbor = false;
-
                 if (x > 0 && boardData[x - 1][y].letter.value !== '') {
                     hasNeighbor = true;
                 }
@@ -160,6 +174,7 @@ export const mapWordsToCoords = (wordObjArray) => {
         wordArray.map(word => ({ x: word.y, y: word.x, letter: word.letter })))
     return wordObjArrayFull
 }
+
 export const mapToWords = (wordObjArrayFull) => {
     const wordsJoined = []
     wordObjArrayFull.forEach(e => {
@@ -235,6 +250,7 @@ export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
         let multiplier = 1;
         word.map((letterObj, letterIndex) => {
             wordSum[wordIndex] += (getLetterPoints(letterObj.letter, letterMap) * getLetterBonuses(letterObj.x, letterObj.y, boardData))
+            console.log(`X: ${letterObj.x}, Y: ${letterObj.y}`)
             multiplier *= getWordBonuses(letterObj.x, letterObj.y, boardData)
             if (letterIndex === word.length - 1) {
                 wordSum[wordIndex] *= multiplier;
