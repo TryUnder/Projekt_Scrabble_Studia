@@ -246,6 +246,7 @@ export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
     let wordsSum = 0
     let wordSum = [];
     wordsCoordsArray.map((word, wordIndex) => {
+        console.log("length: ", word.length)
         wordSum[wordIndex] = 0
         let multiplier = 1;
         word.map((letterObj, letterIndex) => {
