@@ -23,9 +23,8 @@ function Board() {
     const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} changeId = {pointsState.changeId} />, [pointsState.changeId])
 
     useEffect(() => {
-        console.log("Use Effect Points Change: ", pointsState.points)
-        console.log("points state change id: ", pointsState.changeId)
-    }, [pointsState.changeId])
+        console.log("board prev elements: ", previousBoardElements)
+    }, [previousBoardElements])
 
     const updatePoints = (newPoints, wordSum, words) => {
         //setPoints(newPoints);
@@ -151,7 +150,7 @@ function Board() {
 
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
-        const droppedTile = newBoardData.flat().find(tile => tile.x === x && tile.y === y);
+        const droppedTile = newBoardData[y][x]
         const newPreviousBoardElements = [...previousBoardElements]
         const newObj = JSON.parse(JSON.stringify(droppedTile))
         newPreviousBoardElements.push(newObj)
@@ -221,6 +220,27 @@ function Board() {
             setDraggedMain(null)
         }
     }
+    
+    const takeDownLetters = (wordsCoordsArray) => {
+        const newPreviousBoardElements = [...previousBoardElements];
+        const newWordBlockLetters = [...wordBlockLetters];
+        const boardDataCopy = [...boardData];
+        
+        wordsCoordsArray.forEach((wordCoords) => {
+            wordCoords.forEach(({ x, y }) => {
+                const index = newPreviousBoardElements.findIndex(elem => elem.x === y && elem.y === x);
+                if (index !== -1) {
+                    newWordBlockLetters.push(boardData[x][y].letter.value);
+                    boardDataCopy[x][y] = newPreviousBoardElements[index];
+                    newPreviousBoardElements.splice(index, 1);
+                }
+            });
+        });
+    
+        setWordBlockLetters(newWordBlockLetters);
+        setBoardData(boardDataCopy);
+        setPreviousBoardElements(newPreviousBoardElements)
+    };
 
     const checkWords = async (event) => {
         event.preventDefault();
@@ -261,6 +281,8 @@ function Board() {
                         updateAcceptedProperty(words)
                         addLetters();
                         updatePoints(wordsSum, wordSum, wordsMapped);
+                    } else {
+                        takeDownLetters(wordsCoordsArray)
                     }
             }
             setChange(false)
