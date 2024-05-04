@@ -228,11 +228,13 @@ function Board() {
         
         wordsCoordsArray.forEach((wordCoords) => {
             wordCoords.forEach(({ x, y }) => {
-                const index = newPreviousBoardElements.findIndex(elem => elem.x === y && elem.y === x);
-                if (index !== -1) {
-                    newWordBlockLetters.push(boardData[x][y].letter.value);
-                    boardDataCopy[x][y] = newPreviousBoardElements[index];
-                    newPreviousBoardElements.splice(index, 1);
+                if (boardDataCopy[x][y].isAccepted === false) {
+                    const index = newPreviousBoardElements.findIndex(elem => elem.x === y && elem.y === x);
+                    if (index !== -1) {
+                        newWordBlockLetters.push(boardData[x][y].letter.value);
+                        boardDataCopy[x][y] = newPreviousBoardElements[index];
+                        newPreviousBoardElements.splice(index, 1);
+                    }
                 }
             });
         });
@@ -262,6 +264,8 @@ function Board() {
                         updateAcceptedProperty(words)
                         addLetters();
                         updatePoints(wordsSum, wordSum, filteredWords);
+                    } else {
+                        takeDownLetters(wordsCoordsArray)
                     }
                 } else {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
