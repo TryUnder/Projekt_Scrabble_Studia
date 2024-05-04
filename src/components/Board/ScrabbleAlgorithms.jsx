@@ -50,16 +50,30 @@ export const checkNeighbourhood = (words, boardData) => {
     }
 };
 
+export const validateBlankLetter = (letterValue) => {
+    const regexpPattern = /^[A-ZĄĆĘŁŃÓŚŹŻ]$/i;
+    if (regexpPattern.test(letterValue.toString().toUpperCase())) {
+        return true
+    } else {
+        return false
+    }
+}
+
 export const handleBlank = (boardData, setBoardData) => {
     boardData.map((row, x) => {
         row.map((column, y) => {
             const tile = boardData[x][y]
+            var letterValue = ''
             if (tile.letter.value === ' ' && tile.isAccepted === false) {
-                const letterValue = prompt(`Znaleziono blanka na pozycji:(${y},${x}) - wprowadź literę: `)
+                do {
+                    letterValue = prompt(`Znaleziono blanka na pozycji:(${y},${x}) - wprowadź literę: `)
+                    if(!validateBlankLetter(letterValue)) {
+                        alert("Podaj poprawnie literę do blanka!")
+                    }
+                } while (!validateBlankLetter(letterValue))
                 const boardDataCopy = [...boardData]
-                boardDataCopy[x][y].letter.value = letterValue
+                boardDataCopy[x][y].letter.value = letterValue.toString().toUpperCase()
                 setBoardData(boardDataCopy)
-                console.log("Letter Value: ", letterValue)
             }
         })
     })
