@@ -37,6 +37,9 @@ io.on('connection', (socket) => {
     socket.on('example', (data) => {
         console.log('Otrzymano dane:', data);
         // Tutaj możesz wykonać odpowiednie akcje w zależności od otrzymanych danych
+
+        // Wysyłamy odpowiedź na zdarzenie 'exampleResponse'
+        socket.emit('exampleResponse', { message: 'Odpowiedź na przykładową wiadomość' });
     });
 
     // Obsługa rozłączenia klienta
@@ -44,6 +47,7 @@ io.on('connection', (socket) => {
         console.log('Klient rozłączony');
     });
 });
+
 
 app.get('*', (req, res) => {
     const indexFilePath = path.resolve(__dirname, '../dist', 'index.html');
