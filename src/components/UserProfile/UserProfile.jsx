@@ -34,10 +34,13 @@ const UserProfile = () => {
     useEffect(() => {
         const socket = io()
 
-        socket.on('loggedInUser', (users) => {
+        socket.on('loggedInUsers', (users) => {
             console.log("Załadowane dane użytkowników: ", users)
-            setLoggedInUsers(users)
+            const filteredUsers = users.filter(user => user !== userInfo.Login)
+            setLoggedInUsers(filteredUsers)
         })
+
+        return () => socket.close()
     })
 
     const handleLogout = async (event) => {

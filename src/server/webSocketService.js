@@ -10,6 +10,8 @@ const initializeWebSocket = (server) => {
     io.on('connection', (socket) => {
         console.log("Nowe połączenie WebSocket.")
 
+        socket.emit('loggedInUsers', loggedInUsers)
+
         socket.on('disconnect', () => {
             console.log("Klient rozłączony")
         })
@@ -20,7 +22,7 @@ const emitLoggedInUser = (userLogin) => {
     console.log("Nowy uzytkownik zalogowany!")
     loggedInUsers.push(userLogin)
     console.log("uzytkownicy: ", loggedInUsers)
-    io.emit('loggedInUser', loggedInUsers)
+    io.emit('loggedInUsers', loggedInUsers)
 }
 
 module.exports = {
