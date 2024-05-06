@@ -51,7 +51,6 @@ const UserProfile = () => {
             console.log("pomyślnie wylogowano")
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
             document.location.reload();
-            <ClientComponent />
         } catch (error) {
             console.log("Błąd podczas wylogowania", error)
         }
@@ -75,8 +74,11 @@ const UserProfile = () => {
                 console.error("Błąd na etapie pobierania danych użytkownika (front-end). ", error)
             }
         }
-
-        getUserInfo();
+        const token = getTokenCookie()
+        const userId = getUserIdCookie()
+        if (token && userId) {
+            getUserInfo();
+        }
     }, [])
 
     return (

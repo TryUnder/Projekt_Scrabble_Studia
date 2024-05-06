@@ -52,6 +52,8 @@ const loginUser = async (login, plainTextPassword) => {
             userToken: token,
             userLogin: login
         }
+
+        conn.release()
         return user;
 
     } catch (error) {
@@ -63,6 +65,7 @@ const getUserDataFromDB = async(id) => {
     try {
         const conn = await pool.getConnection();
         const userInfo = await conn.query("SELECT Login, CreationDate, LiczbaRozegranychPartii, UkonczoneGry, WygraneGry, PrzegraneGry FROM user WHERE id = (?)", id);
+        conn.release()
         return userInfo;
     } catch (error) {
         console.error("Błąd podczas pobierania danych o użytkowniku z bazy danych.")
