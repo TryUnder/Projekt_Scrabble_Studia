@@ -32,6 +32,13 @@
     font-weight: bold;
 }
 
+.greetings-header{
+    font-size:25px;
+}
+
+.authors-header{
+    font-size: 20px;
+}
 .first-grid-container {
     border: 2px solid black;
     border-radius: 10px;
@@ -77,3 +84,13 @@
     display: flex;
     justify-content: center;
 }
+
+.img-container{
+    text-align: center;
+}
+
+.greetings-container{
+    margin-top: 50px;
+    text-align: center;
+}
+

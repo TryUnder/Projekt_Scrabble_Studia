@@ -1,6 +1,10 @@
 import React from 'react'
 import style from '../../css/LoginRegister/ExtendedRules.module.css'
 import board from '../../utils/board.png'
+import liternik1 from '../../utils/liternik1.jpg'
+import liternik2 from '../../utils/liternik2.jpg'
+import liternik3 from '../../utils/liternik3.jpg'
+import liternik4 from '../../utils/liternik4.jpg'
 
 const ViewRules = () => {
     return (
@@ -15,7 +19,7 @@ const ViewRules = () => {
                     </span>
                     <span className={style["span"]}>
                         Celem nadrzędnym jest maksymalizowanie swojej wypłaty, czyli uzyskanie jak największej liczby  
-                        punktów, wykorzystując wartości punktowe liter i premiowane pola.
+                        punktów, wykorzystując wartości punktowe liter <br />i premiowane pola.
                     </span>
                     <h2 className={style["rules-header"]}>Podstawowe reguły - rozpoczęcie gry</h2>
                     <span className={style["span"]}>
@@ -23,14 +27,16 @@ const ViewRules = () => {
                         Podstawowy rodzaj planszy składa się z 15 kolumn i 15 wierszy rozdzielonych liniami. 
                         Grę rozpoczyna jeden z graczy wybrany losowo. Ruch w grze jest rozumiany poprzez: 
                         <ul>
+                            <br />
                             <li>Ułożenie słowa</li>
                             <li>Wymiana liter</li>
                             <li>Opuszczenie kolejki</li>
+                            <br />
                         </ul>
                         Wymagane jest, aby pierwsze słowo przechodziło przez wyznaczony kafelek, symbolizujący środek planszy. 
                         Słowa tworzy się poprzez przeciąganie liter. <br />Co ważne, litery znajdujące się na sąsiednich polach, czytane  
                         są od lewej do prawej, oraz od góry do dołu.  
-                        Pierwsze słowo powinno składać się z conajmniej dwóch liter. Na późniejszych etapach gry, może to być jedna  
+                        Pierwsze słowo powinno składać się z co najmniej dwóch liter. Na późniejszych etapach gry, może to być jedna  
                         lub więcej liter.  
                         Istnieje możliwość wymiany liter, jednak skutkuje to utratą kolejki. Wymienione przez gracza płytki, wracają do puli.  
                         Nadrzędną zasadą jest, aby wybrane litery zostały umieszczone w tym samym rzędzie, lub kolumnie (niedopuszczalne  
@@ -40,10 +46,39 @@ const ViewRules = () => {
                     <span className={style["span"]}>
                         Istnieją zasady, co do sposobu tworzenia nowych słów na planszy.
                         <ul>
-                            <li>Poszerzenie istniejącego już na planszy słowa poprzez dodanie do niego litery na początku lub końcu. ROBI - ZROBI</li>
+                            <br />
+                            <li>Poszerzenie istniejącego już na planszy słowa poprzez dodanie do niego litery na początku lub końcu.</li>
+                            <br />
+                            <ul>W przykładzie dodano literę <span style={{fontStyle: 'italic'}}>Ć</span> do słowa <span style={{fontStyle: 'italic'}}>ROBI</span> ułożonego w poprzedniej turze.</ul>
+                            <br />
+                            <div className = {style['img-container']}>
+                                <img src={liternik1}></img>
+                            </div>
+                            <br />
                             <li>Utworzenie słowa w pionie lub poziomie poprzez dodanie liter tworzących słowo do istniejącego już wyrazu.</li>
+                            <br />
+                            <ul>W przykładzie dołożono pionowo litery do poziomego słowa <span style={{fontStyle: 'italic'}}>ROBIĆ</span> tym samym uzyskując nowe słowo <span style={{fontStyle: 'italic'}}>PROŚ</span>.</ul>
+                            <br />
+                            <div className = {style['img-container']}>
+                                <img src={liternik2}></img>
+                            </div>
+                            <br />
                             <li>Równoległe dodanie słowa do istniejącego wyrazu.</li>
+                            <br />
+                            <ul>Do istniejących już słów położono trzy litery: <span style={{fontStyle: 'italic'}}>S, J, A</span> tym samym uzyskując nowe słowa: <span style={{fontStyle: 'italic'}}>SOJA, OJ, BA</span>.</ul>
+                            <br />
+                            <div className = {style['img-container']}>
+                                <img src={liternik3}></img>
+                            </div>
+                            <br />
                             <li>"Mostek", czyli dodanie liter, pomiędzy dwiema lub więcej literami tworząc w ten sposób nowe słowo.</li>
+                            <br />
+                            <ul>Na planszę dołożono kolejne dwie litery między dwa słowa: <span style={{fontStyle: 'italic'}}>BAT i ĆMO</span> tym samym uzyskując nowe słowo: <span style={{fontStyle: 'italic'}}>TŁOK</span>.</ul>
+                            <br />
+                            <div className = {style['img-container']}>
+                                <img src={liternik4}></img>
+                            </div>
+                            <br />
                         </ul>
                         Płytkę pustą (masełko), można wykorzystać do utworzenia nowego słowa, ponieważ umożliwia ona graczowi wybór dowolnej litery.  
                     </span>
@@ -51,7 +86,7 @@ const ViewRules = () => {
                     <span className={style["span"]}>
                         Utworzone przez gracza słowa, zostają poddane weryfikacji: jeśli nie znajduje się ono w bazie słów dopuszczalnych w grach,  
                         to traci on kolejkę i nie zostają mu przyznane żadne punkty.  
-                        Słowa uznawane za poprawne to te, które występują w słowniku ortograficznym i wszystkie ich odmiany, z wyjątkiem nazw własnych,  
+                        Słowa uznawane za poprawne to te, które występują w słowniku ortograficznym i wszystkie ich odmiany, <br />z wyjątkiem nazw własnych  
                         i słów z łącznikiem, lub apostrofem.
                     </span>
                     <h2 className={style["rules-header"]}>Punktacja</h2>
@@ -66,7 +101,7 @@ const ViewRules = () => {
                             </thead>
                             <tbody className={style["tbody-style"]}>
                                 <tr className={style["tr-row"]}>
-                                    <td>0</td>
+                                    <td>Wymiennie</td>
                                     <td>Masełko (x2)</td>
                                 </tr>
                                 <tr className={style["tr-row"]}>
@@ -100,12 +135,13 @@ const ViewRules = () => {
                             </tbody>
                         </table>
                         </div>
-                         
                         Gracz zostaje nagrodzony za ułożone słowo. Wartość wypłaty jest sumą wartości liter tworzących słowo  
-                        wraz z uwzględnieniem premii literowych i słownych. Pola literowe podwajają, lub potrajają wartości położonych na nich liter.  
+                        wraz z uwzględnieniem premii literowych <br />i słownych. Pola literowe podwajają, lub potrajają wartości położonych na nich liter.  
                         Jeśli chociaż jedna litera zostaje umieszczona na polu słownym, to cała wartość wyrazu zostaje odpowiednio podwojona, bądź potrojona.  
-                        Masełko położone na którymkolwiek polu premiowym, nie zostaje wliczone w punktację, bo nadal ma wartość zerową.  
+                        Masełko położone na którymkolwiek polu premiowym, zostaje wliczone <br />w punktację, bo ma wartość zależną od wybranej litery.  
                         Gracz któremu uda się w jednym ruchu wykorzystać wszystkie siedem płytek, otrzymuje dodatkową premię w wysokości 50 punktów.  
+                        <br /> 
+                        PS: Liczba punktów przydzielana za Masełko jest uzależniona od litery, którą użytkownik wybierze.
                     </span>
                     <h2 className={style["rules-header"]}>Zakończenie gry</h2>
                     <span className={style["span"]}>
@@ -119,6 +155,14 @@ const ViewRules = () => {
                 <div className={style["second-grid-container"]}>
                     <h1 className={style["board-header"]}>Plansza Liternik</h1>
                     <img src={board}></img>
+                    <div className={style["greetings-container"]}>
+                        <h2 className={style["rules-header"]}>Życzymy udanej zabawy!</h2>
+                        <br />
+                        <h4 className={style["greetings-header"]}>Autorzy: </h4>
+                        <br />
+                        <h5 className={style["authors-header"]}>Hubert Lewowicki</h5>
+                        <h5 className={style["authors-header"]}>Agata Orzechowska</h5>
+                    </div>
                 </div>
             </div>
         </div>
