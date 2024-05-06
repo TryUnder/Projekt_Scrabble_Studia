@@ -49,7 +49,8 @@ const loginUser = async (login, plainTextPassword) => {
 
         const user = {
             userId: id,
-            userToken: token
+            userToken: token,
+            userLogin: login
         }
         return user;
 

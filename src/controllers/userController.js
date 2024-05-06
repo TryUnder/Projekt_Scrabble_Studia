@@ -1,4 +1,5 @@
 const { verifyToken } = require('../VerifyToken')
+const { emitLoggedInUser } = require('../server/webSocketService')
 
 const User = require('../models/userModel')
 
@@ -34,6 +35,14 @@ const loginUser = async(req, res) => {
                 maxAge: 3600 * 1000,
                 secure: false
             });
+            
+            if (user.userLogin) {
+                console.log("TEST")
+                emitLoggedInUser(user.userLogin)
+            } else {
+                console.log("nie dziala")
+            }
+
             return res.redirect("/user-profile");
         } else {
             res.status(401).json({ message: "Błędny login lub hasło. " })

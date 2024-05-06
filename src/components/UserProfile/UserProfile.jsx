@@ -2,6 +2,8 @@ import style from '../../css/UserProfile/UserProfile.module.css'
 import axios from 'axios'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
+import ClientComponent from '../UserProfile/ClientComponent'
+import io from 'socket.io-client'
 
 const getTokenCookie = () => {
     const cookies = document.cookie.split(';').map(cookie => cookie.trim());
@@ -13,7 +15,7 @@ const getTokenCookie = () => {
     return null;
 }
 
-const getUserIdCookie = () => {
+export const getUserIdCookie = () => {
     const cookies = document.cookie.split(';').map(cookie => cookie.trim());
     const idCookie = cookies.find(cookie => cookie.startsWith('id='));
     const cookie = idCookie.split('=')[1]
@@ -27,6 +29,16 @@ const getUserIdCookie = () => {
 
 const UserProfile = () => {
     const [ userInfo, setUserInfo ] = useState(null)
+    const [ loggedInUsers, setLoggedInUsers ] = useState([])
+
+    useEffect(() => {
+        const socket = io()
+
+        socket.on('loggedInUser', (users) => {
+            console.log("Załadowane dane użytkowników: ", users)
+            setLoggedInUsers(users)
+        })
+    })
 
     const handleLogout = async (event) => {
         event.preventDefault();
@@ -39,6 +51,7 @@ const UserProfile = () => {
             console.log("pomyślnie wylogowano")
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
             document.location.reload();
+            <ClientComponent />
         } catch (error) {
             console.log("Błąd podczas wylogowania", error)
         }
@@ -149,62 +162,12 @@ const UserProfile = () => {
                     <div className={style["available-players-list"]}>
                         <fieldset>
                             <legend>Wybierz użytkownika, z którym chcesz się zmierzyć:</legend>
-                            <div>
-                                <input type='radio' id="player-1" name='player' value="player-1" />
-                                <label>Agusia Biedronusia</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="player-2" name="player" value="player-2" />
-                                <label>AgusiaBiedronusia2</label>
-                            </div>
-                            <div>
-                                <input type='radio' id="player-1" name='player' value="player-1" />
-                                <label>Agusia Biedronusia</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="player-2" name="player" value="player-2" />
-                                <label>AgusiaBiedronusia2</label>
-                            </div>
-                            <div>
-                                <input type='radio' id="player-1" name='player' value="player-1" />
-                                <label>Agusia Biedronusia</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="player-2" name="player" value="player-2" />
-                                <label>AgusiaBiedronusia2</label>
-                            </div>
-                            <div>
-                                <input type='radio' id="player-1" name='player' value="player-1" />
-                                <label>Agusia Biedronusia</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="player-2" name="player" value="player-2" />
-                                <label>AgusiaBiedronusia2</label>
-                            </div>
-                            <div>
-                                <input type='radio' id="player-1" name='player' value="player-1" />
-                                <label>Agusia Biedronusia</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="player-2" name="player" value="player-2" />
-                                <label>AgusiaBiedronusia2</label>
-                            </div>
-                            <div>
-                                <input type='radio' id="player-1" name='player' value="player-1" />
-                                <label>Agusia Biedronusia</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="player-2" name="player" value="player-2" />
-                                <label>AgusiaBiedronusia2</label>
-                            </div>
-                            <div>
-                                <input type='radio' id="player-1" name='player' value="player-1" />
-                                <label>Agusia Biedronusia</label>
-                            </div>
-                            <div>
-                                <input type="radio" id="player-2" name="player" value="player-2" />
-                                <label>AgusiaBiedronusia2</label>
-                            </div>
+                            {loggedInUsers.map((user, index) => (
+                                <div>
+                                    <input type='radio' id={index}></input>
+                                    <label>{user ? user : null}</label>
+                                </div>
+                            ))}
                         </fieldset>
                     </div>
                 </div>
