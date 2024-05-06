@@ -8,20 +8,23 @@ const initializeWebSocket = (server) => {
     const loggedInUser = []
 
     io.on('connection', (socket) => {
-        console.log("Nowe połączenie WebSocket.")
 
         socket.emit('loggedInUsers', loggedInUsers)
 
         socket.on('disconnect', () => {
-            console.log("Klient rozłączony")
+        })
+
+        socket.on('userLogout', (userLogin) => {
+            const index = loggedInUsers.indexOf(userLogin)
+            if (index !== -1) {
+                loggedInUsers.splice(index, 1)
+            }
         })
     })
 }
 
 const emitLoggedInUser = (userLogin) => {
-    console.log("Nowy uzytkownik zalogowany!")
     loggedInUsers.push(userLogin)
-    console.log("uzytkownicy: ", loggedInUsers)
     io.emit('loggedInUsers', loggedInUsers)
 }
 

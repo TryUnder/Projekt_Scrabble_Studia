@@ -30,12 +30,11 @@ export const getUserIdCookie = () => {
 const UserProfile = () => {
     const [ userInfo, setUserInfo ] = useState(null)
     const [ loggedInUsers, setLoggedInUsers ] = useState([])
+    const socket = io()
 
     useEffect(() => {
-        const socket = io()
 
         socket.on('loggedInUsers', (users) => {
-            console.log("Załadowane dane użytkowników: ", users)
             const filteredUsers = users.filter(user => user !== userInfo.Login)
             setLoggedInUsers(filteredUsers)
         })
@@ -53,6 +52,7 @@ const UserProfile = () => {
             const response = await axios.post('/api/logout')
             console.log("pomyślnie wylogowano")
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+            socket.emit('userLogout', userInfo.Login)
             document.location.reload();
         } catch (error) {
             console.log("Błąd podczas wylogowania", error)
