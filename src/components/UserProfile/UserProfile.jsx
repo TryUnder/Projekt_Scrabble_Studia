@@ -30,17 +30,30 @@ export const getUserIdCookie = () => {
 const UserProfile = () => {
     const [ userInfo, setUserInfo ] = useState(null)
     const [ loggedInUsers, setLoggedInUsers ] = useState([])
+    const [ languageSelect, setLanguageSelect ] = useState(null)
+    const [ timeSelect, setTimeSelect ] = useState(null)
+    const [ boardSelect, setBoardSelect ] = useState(null)
     const socket = io()
 
     useEffect(() => {
-
         socket.on('loggedInUsers', (users) => {
-            const filteredUsers = users.filter(user => user !== userInfo.Login)
-            setLoggedInUsers(filteredUsers)
+            console.log("UserInfo: ", userInfo)
+            if (userInfo !== null) {
+                console.log("UserInfo in: ", userInfo)
+                const filteredUsers = users.filter(user => user !== userInfo.Login)
+                setLoggedInUsers(filteredUsers)
+            } else {
+                setLoggedInUsers(users)
+            }
+            
         })
 
         return () => socket.close()
-    })
+    }, [userInfo])
+
+    useEffect(() => {
+
+    }, [timeSelect])
 
     const handleLogout = async (event) => {
         event.preventDefault();
@@ -132,18 +145,25 @@ const UserProfile = () => {
                             <label>Wybierz język gry</label>
                             <select name="language" id="language-select" className={style["language-menu-select"]}>
                                 <option value="     "> </option>
-                                <option value="Polski"></option>
-                                <option value="Angielski">Angielski</option>
+                                <option value="Polski">Polski</option>
+                                {/* <option value="Angielski">Angielski</option> */}
                             </select>
                         </div>
                         <div className={style["time-menu"]}>
                             <label>Wybierz czas trwania gry:</label>
-                            <select name="time" id="time-select" className={style["time-menu-select"]}>
-                                <option value="     "> </option>
-                                <option value="3-min">3 minuty</option>
-                                <option value="6-min">6 minut</option>
-                                <option value="9-min">9 minut</option>
-                                <option value="15-min">15 minut</option>
+                            <select 
+                                name = "time" 
+                                id = "time-select" 
+                                className = {style["time-menu-select"]}
+                                onChange = {e => {setTimeSelect(moment(e.target.value))
+                                console.log("e targetr value: ", e.target.value)}}
+                                >
+                                    <option value="     "> </option>
+                                    <option value = { moment().set({ hour: 0, minute: 3, second: 0 }) }>3 minuty</option>
+                                    <option value = { moment().set({ hour: 0, minute: 6, second: 0 }) }>6 minut</option>
+                                    <option value = { moment().set({ hour: 0, minute: 9, second: 0 }) }>9 minut</option>
+                                    <option value = { moment().set({ hour: 0, minute: 15, second: 0 }) }>15 minut</option>
+                                    <option value = { moment().set({ hour: 0, minute: 30, second: 0 }) }>30 minut</option>
                             </select>
                         </div>
                         <div className={style["board-menu"]}>
@@ -151,8 +171,8 @@ const UserProfile = () => {
                             <select name="board" id="board-select" className={style["board-menu-select"]}>
                                 <option value="     "> </option>
                                 <option value="Standardowa">Standardowa</option>
-                                <option value="Niestandardowa">Niestandardowa</option>
-                                <option value="Bez-premii">Bez premii</option>
+                                {/* <option value="Niestandardowa">Niestandardowa</option>
+                                <option value="Bez-premii">Bez premii</option> */}
                             </select>
                         </div>
                     </div>
