@@ -2,7 +2,9 @@ import { useEffect } from 'react'
 import { react, useState } from 'react'
 import style from '../../css/Board/score_board.module.css'
 
-export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId }) => {
+export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, secondUser }) => {
+    const [ firstLoginName, setUsers ] = useState(firstUser)
+    const [ secondLoginName, setSecondLoginName ] = useState(secondUser)
     const [ userPoints, setUserPoints] = useState(0)
     const [ userPointsTable, setUserPointsTable ] = useState([])
     const [ arrayPointsMapState, setArrayPointsMap ] = useState(new Map())
@@ -29,7 +31,7 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId }) => {
                 </div>
                 <div className={style['first-user']}>
                     <div className={style['first-user-score']}>
-                        <span className={style['first-username']}>Gracz 1: Sotoran</span>
+                        <span className={style['first-username']}>Gracz 1: { firstLoginName }</span>
                         <span className={style['first-user-points']}>Suma: { userPoints }</span>
                     </div>
                     <div className={style['first-user-score-friction']}>
@@ -44,7 +46,7 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId }) => {
 
                 <div className={style['second-user']}>
                     <div className={style['second-user-score']}>
-                        <span className={style['second-username']}>Gracz 2: Agusia</span>
+                        <span className={style['second-username']}>Gracz 2: { secondLoginName }</span>
                         <span className={style['second-user-points']}>Suma: 69</span>
                     </div>
                     <div className={style['second-user-score-friction']}>

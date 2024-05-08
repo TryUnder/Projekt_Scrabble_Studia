@@ -36,7 +36,7 @@ function MainGamePage() {
     <div className="App">
           <div className={styleMainView["grid-container"]}>
               <Header></Header>
-              <UserPanel></UserPanel>
+              {/* <UserPanel></UserPanel> */}
               <Board></Board>
               {/* <WordsBlock></WordsBlock> */}
               

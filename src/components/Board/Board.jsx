@@ -3,6 +3,7 @@ import style2 from '../../css/Board/word_block.module.css'
 import React, { useEffect, useState, useMemo } from 'react'
 
 import WordBlockLetters from "./WordsBlock"
+import UserPanel from './UserPanel'
 import { initializeBoardData, initializeLetterMap, initializeBlockLetters } from "./BoardUtils"
 import { sendWordsToServer, checkNeighbourhood, findWords, filterWords, 
     calculatePoints, mapWordsToCoords, mapToWords, handleBlank } from './ScrabbleAlgorithms';
@@ -21,9 +22,11 @@ function Board() {
     //const [ points, setPoints ] = useState(0)
     const [ pointsState, setPointsState ] = useState({ points: 0, changeId: 0})
     const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
-    const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} changeId = {pointsState.changeId} />, [pointsState.changeId])
     const location = useLocation()
     const { receiverPlayer, senderPlayer, time } = location.state
+    const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} 
+                                            changeId = {pointsState.changeId} firstUser = {receiverPlayer} secondUser = {senderPlayer} />, [pointsState.changeId])
+    const memoizedUserPanel = useMemo(() => <UserPanel receiverPlayer = {receiverPlayer} senderPlayer = {senderPlayer} time = {time} />, [time])
 
     useEffect(() => {
         console.log("board prev elements: ", previousBoardElements)
@@ -340,6 +343,7 @@ function Board() {
                 }
             </div>
             { memoizedScoreBoard }
+            { memoizedUserPanel }
         </>
     )
 }

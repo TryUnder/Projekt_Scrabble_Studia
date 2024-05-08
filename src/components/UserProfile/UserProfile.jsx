@@ -3,7 +3,6 @@ import axios from 'axios'
 import moment from 'moment'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import io from 'socket.io-client'
 import { SocketContext } from '../SocketProvider.jsx'
 
 const getTokenCookie = () => {
@@ -70,7 +69,6 @@ const UserProfile = () => {
 
         try {
             const response = await axios.post('/api/logout')
-            console.log("pomyślnie wylogowano")
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
             socket.emit('userLogout', userInfo.Login)
             document.location.reload();
@@ -105,7 +103,6 @@ const UserProfile = () => {
             return;
         }
 
-        console.log("Receiver player: ", receiverPlayer, "Sender player: ", senderPlayer)
         socket.emit("acceptedProposal", { receiverPlayer: receiverPlayer, senderPlayer: senderPlayer, time: time });
         navigate("/game", { state: { receiverPlayer, senderPlayer, time }});
     };
@@ -206,7 +203,6 @@ const UserProfile = () => {
                                 className={style["language-menu-select"]}
                                 onChange={e => {setLanguageSelect(e.target.value)}}
                                 >
-                                
                                     <option value=""> </option>
                                     <option value="Polski">Polski</option>
                             </select>
