@@ -23,7 +23,7 @@ const initializeWebSocket = (server) => {
 
         socket.on('gameRequest', ({ language, time, board, receiverPlayer, senderPlayer }) => {
             if (userSockets.has(receiverPlayer)) {
-                io.emit('gameAccept', { language, time, board, receiverPlayer, senderPlayer })
+                io.to(userSockets.get(receiverPlayer)).emit('gameAccept', { language, time, board, receiverPlayer, senderPlayer })
             }
         })
 

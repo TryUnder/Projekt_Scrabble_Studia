@@ -1,7 +1,7 @@
 import style from '../../css/UserProfile/UserProfile.module.css'
 import axios from 'axios'
 import moment from 'moment'
-import { useContext, useEffect, useState, useCallback } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import io from 'socket.io-client'
 import { SocketContext } from '../SocketProvider.jsx'
@@ -96,7 +96,7 @@ const UserProfile = () => {
             receiverPlayer: playerSelect, senderPlayer: userInfo.Login})
     }
 
-    const acceptRejectProposal = useCallback((receiverPlayer, senderPlayer, time) => {
+    const acceptRejectProposal = (receiverPlayer, senderPlayer, time) => {
         if (!userInfo) {
             console.error("UserInfo is null");
             return;
@@ -113,7 +113,7 @@ const UserProfile = () => {
             socket.emit("acceptedProposal", { senderPlayer: senderPlayer, time: time });
             navigate("/game", { state: { login, time }});
         }
-    }, [userInfo]);
+    };
 
     useEffect(() => {
         console.log("UserInfo updated:", userInfo);
@@ -164,7 +164,7 @@ const UserProfile = () => {
                 socket.off('senderPlayerNavigate');
             };
         }
-    }, [socket]);
+    }, [socket, userInfo]);
     
     return (
         <div className={style["main-container"]}>
