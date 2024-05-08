@@ -1,34 +1,40 @@
 const socketIo = require('socket.io')
 
 let io;
-const loggedInUsers = []
+const userSockets = new Map()
 
 const initializeWebSocket = (server) => {
     io = socketIo(server)
-    const loggedInUser = []
 
     io.on('connection', (socket) => {
+        socket.emit('loggedInUsers', Array.from(userSockets.keys()))
 
-        socket.emit('loggedInUsers', loggedInUsers)
-
-        socket.on('disconnect', () => {
+        socket.on('userLogin', (userLogin) => {
+            console.log("socket: ", socket.id)
+            userSockets.set(userLogin, socket.id)
+            console.log("User Sockets: ", userSockets)
+            io.emit('loggedInUsers', Array.from(userSockets.keys()))
         })
 
         socket.on('userLogout', (userLogin) => {
-            const index = loggedInUsers.indexOf(userLogin)
-            if (index !== -1) {
-                loggedInUsers.splice(index, 1)
+            if (userSockets.has(userLogin)) {
+                userSockets.delete(userLogin)
+            }
+            io.emit('loggedInUsers', Array.from(userSockets.keys()))
+        })
+
+        socket.on('gameRequest', ({ language, time, board, player }) => {
+            console.log("test before")
+            if (userSockets.has(player)) {
+                console.log("test after")
+                const playerSocketId = userSockets.get(player);
+                io.to(playerSocketId).emit('gameAccept', { language, time, board, player: socket.id })
             }
         })
+        
     })
-}
-
-const emitLoggedInUser = (userLogin) => {
-    loggedInUsers.push(userLogin)
-    io.emit('loggedInUsers', loggedInUsers)
 }
 
 module.exports = {
     initializeWebSocket,
-    emitLoggedInUser
 }

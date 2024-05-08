@@ -1,5 +1,6 @@
 const { verifyToken } = require('../VerifyToken')
 const { emitLoggedInUser } = require('../server/webSocketService')
+const io = require('socket.io-client')
 
 const User = require('../models/userModel')
 
@@ -38,7 +39,9 @@ const loginUser = async(req, res) => {
             
             if (user.userLogin) {
                 console.log("TEST")
-                emitLoggedInUser(user.userLogin)
+                
+                const socket = io('http://localhost:3000')
+                socket.emit('userLogin', user.userLogin)
             } else {
                 console.log("nie dziala")
             }

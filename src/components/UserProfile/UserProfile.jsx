@@ -1,8 +1,7 @@
 import style from '../../css/UserProfile/UserProfile.module.css'
 import axios from 'axios'
-import moment from 'moment'
+import moment, { lang } from 'moment'
 import { useEffect, useState } from 'react'
-import ClientComponent from '../UserProfile/ClientComponent'
 import io from 'socket.io-client'
 
 const getTokenCookie = () => {
@@ -33,7 +32,8 @@ const UserProfile = () => {
     const [ languageSelect, setLanguageSelect ] = useState(null)
     const [ timeSelect, setTimeSelect ] = useState(null)
     const [ boardSelect, setBoardSelect ] = useState(null)
-    const socket = io()
+    const [ playerSelect, setPlayerSelect ] = useState(null)
+    const socket = io('http://localhost:3000')
 
     useEffect(() => {
         socket.on('loggedInUsers', (users) => {
@@ -48,12 +48,23 @@ const UserProfile = () => {
             
         })
 
-        return () => socket.close()
     }, [userInfo])
 
     useEffect(() => {
+        console.log("Language select: ", languageSelect)
+    }, [languageSelect])
 
+    useEffect(() => {
+        console.log("Time select: ", timeSelect)
     }, [timeSelect])
+
+    useEffect(() => {
+        console.log("Board select: ", boardSelect)
+    }, [boardSelect])
+
+    useEffect(() => {
+        console.log("Player select: ", playerSelect)
+    }, [playerSelect])
 
     const handleLogout = async (event) => {
         event.preventDefault();
@@ -72,6 +83,29 @@ const UserProfile = () => {
         }
 
     }
+
+    const handleGameStart = async (event) => {
+        event.preventDefault();
+
+        if (languageSelect === null || languageSelect === '' ||
+            timeSelect === null || timeSelect === '' ||
+            boardSelect === null || boardSelect === '' || 
+            playerSelect === null || playerSelect === '') {
+            alert("Nie wybrano wszystkich opcji")
+            return
+        } 
+
+        socket.emit('gameRequest', { language: languageSelect, time: timeSelect, board: boardSelect, player: playerSelect})
+    }
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('gameAccept', ({ language, time, board, player }) => {
+                console.log("Game accept: ", language, time, board, player)
+            })
+        }
+    }, [socket]) 
+
 
     useEffect(() => {
         const getUserInfo = async() => {
@@ -143,10 +177,15 @@ const UserProfile = () => {
                     <div className={style["create-game-menu"]}>
                         <div className={style["language-menu"]}>
                             <label>Wybierz język gry</label>
-                            <select name="language" id="language-select" className={style["language-menu-select"]}>
-                                <option value="     "> </option>
-                                <option value="Polski">Polski</option>
-                                {/* <option value="Angielski">Angielski</option> */}
+                            <select 
+                                name="language" 
+                                id="language-select" 
+                                className={style["language-menu-select"]}
+                                onChange={e => {setLanguageSelect(e.target.value)}}
+                                >
+                                
+                                    <option value=""> </option>
+                                    <option value="Polski">Polski</option>
                             </select>
                         </div>
                         <div className={style["time-menu"]}>
@@ -155,29 +194,36 @@ const UserProfile = () => {
                                 name = "time" 
                                 id = "time-select" 
                                 className = {style["time-menu-select"]}
-                                onChange = {e => {setTimeSelect(moment(e.target.value))
+                                onChange = {e => {setTimeSelect(e.target.value)
                                 console.log("e targetr value: ", e.target.value)}}
                                 >
-                                    <option value="     "> </option>
-                                    <option value = { moment().set({ hour: 0, minute: 3, second: 0 }) }>3 minuty</option>
-                                    <option value = { moment().set({ hour: 0, minute: 6, second: 0 }) }>6 minut</option>
-                                    <option value = { moment().set({ hour: 0, minute: 9, second: 0 }) }>9 minut</option>
-                                    <option value = { moment().set({ hour: 0, minute: 15, second: 0 }) }>15 minut</option>
-                                    <option value = { moment().set({ hour: 0, minute: 30, second: 0 }) }>30 minut</option>
+                                    <option value=""> </option>
+                                    <option value = "3 minutes">3 minuty</option>
+                                    <option value = "6 minutes">6 minut</option>
+                                    <option value = "9 minutes">9 minut</option>
+                                    <option value = "15 minutes">15 minut</option>
+                                    <option value = "30 minutes">30 minut</option>
                             </select>
                         </div>
                         <div className={style["board-menu"]}>
                             <label>Wybierz planszę:</label>
-                            <select name="board" id="board-select" className={style["board-menu-select"]}>
-                                <option value="     "> </option>
-                                <option value="Standardowa">Standardowa</option>
-                                {/* <option value="Niestandardowa">Niestandardowa</option>
-                                <option value="Bez-premii">Bez premii</option> */}
+                            <select 
+                                name="board" 
+                                id="board-select" 
+                                className={style["board-menu-select"]}
+                                onChange={e => {setBoardSelect(e.target.value)}}
+                                >
+                                    <option value=""> </option>
+                                    <option value="Standardowa">Standardowa</option>
                             </select>
                         </div>
                     </div>
                     <div className={style["create-game-button"]}>
-                        <button className={style["button-4"]} role="button">Rozpocznij grę</button>
+                        <button 
+                            className={style["button-4"]} 
+                            role="button"
+                            onClick={(event) => handleGameStart(event)}
+                            >Rozpocznij grę</button>
                     </div>
                 </div>
                 <div className={style["available-players-panel"]}>
@@ -189,7 +235,11 @@ const UserProfile = () => {
                             <legend>Wybierz użytkownika, z którym chcesz się zmierzyć:</legend>
                             {loggedInUsers.map((user, index) => (
                                 <div>
-                                    <input type='radio' id={index}></input>
+                                    <input type='radio' id={index}
+                                        value={user}
+                                        name='player-select'
+                                        onChange={e => setPlayerSelect(e.target.value)}
+                                    ></input>
                                     <label>{user ? user : null}</label>
                                 </div>
                             ))}
