@@ -35,7 +35,6 @@ const UserProfile = () => {
     const [ timeSelect, setTimeSelect ] = useState(null)
     const [ boardSelect, setBoardSelect ] = useState(null)
     const [ playerSelect, setPlayerSelect ] = useState(null)
-    //const socket = io('http://localhost:3000')
     const socket = useContext(SocketContext)
     const navigate = useNavigate()
 
@@ -78,7 +77,6 @@ const UserProfile = () => {
         } catch (error) {
             console.log("Błąd podczas wylogowania", error)
         }
-
     }
 
     const handleGameStart = async (event) => {
@@ -102,28 +100,18 @@ const UserProfile = () => {
             return;
         }
     
-        const login = userInfo.Login;
-        if (receiverPlayer === login) {
-            console.log("rec: ", receiverPlayer, " userLog: ", userInfo.Login);
-            const confirm = window.confirm(`Czy chcesz rozpocząć grę z użytkownikiem: ${senderPlayer} ?`);
-            if (!confirm) {
-                return;
-            }
-    
-            socket.emit("acceptedProposal", { senderPlayer: senderPlayer, time: time });
-            navigate("/game", { state: { login, time }});
+        const confirm = window.confirm(`Czy chcesz rozpocząć grę z użytkownikiem: ${senderPlayer} ?`);
+        if (!confirm) {
+            return;
         }
+
+        console.log("Receiver player: ", receiverPlayer, "Sender player: ", senderPlayer)
+        socket.emit("acceptedProposal", { receiverPlayer: receiverPlayer, senderPlayer: senderPlayer, time: time });
+        navigate("/game", { state: { receiverPlayer, senderPlayer, time }});
     };
 
-    useEffect(() => {
-        console.log("UserInfo updated:", userInfo);
-    }, [userInfo]);
-
-    const senderPlayerNavigate = (senderPlayer, time) => {
-        const login = userInfo.Login
-        if (senderPlayer === login) {
-            navigate("/game", { state: { login, time }})
-        }
+    const senderPlayerNavigate = (receiverPlayer, senderPlayer, time) => {
+        navigate("/game", { state: { receiverPlayer, senderPlayer, time }})
     }
 
     useEffect(() => {
@@ -155,8 +143,8 @@ const UserProfile = () => {
                 acceptRejectProposal(receiverPlayer, senderPlayer, time);
             });
     
-            socket.on('senderPlayerNavigate', ({ senderPlayer, time }) => {
-                senderPlayerNavigate(senderPlayer, time);
+            socket.on('senderPlayerNavigate', ({ receiverPlayer, senderPlayer, time }) => {
+                senderPlayerNavigate(receiverPlayer, senderPlayer, time);
             });
     
             return () => {

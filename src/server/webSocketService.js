@@ -27,9 +27,9 @@ const initializeWebSocket = (server) => {
             }
         })
 
-        socket.on('acceptedProposal', ({ senderPlayer, time }) => {
+        socket.on('acceptedProposal', ({ receiverPlayer, senderPlayer, time }) => {
             if (userSockets.has(senderPlayer)) {
-                io.emit('senderPlayerNavigate', { senderPlayer, time })
+                io.emit('senderPlayerNavigate', { receiverPlayer, senderPlayer, time })
             }
         })
         

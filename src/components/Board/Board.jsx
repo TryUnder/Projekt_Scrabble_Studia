@@ -23,13 +23,14 @@ function Board() {
     const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
     const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} changeId = {pointsState.changeId} />, [pointsState.changeId])
     const location = useLocation()
-    const { login, time } = location.state
+    const { receiverPlayer, senderPlayer, time } = location.state
 
     useEffect(() => {
         console.log("board prev elements: ", previousBoardElements)
-        console.log("LOGIN : ", login)
+        console.log("LOGIN rec: ", receiverPlayer)
+        console.log("LOGIN send: ", senderPlayer)
         console.log("TIME: ", time)
-    }, [previousBoardElements])
+    }, [])
 
     const updatePoints = (newPoints, wordSum, words) => {
         //setPoints(newPoints);
