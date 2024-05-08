@@ -8,6 +8,7 @@ import { sendWordsToServer, checkNeighbourhood, findWords, filterWords,
     calculatePoints, mapWordsToCoords, mapToWords, handleBlank } from './ScrabbleAlgorithms';
 import { Tile } from './Tile'
 import { ScoreBoard } from './ScoreBoard'
+import { useLocation } from 'react-router-dom'
 
 function Board() {
     const [ boardData, setBoardData] = useState([]);
@@ -21,9 +22,13 @@ function Board() {
     const [ pointsState, setPointsState ] = useState({ points: 0, changeId: 0})
     const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
     const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} changeId = {pointsState.changeId} />, [pointsState.changeId])
+    const location = useLocation()
+    const { login, time } = location.state
 
     useEffect(() => {
         console.log("board prev elements: ", previousBoardElements)
+        console.log("LOGIN : ", login)
+        console.log("TIME: ", time)
     }, [previousBoardElements])
 
     const updatePoints = (newPoints, wordSum, words) => {

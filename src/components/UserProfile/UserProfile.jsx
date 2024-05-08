@@ -1,7 +1,8 @@
 import style from '../../css/UserProfile/UserProfile.module.css'
 import axios from 'axios'
-import moment, { lang } from 'moment'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import io from 'socket.io-client'
 
 const getTokenCookie = () => {
@@ -34,6 +35,7 @@ const UserProfile = () => {
     const [ boardSelect, setBoardSelect ] = useState(null)
     const [ playerSelect, setPlayerSelect ] = useState(null)
     const socket = io('http://localhost:3000')
+    const navigate = useNavigate()
 
     useEffect(() => {
         socket.on('loggedInUsers', (users) => {
@@ -48,23 +50,9 @@ const UserProfile = () => {
             
         })
 
+        return () => socket.close()
+
     }, [userInfo])
-
-    useEffect(() => {
-        console.log("Language select: ", languageSelect)
-    }, [languageSelect])
-
-    useEffect(() => {
-        console.log("Time select: ", timeSelect)
-    }, [timeSelect])
-
-    useEffect(() => {
-        console.log("Board select: ", boardSelect)
-    }, [boardSelect])
-
-    useEffect(() => {
-        console.log("Player select: ", playerSelect)
-    }, [playerSelect])
 
     const handleLogout = async (event) => {
         event.preventDefault();
@@ -95,14 +83,43 @@ const UserProfile = () => {
             return
         } 
 
-        socket.emit('gameRequest', { language: languageSelect, time: timeSelect, board: boardSelect, player: playerSelect})
+        socket.emit('gameRequest', { language: languageSelect, time: timeSelect, board: boardSelect, 
+            receiverPlayer: playerSelect, senderPlayer: userInfo.Login})
+    }
+
+    const acceptRejectProposal = (receiverPlayer, senderPlayer, time) => {
+        const login = userInfo.Login
+        if (receiverPlayer === login) {
+            const confirm = window.confirm(`Czy chcesz rozpocząć grę z użytkownikiem: ${senderPlayer} ?`)
+            if (!confirm) {
+                return;
+            }
+            socket.emit("acceptedProposal", { senderPlayer: senderPlayer, time: time })
+            navigate("/game", { state: { login, time }})
+        }
+    }
+
+    const senderPlayerNavigate = (senderPlayer, time) => {
+        const login = userInfo.Login
+        if (senderPlayer === login) {
+            navigate("/game", { state: { login, time }})
+        }
     }
 
     useEffect(() => {
         if (socket) {
-            socket.on('gameAccept', ({ language, time, board, player }) => {
-                console.log("Game accept: ", language, time, board, player)
+            console.log("socket: ", socket)
+            console.log("socket id: ", socket.id)
+            socket.on('gameAccept', ({ language, time, board, receiverPlayer, senderPlayer }) => {
+                console.log("Game accept: ", language, time, board, receiverPlayer, senderPlayer)
+                acceptRejectProposal(receiverPlayer, senderPlayer, time)
             })
+
+            socket.on('senderPlayerNavigate', ({ senderPlayer, time }) => {
+                senderPlayerNavigate(senderPlayer, time)
+            })
+
+            return () => socket.close()
         }
     }, [socket]) 
 
