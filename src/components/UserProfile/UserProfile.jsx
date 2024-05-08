@@ -1,9 +1,10 @@
 import style from '../../css/UserProfile/UserProfile.module.css'
 import axios from 'axios'
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import io from 'socket.io-client'
+import { SocketContext } from '../SocketProvider.jsx'
 
 const getTokenCookie = () => {
     const cookies = document.cookie.split(';').map(cookie => cookie.trim());
@@ -34,25 +35,33 @@ const UserProfile = () => {
     const [ timeSelect, setTimeSelect ] = useState(null)
     const [ boardSelect, setBoardSelect ] = useState(null)
     const [ playerSelect, setPlayerSelect ] = useState(null)
-    const socket = io('http://localhost:3000')
+    //const socket = io('http://localhost:3000')
+    const socket = useContext(SocketContext)
     const navigate = useNavigate()
 
     useEffect(() => {
-        socket.on('loggedInUsers', (users) => {
-            console.log("UserInfo: ", userInfo)
-            if (userInfo !== null) {
-                console.log("UserInfo in: ", userInfo)
-                const filteredUsers = users.filter(user => user !== userInfo.Login)
-                setLoggedInUsers(filteredUsers)
-            } else {
-                setLoggedInUsers(users)
+        const getUserInfo = async() => {
+            try {
+                const response = await axios.get("/api/getUserData", {
+                    headers: {
+                        Authorization: `Bearer ${getTokenCookie()}`
+                    },
+                    params: {
+                        userId: getUserIdCookie()
+                    }
+                    
+                });
+                setUserInfo(response.data[0])
+            } catch (error) {
+                console.error("Błąd na etapie pobierania danych użytkownika (front-end). ", error)
             }
-            
-        })
-
-        return () => socket.close()
-
-    }, [userInfo])
+        }
+        const token = getTokenCookie()
+        const userId = getUserIdCookie()
+        if (token && userId) {
+            getUserInfo();
+        }
+    }, [])
 
     const handleLogout = async (event) => {
         event.preventDefault();
@@ -87,17 +96,28 @@ const UserProfile = () => {
             receiverPlayer: playerSelect, senderPlayer: userInfo.Login})
     }
 
-    const acceptRejectProposal = (receiverPlayer, senderPlayer, time) => {
-        const login = userInfo.Login
+    const acceptRejectProposal = useCallback((receiverPlayer, senderPlayer, time) => {
+        if (!userInfo) {
+            console.error("UserInfo is null");
+            return;
+        }
+    
+        const login = userInfo.Login;
         if (receiverPlayer === login) {
-            const confirm = window.confirm(`Czy chcesz rozpocząć grę z użytkownikiem: ${senderPlayer} ?`)
+            console.log("rec: ", receiverPlayer, " userLog: ", userInfo.Login);
+            const confirm = window.confirm(`Czy chcesz rozpocząć grę z użytkownikiem: ${senderPlayer} ?`);
             if (!confirm) {
                 return;
             }
-            socket.emit("acceptedProposal", { senderPlayer: senderPlayer, time: time })
-            navigate("/game", { state: { login, time }})
+    
+            socket.emit("acceptedProposal", { senderPlayer: senderPlayer, time: time });
+            navigate("/game", { state: { login, time }});
         }
-    }
+    }, [userInfo]);
+
+    useEffect(() => {
+        console.log("UserInfo updated:", userInfo);
+    }, [userInfo]);
 
     const senderPlayerNavigate = (senderPlayer, time) => {
         const login = userInfo.Login
@@ -108,46 +128,44 @@ const UserProfile = () => {
 
     useEffect(() => {
         if (socket) {
-            console.log("socket: ", socket)
-            console.log("socket id: ", socket.id)
-            socket.on('gameAccept', ({ language, time, board, receiverPlayer, senderPlayer }) => {
-                console.log("Game accept: ", language, time, board, receiverPlayer, senderPlayer)
-                acceptRejectProposal(receiverPlayer, senderPlayer, time)
-            })
+            socket.on('loggedInUsers', (users) => {
+                setLoggedInUsers(users.filter(user => user !== userInfo?.Login));
+            });
 
-            socket.on('senderPlayerNavigate', ({ senderPlayer, time }) => {
-                senderPlayerNavigate(senderPlayer, time)
-            })
-
-            return () => socket.close()
-        }
-    }, [socket]) 
-
-
-    useEffect(() => {
-        const getUserInfo = async() => {
-            try {
-                const response = await axios.get("/api/getUserData", {
-                    headers: {
-                        Authorization: `Bearer ${getTokenCookie()}`
-                    },
-                    params: {
-                        userId: getUserIdCookie()
-                    }
-                    
-                });
-                setUserInfo(response.data[0])
-            } catch (error) {
-                console.error("Błąd na etapie pobierania danych użytkownika (front-end). ", error)
+            return () => {
+                socket.off('loggedInUsers');
             }
         }
-        const token = getTokenCookie()
-        const userId = getUserIdCookie()
-        if (token && userId) {
-            getUserInfo();
-        }
-    }, [])
+    }, [socket, userInfo]);
 
+    useEffect(() => {
+        if (socket && userInfo) {
+            socket.emit('userLogin', userInfo.Login);
+
+            return () => {
+                socket.emit('userLogout', userInfo.Login);
+            }
+        }
+    }, [socket, userInfo]);
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('gameAccept', ({ language, time, board, receiverPlayer, senderPlayer }) => {
+                console.log("Game accept: ", language, time, board, receiverPlayer, senderPlayer);
+                acceptRejectProposal(receiverPlayer, senderPlayer, time);
+            });
+    
+            socket.on('senderPlayerNavigate', ({ senderPlayer, time }) => {
+                senderPlayerNavigate(senderPlayer, time);
+            });
+    
+            return () => {
+                socket.off('gameAccept');
+                socket.off('senderPlayerNavigate');
+            };
+        }
+    }, [socket]);
+    
     return (
         <div className={style["main-container"]}>
             <div className={style["player-panel"]}>
