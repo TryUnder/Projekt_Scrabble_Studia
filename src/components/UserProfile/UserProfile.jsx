@@ -104,11 +104,14 @@ const UserProfile = () => {
         }
 
         socket.emit("acceptedProposal", { receiverPlayer: receiverPlayer, senderPlayer: senderPlayer, time: time });
-        navigate("/game", { state: { receiverPlayer, senderPlayer, time }});
+
+        const login = userInfo.Login;
+        navigate("/game", { state: { receiverPlayer, senderPlayer, time, login }});
     };
 
     const senderPlayerNavigate = (receiverPlayer, senderPlayer, time) => {
-        navigate("/game", { state: { receiverPlayer, senderPlayer, time }})
+        const login = userInfo.Login;
+        navigate("/game", { state: { receiverPlayer, senderPlayer, time, login }})
     }
 
     useEffect(() => {
