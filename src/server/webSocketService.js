@@ -4,6 +4,9 @@ const GameStateManager = require('./GameStateManager')
 
 let io;
 const userSockets = new Map()
+let boardDataToSend = new Array(15).fill(null).map(() => new Array(15).fill(null)) 
+let newTurn = ''
+let playerArrayLetters = []
 
 const initializeLetterMap = () => {
     return Board.initializeLetterMap()
@@ -45,12 +48,10 @@ const initializeWebSocket = (server) => {
         })
 
         socket.on('initializePlayerLetters', (playerLogin, numberLetterToFetch) => {
-            let playerArrayLetters = []
             let letter = null
             for (let i = 0; i < numberLetterToFetch; i++) {        
                 letter = gameStateManager.initializeLetter()
 
-                playerArrayLetters = gameStateManager.player1 === playerLogin ? gameStateManager.playerFirstLetters : gameStateManager.playerSecondLetters
                 if (letter !== null) {
                     playerArrayLetters.push(letter)
                 }
@@ -60,10 +61,19 @@ const initializeWebSocket = (server) => {
             console.log("Map: ", gameStateManager.letterMap)
             console.log("array first: ", gameStateManager.playerFirstLetters)
             console.log("array second: ", gameStateManager.playerSecondLetters)
-            if (letter !== null)
+            if (letter !== null) {
                 io.emit('getPlayerLetters', { playerLogin, playerArrayLetters })
+                playerArrayLetters = []
+            }
         })
-        
+
+        socket.on('boardSend', ({boardData, newTurn}) => {
+            console.log("Board Data sock: ", boardData[7][7])
+            console.log("Turn: sock ", newTurn)
+            boardDataToSend = boardData
+            newTurn = newTurn
+            io.emit('boardReceive', { boardDataToSend, newTurn })
+        })
     })
 }
 

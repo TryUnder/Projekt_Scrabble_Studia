@@ -30,6 +30,7 @@ function Board() {
     const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} 
                                             changeId = {pointsState.changeId} firstUser = {receiverPlayer} secondUser = {senderPlayer} />, [pointsState.changeId])
     const memoizedUserPanel = useMemo(() => <UserPanel receiverPlayer = {receiverPlayer} senderPlayer = {senderPlayer} time = {time} />, [time])
+    const [ turn, setTurn ] = useState(receiverPlayer)
     const socket = useContext(SocketContext)
 
     useEffect(() => {
@@ -43,35 +44,26 @@ function Board() {
         socket.emit('initializePlayerLetters', playerLogin, numberLetterToFetch)
         socket.on('getPlayerLetters', ({ playerLogin, playerArrayLetters }) => {
             if (login === playerLogin) {
-                const wordBlockLettersCopy = [...wordBlockLetters]
-                wordBlockLettersCopy.push(...playerArrayLetters)
-                setWordBlockLetters(wordBlockLettersCopy)
+                setWordBlockLetters(prevLetters => [...prevLetters, ...playerArrayLetters]);
             }
         })
+
+        socket.on('boardReceive', ({ boardDataToSend, newTurn }) => {
+            console.log("Board Data recv: ", boardData)
+            console.log("Turn: recv ", turn)
+            setBoardData(boardDataToSend)
+            setTurn(newTurn)
+        })
+
+        console.log("turn: ", turn)
     }, [])
 
-    useEffect(() => {
-        // if (wordBlockLetters.length < 7 || wordBlockLetters === null) {
-        //     const ifExists = ifIsAcceptedFalseExist();
-        //     if (ifExists === undefined) {
-        //         socket.emit('initializePlayerLetters', playerLogin)
-        //     }
-        // }
-
-        // socket.on('getLetter', ({ login, letter }) => {
-        //     if (login === playerLogin) {
-        //         setWordBlockLetters(prevState => [...prevState, letter])
-        //     }
-        // })
-
-        // return () => {
-        //     socket.off('getLetter')
-        // }
-    }, [wordBlockLetters])
-
-    useEffect(() => {
-        console.log("LetterMap: ", letterMap)
-    }, [letterMap])
+    // useEffect(() => {
+    //     const numberLetterToFetch = 7 - wordBlockLetters.length;
+    //     if (numberLetterToFetch > 0) {
+    //         socket.emit('initializePlayerLetters', playerLogin, numberLetterToFetch);
+    //     }
+    // }, [boardData]);
 
     const updatePoints = (newPoints, wordSum, words) => {
         //setPoints(newPoints);
@@ -234,6 +226,8 @@ function Board() {
                 change = { change }
                 handleDragStart = { (event) => setDragged(event.target) }
                 setPointerEvents = { setPointerEvents }
+                turn = { turn }
+                playerLogin = { playerLogin }
             />
         ))
     }
@@ -293,7 +287,7 @@ function Board() {
 
     const checkWords = async (event) => {
         event.preventDefault();
-        if (change === false) {
+        if (change === false && turn === playerLogin) {
             handleBlank(boardData, setBoardData)
             const { words, wordObjArray } = findWords(boardData);
             if (!boardData[7][7].isAccepted === false) {
@@ -311,6 +305,10 @@ function Board() {
                         updateAcceptedProperty(words)
                         //addLetters();
                         //updatePoints(wordsSum, wordSum, filteredWords);
+                        socket.emit('initializePlayerLetters', turn, 7 - wordBlockLetters.length)
+                        const newTurn = turn === receiverPlayer ? senderPlayer : receiverPlayer
+                        setTurn(newTurn)
+                        socket.emit('boardSend', { boardData, newTurn })
                     } else {
                         takeDownLetters(wordsCoordsArray)
                     }
@@ -330,6 +328,12 @@ function Board() {
                     const existInDb = await sendWordsToServer(words)
                     if (existInDb === true) {
                         updateAcceptedProperty(words)
+
+                        socket.emit('initializePlayerLetters', turn, 7 - wordBlockLetters.length)
+                        const newTurn = turn === receiverPlayer ? senderPlayer : receiverPlayer
+                        setTurn(newTurn)
+                        socket.emit('boardSend', { boardData, newTurn })
+                        
                         //addLetters();
                         //updatePoints(wordsSum, wordSum, wordsMapped);
                     } else {

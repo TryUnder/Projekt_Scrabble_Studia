@@ -1,7 +1,7 @@
 import { React, useState } from 'react'
 import style2 from '../../css/Board/word_block.module.css'
 
-const UserBlockLetters = ({ letter, index, change, handleDragStart, setPointerEvents }) => {
+const UserBlockLetters = ({ letter, index, change, handleDragStart, setPointerEvents, turn, playerLogin }) => {
     const [ blankState, setBlankState ] = useState(false)
     const [ inputValue, setInputValue ] = useState('')
     const [ tileValue, setTileValue ] = useState(letter)
@@ -22,7 +22,7 @@ const UserBlockLetters = ({ letter, index, change, handleDragStart, setPointerEv
             key = { index }
             id = { index }
             className = { style2["letter-style"] }
-            draggable = { true }
+            draggable = { turn === playerLogin ? true : false }
             onClick = { (event) => { change ? handleLetterChange(event) : event.preventDefault() } }
             onDragStart = { (event) => handleDragStart(event) }
             onDrop = { (event) => setPointerEvents(event) }

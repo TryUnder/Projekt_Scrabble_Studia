@@ -16,11 +16,11 @@ class GameStateManager {
     }
 
     PrintLetterMap() {
-        console.log("Letter Mapxx: ", this.letterMap);
+        //console.log("Letter Mapxx: ", this.letterMap);
     }
 
     PrintPlayers() {
-        console.log("Player 1: ", this.player1, " Player 2: ", this.player2);
+        //console.log("Player 1: ", this.player1, " Player 2: ", this.player2);
     }
 
     initializeLetter() {
