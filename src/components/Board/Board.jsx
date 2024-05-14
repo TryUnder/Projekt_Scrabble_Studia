@@ -66,6 +66,13 @@ function Board() {
         console.log("Letter Map: ", letterMap)
     }, [letterMap])
 
+    useEffect(() => {
+        const arrayPointsMapArray = Array.from(arrayPointsMap.entries());
+        const arrayPointsMapJSON = JSON.stringify(arrayPointsMapArray)
+        const toPlayer = playerLogin === receiverPlayer ? senderPlayer : receiverPlayer
+        socket.emit('sendPointsToServer', { points, arrayPointsMapJSON, toPlayer})
+    }, [arrayPointsMap, points])
+
     // useEffect(() => {
     //     const numberLetterToFetch = 7 - wordBlockLetters.length;
     //     if (numberLetterToFetch > 0) {

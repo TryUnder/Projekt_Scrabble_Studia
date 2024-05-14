@@ -39,10 +39,7 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
     }, [changeId])
 
     useEffect(() => {
-        const arrayPointsMapArray = Array.from(arrayPointsMapState.entries());
-        const arrayPointsMapJSON = JSON.stringify(arrayPointsMapArray)
-        const toPlayer = playerLoginx === firstLoginName ? secondLoginName : firstLoginName
-        socket.emit('sendPointsToServer', { userPoints, arrayPointsMapJSON, toPlayer})
+        
 
         
     }, [userPoints, arrayPointsMapState])
@@ -56,12 +53,12 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
                 setSecondUserPoints(userPoints)
                 setArrayPointsMapSecond(new Map(JSON.parse(arrayPointsMapJSON)))
             }})
-
+            console.log("userPoints: got it", userPoints)
     
         return () => {
             socket.off('sendPointsToClient')
         }
-    }, [])
+    }, [userPoints, arrayPointsMapState])
 
     return (
         <div className={style['score-board']}>
