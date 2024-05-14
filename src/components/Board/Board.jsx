@@ -29,7 +29,7 @@ function Board() {
     const playerLogin = useMemo(() => login, [location.state])
     const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} 
                                             changeId = {pointsState.changeId} firstUser = {receiverPlayer} secondUser = {senderPlayer}
-                                            playerLogin = { playerLogin }  />, [pointsState.changeId])
+                                            playerLogin = { playerLogin } />, [pointsState.changeId])
     const memoizedUserPanel = useMemo(() => <UserPanel receiverPlayer = {receiverPlayer} senderPlayer = {senderPlayer} time = {time} />, [time])
     const [ turn, setTurn ] = useState(receiverPlayer)
     const socket = useContext(SocketContext)

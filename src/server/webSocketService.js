@@ -85,7 +85,8 @@ const initializeWebSocket = (server) => {
             console.log("to Player: ", toPlayer)
             //console.log("Player Login: ", playerLogin)
             //io.emit('sendPointsToClient', { wordsSum, wordSum, playerLogin
-            io.emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
+            
+            socket.broadcast.emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
         })
     })
 }
