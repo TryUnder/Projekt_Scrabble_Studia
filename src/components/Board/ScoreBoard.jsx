@@ -16,13 +16,23 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
 
     useEffect(() => {
         console.log("NOWY CLG: ", points)
-        setUserPoints(userPoints + points)
-        // const copyPointsTable = [...userPointsTable]
-        // copyPointsTable.push(points)
-        // setUserPointsTable(copyPointsTable);
-        if (arrayPointsMap.size > 0) {
-            setArrayPointsMap(prevMap => new Map([...prevMap, ...arrayPointsMap]))
+        if (arrayPointsMap.size > 0 || arrayPointsMapStateSecond.size > 0) {
+            if (playerLoginx === firstLoginName) {
+                setUserPoints(userPoints + points)
+                setArrayPointsMap(prevMap => new Map([...prevMap, ...arrayPointsMap]))
+            } else if (playerLoginx === secondLoginName) {
+                setSecondUserPoints(secondUserPoints + points)
+                setArrayPointsMapSecond(prevMap => new Map([...prevMap, ...arrayPointsMap]))
+            }
         }
+
+        // setUserPoints(userPoints + points)
+        // // const copyPointsTable = [...userPointsTable]
+        // // copyPointsTable.push(points)
+        // // setUserPointsTable(copyPointsTable);
+        // if (arrayPointsMap.size > 0) {
+        //     setArrayPointsMap(prevMap => new Map([...prevMap, ...arrayPointsMap]))
+        // }
         
         
  
@@ -39,12 +49,14 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
 
     useEffect(() => {
         socket.on('sendPointsToClient', ({ userPoints, arrayPointsMapJSON, toPlayer }) => {
-            console.log("POSZŁO")
-            if (toPlayer !== playerLoginx) {
+            if (toPlayer === playerLoginx) {
                 setUserPoints(userPoints)
-                setArrayPointsMap(new Map(JSON.parse(arrayPointsMapJSON)))
-            }
-        })
+                setArrayPointsMap(new Map(JSON.parse(arrayPointsMapJSON)))   
+            } else if (toPlayer === secondLoginName) {
+                setSecondUserPoints(userPoints)
+                setArrayPointsMapSecond(new Map(JSON.parse(arrayPointsMapJSON)))
+            }})
+
     
         return () => {
             socket.off('sendPointsToClient')
@@ -52,44 +64,39 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
     }, [])
 
     return (
-        <>
-        {
-            console.log("z score board points: ", points)
-        }
-            <div className={style['score-board']}>
-                <div className={style['score-board-header']}>
-                    <span className={style['score-board-header-span']}>Tablica Wyników</span>
+        <div className={style['score-board']}>
+            <div className={style['score-board-header']}>
+                <span className={style['score-board-header-span']}>Tablica Wyników</span>
+            </div>
+            <div className={style['first-user']}>
+                <div className={style['first-user-score']}>
+                    <span className={style['first-username']}>Gracz 1: {firstUser}</span>
+                    <span className={style['first-user-points']}>Suma: {userPoints}</span>
                 </div>
-                <div className={style['first-user']}>
-                    <div className={style['first-user-score']}>
-                        <span className={style['first-username']}>Gracz 1: { firstLoginName }</span>
-                        <span className={style['first-user-points']}>Suma: { userPoints }</span>
-                    </div>
-                    <div className={style['first-user-score-friction']}>
-                        <span className={style['score-header']}>Punkty Cząstkowe</span>
-                        {arrayPointsMapState.size > 0 && playerLogin === firstLoginName ? Array.from(arrayPointsMapState.entries()).map(([key, value], index) => (
-                            <span key={index}>
-                                {key.word} : {value}
-                            </span>
-                        )) : null }
-                    </div>
-                </div>
-
-                <div className={style['second-user']}>
-                    <div className={style['second-user-score']}>
-                        <span className={style['second-username']}>Gracz 2: { secondLoginName }</span>
-                        <span className={style['second-user-points']}>Suma: { secondUserPoints }</span>
-                    </div>
-                    <div className={style['second-user-score-friction']}>
-                        <span className={style['score-header']}>Punkty Cząstkowe</span>
-                        {arrayPointsMapStateSecond.size > 0 && arrayPointsMapStateSecond !== null ? Array.from(arrayPointsMapStateSecond.entries()).map(([key, value], index) => (
-                            <span key={index}>
-                                {key.word} : {value}
-                            </span>
-                        )) : null }
-                    </div>
+                <div className={style['first-user-score-friction']}>
+                    <span className={style['score-header']}>Punkty Cząstkowe</span>
+                    {Array.from(arrayPointsMapState.entries()).map(([key, value], index) => (
+                        <span key={index}>
+                            {key.word} : {value}
+                        </span>
+                    ))}
                 </div>
             </div>
-        </>
+
+            <div className={style['second-user']}>
+                <div className={style['second-user-score']}>
+                    <span className={style['second-username']}>Gracz 2: {secondUser}</span>
+                    <span className={style['second-user-points']}>Suma: {secondUserPoints}</span>
+                </div>
+                <div className={style['second-user-score-friction']}>
+                    <span className={style['score-header']}>Punkty Cząstkowe</span>
+                    {Array.from(arrayPointsMapStateSecond.entries()).map(([key, value], index) => (
+                        <span key={index}>
+                            {key.word} : {value}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </div>
     )
 }
