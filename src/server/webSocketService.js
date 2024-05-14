@@ -85,9 +85,18 @@ const initializeWebSocket = (server) => {
             console.log("to Player: ", toPlayer)
             //console.log("Player Login: ", playerLogin)
             //io.emit('sendPointsToClient', { wordsSum, wordSum, playerLogin
-            
-            socket.broadcast.emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
+            io.emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
         })
+
+        socket.on('sendMessage', ({message, playerLogin}) => {
+            const newMessage = {
+                sender: playerLogin, 
+                text: message,
+                date: new Date().toLocaleString()
+            };
+            socket.broadcast.emit('receiveMessage', newMessage); 
+            socket.emit('receiveMessage', { ...newMessage, playerLogin }); 
+        });
     })
 }
 
