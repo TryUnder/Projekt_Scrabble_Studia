@@ -58,10 +58,14 @@ const initializeWebSocket = (server) => {
 
             }
 
-            console.log("Map: ", gameStateManager.letterMap)
+            //console.log("Map: ", gameStateManager.letterMap)
             console.log("array first: ", gameStateManager.playerFirstLetters)
             console.log("array second: ", gameStateManager.playerSecondLetters)
+            
             if (letter !== null) {
+                const map = gameStateManager.letterMap
+                const letterMapJSON = JSON.stringify(map)
+                //console.log("letter map json: ", letterMapJSON)
                 io.emit('getPlayerLetters', { playerLogin, playerArrayLetters })
                 playerArrayLetters = []
             }
@@ -73,6 +77,15 @@ const initializeWebSocket = (server) => {
             boardDataToSend = boardData
             newTurn = newTurn
             io.emit('boardReceive', { boardDataToSend, newTurn })
+        })
+
+        socket.on('sendPointsToServer', ({ userPoints, arrayPointsMapJSON, toPlayer }) => {
+            console.log("suma pkt: ", userPoints)
+            console.log("array: ", JSON.parse(arrayPointsMapJSON))
+            console.log("to Player: ", toPlayer)
+            //console.log("Player Login: ", playerLogin)
+            //io.emit('sendPointsToClient', { wordsSum, wordSum, playerLogin
+            io.emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
         })
     })
 }

@@ -1,13 +1,18 @@
 import { useEffect } from 'react'
-import { react, useState } from 'react'
+import { react, useState, useContext } from 'react'
 import style from '../../css/Board/score_board.module.css'
+import { SocketContext } from '../SocketProvider.jsx'
 
-export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, secondUser }) => {
+export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, secondUser, playerLogin }) => {
     const [ firstLoginName, setUsers ] = useState(firstUser)
     const [ secondLoginName, setSecondLoginName ] = useState(secondUser)
     const [ userPoints, setUserPoints] = useState(0)
+    const [ secondUserPoints, setSecondUserPoints ] = useState(0)
     const [ userPointsTable, setUserPointsTable ] = useState([])
     const [ arrayPointsMapState, setArrayPointsMap ] = useState(new Map())
+    const [ arrayPointsMapStateSecond, setArrayPointsMapSecond ] = useState(new Map())
+    const [ playerLoginx, setPlayerLogin ] = useState(playerLogin)
+    const socket = useContext(SocketContext)
 
     useEffect(() => {
         console.log("NOWY CLG: ", points)
@@ -18,6 +23,9 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
         if (arrayPointsMap.size > 0) {
             setArrayPointsMap(prevMap => new Map([...prevMap, ...arrayPointsMap]))
         }
+        
+        
+ 
     }, [changeId])
 
     return (
@@ -36,7 +44,7 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
                     </div>
                     <div className={style['first-user-score-friction']}>
                         <span className={style['score-header']}>Punkty Cząstkowe</span>
-                        {arrayPointsMapState.size > 0 ? Array.from(arrayPointsMapState.entries()).map(([key, value], index) => (
+                        {arrayPointsMapState.size > 0 && playerLogin === firstLoginName ? Array.from(arrayPointsMapState.entries()).map(([key, value], index) => (
                             <span key={index}>
                                 {key.word} : {value}
                             </span>
@@ -47,12 +55,15 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
                 <div className={style['second-user']}>
                     <div className={style['second-user-score']}>
                         <span className={style['second-username']}>Gracz 2: { secondLoginName }</span>
-                        <span className={style['second-user-points']}>Suma: 69</span>
+                        <span className={style['second-user-points']}>Suma: { secondUserPoints }</span>
                     </div>
                     <div className={style['second-user-score-friction']}>
                         <span className={style['score-header']}>Punkty Cząstkowe</span>
-                        <span>5</span>
-                        <span>4</span>
+                        {arrayPointsMapStateSecond.size > 0 && arrayPointsMapStateSecond !== null ? Array.from(arrayPointsMapStateSecond.entries()).map(([key, value], index) => (
+                            <span key={index}>
+                                {key.word} : {value}
+                            </span>
+                        )) : null }
                     </div>
                 </div>
             </div>

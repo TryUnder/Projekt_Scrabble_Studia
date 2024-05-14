@@ -21,19 +21,21 @@ function Board() {
     const [ wordBlockLetters, setWordBlockLetters ] = useState([])
     const [ letterMap, setLetterMap ] = useState(new Map(null))
     const [ change, setChange ] = useState(false)
-    //const [ points, setPoints ] = useState(0)
+    const [ points, setPoints ] = useState(0)
     const [ pointsState, setPointsState ] = useState({ points: 0, changeId: 0})
     const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
     const location = useLocation()
     const { receiverPlayer, senderPlayer, time, login } = location.state
     const playerLogin = useMemo(() => login, [location.state])
     const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} 
-                                            changeId = {pointsState.changeId} firstUser = {receiverPlayer} secondUser = {senderPlayer} />, [pointsState.changeId])
+                                            changeId = {pointsState.changeId} firstUser = {receiverPlayer} secondUser = {senderPlayer}
+                                            playerLogin = { playerLogin }  />, [pointsState.changeId])
     const memoizedUserPanel = useMemo(() => <UserPanel receiverPlayer = {receiverPlayer} senderPlayer = {senderPlayer} time = {time} />, [time])
     const [ turn, setTurn ] = useState(receiverPlayer)
     const socket = useContext(SocketContext)
 
     useEffect(() => {
+        setLetterMap(initializeLetterMap())
         console.log("board prev elements: ", previousBoardElements)
         console.log("LOGIN rec: ", receiverPlayer)
         console.log("LOGIN send: ", senderPlayer)
@@ -43,8 +45,11 @@ function Board() {
         const numberLetterToFetch = 7 - wordBlockLetters.length
         socket.emit('initializePlayerLetters', playerLogin, numberLetterToFetch)
         socket.on('getPlayerLetters', ({ playerLogin, playerArrayLetters }) => {
+            //const letterMapObj = JSON.parse(letterMapJSON)
+            //console.log("Map: ", letterMapObj)
             if (login === playerLogin) {
                 setWordBlockLetters(prevLetters => [...prevLetters, ...playerArrayLetters]);
+                //setLetterMap(letterMapObj)
             }
         })
 
@@ -55,8 +60,11 @@ function Board() {
             setTurn(newTurn)
         })
 
-        console.log("turn: ", turn)
     }, [])
+
+    useEffect(() => {
+        console.log("Letter Map: ", letterMap)
+    }, [letterMap])
 
     // useEffect(() => {
     //     const numberLetterToFetch = 7 - wordBlockLetters.length;
@@ -66,7 +74,7 @@ function Board() {
     // }, [boardData]);
 
     const updatePoints = (newPoints, wordSum, words) => {
-        //setPoints(newPoints);
+        setPoints(newPoints);
         
         setPointsState(prevState => ({
             ...prevState,
@@ -294,7 +302,7 @@ function Board() {
                 if (checkNeighbourhood(words, boardData)) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
                     const { filteredWords, wordsCoordsArray }  = filterWords(wordObjArray, wordObjAcceptedArray)
-                    //const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
+                    const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
 
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
@@ -304,7 +312,7 @@ function Board() {
                     if (existInDb === true) {
                         updateAcceptedProperty(words)
                         //addLetters();
-                        //updatePoints(wordsSum, wordSum, filteredWords);
+                        updatePoints(wordsSum, wordSum, filteredWords);
                         socket.emit('initializePlayerLetters', turn, 7 - wordBlockLetters.length)
                         const newTurn = turn === receiverPlayer ? senderPlayer : receiverPlayer
                         setTurn(newTurn)
@@ -319,7 +327,8 @@ function Board() {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, false)
                     const wordsCoordsArray = mapWordsToCoords(wordObjArray)
                     console.log("words coords array: ", wordsCoordsArray)
-                    //const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
+                    const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap)
+                    
                     const wordsMapped = mapToWords(wordsCoordsArray)
                     if (words.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
@@ -335,7 +344,7 @@ function Board() {
                         socket.emit('boardSend', { boardData, newTurn })
                         
                         //addLetters();
-                        //updatePoints(wordsSum, wordSum, wordsMapped);
+                        updatePoints(wordsSum, wordSum, wordsMapped);
                     } else {
                         takeDownLetters(wordsCoordsArray)
                     }

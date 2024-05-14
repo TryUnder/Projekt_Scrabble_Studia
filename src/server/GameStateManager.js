@@ -23,6 +23,10 @@ class GameStateManager {
         //console.log("Player 1: ", this.player1, " Player 2: ", this.player2);
     }
 
+    getLetterMap() {
+        return this.letterMap
+    }
+
     initializeLetter() {
         if (this.letterMap.size <= 0) {
             return null
