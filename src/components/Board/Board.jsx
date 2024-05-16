@@ -21,15 +21,31 @@ function Board() {
     const [ wordBlockLetters, setWordBlockLetters ] = useState([])
     const [ letterMap, setLetterMap ] = useState(new Map(null))
     const [ change, setChange ] = useState(false)
-    const [ points, setPoints ] = useState(0)
-    const [ pointsState, setPointsState ] = useState({ points: 0, changeId: 0})
-    const [ arrayPointsMap, setArrayPointsMap ] = useState(new Map(null))
+
+    //const [ pointsState, setPointsState ] = useState({ points: 0, changeId: 0})
+    // const [ sumPointsFirstUser, setPointsFirstUser ] = useState(0)
+    // const [ sumPointsSecondUser, setPointsSecondUser ] = useState(0)
+    // const [ pointsMapFirstUser, setPointsMapFirstUser ] = useState(new Map(null))
+    // const [ pointsMapSecondUser, setPointsMapSecondUser ] = useState(new Map(null))
+
     const location = useLocation()
     const { receiverPlayer, senderPlayer, time, login } = location.state
     const playerLogin = useMemo(() => login, [location.state])
-    const memoizedScoreBoard = useMemo(() => <ScoreBoard points = {pointsState.points} arrayPointsMap = {arrayPointsMap} 
-                                            changeId = {pointsState.changeId} firstUser = {receiverPlayer} secondUser = {senderPlayer}
-                                            playerLogin = { playerLogin } />, [pointsState.changeId])
+
+    const [ firstUserPoints, setFirstUserPoints ] = useState({
+        login: receiverPlayer,
+        sumPoints: 0,
+        pointsMap: new Map(null)
+    })
+
+    const [ secondUserPoints, setSecondUserPoints ] = useState({
+        login: senderPlayer,
+        sumPoints: 0,
+        pointsMap: new Map(null)
+    })
+
+    const memoizedScoreBoard = useMemo(() => <ScoreBoard firstUserPoints = { firstUserPoints } secondUserPoints = { secondUserPoints } />, 
+                                            [firstUserPoints, secondUserPoints])
     const memoizedUserPanel = useMemo(() => <UserPanel receiverPlayer = {receiverPlayer} senderPlayer = {senderPlayer} time = {time} />, [time])
     const [ turn, setTurn ] = useState(receiverPlayer)
     const socket = useContext(SocketContext)
@@ -45,17 +61,12 @@ function Board() {
         const numberLetterToFetch = 7 - wordBlockLetters.length
         socket.emit('initializePlayerLetters', playerLogin, numberLetterToFetch)
         socket.on('getPlayerLetters', ({ playerLogin, playerArrayLetters }) => {
-            //const letterMapObj = JSON.parse(letterMapJSON)
-            //console.log("Map: ", letterMapObj)
             if (login === playerLogin) {
                 setWordBlockLetters(prevLetters => [...prevLetters, ...playerArrayLetters]);
-                //setLetterMap(letterMapObj)
             }
         })
 
         socket.on('boardReceive', ({ boardDataToSend, newTurn }) => {
-            console.log("Board Data recv: ", boardData)
-            console.log("Turn: recv ", turn)
             setBoardData(boardDataToSend)
             setTurn(newTurn)
         })
@@ -63,25 +74,13 @@ function Board() {
         console.log("turn: ", turn)
     }, [])
 
-    useEffect(() => {
-        console.log("Letter Map: ", letterMap)
-    }, [letterMap])
-
-    // useEffect(() => {
-    //     const numberLetterToFetch = 7 - wordBlockLetters.length;
-    //     if (numberLetterToFetch > 0) {
-    //         socket.emit('initializePlayerLetters', playerLogin, numberLetterToFetch);
-    //     }
-    // }, [boardData]);
-
     const updatePoints = (newPoints, wordSum, words) => {
-        setPoints(newPoints);
         
-        setPointsState(prevState => ({
-            ...prevState,
-            points: newPoints,
-            changeId: prevState.changeId + 1
-        }))
+        // setPointsState(prevState => ({
+        //     ...prevState,
+        //     points: newPoints,
+        //     changeId: prevState.changeId + 1
+        // }))
         const wordsPointsMap = new Map()
         words.map((word, index) => {
             if (wordsPointsMap.size > 0) {
@@ -92,7 +91,22 @@ function Board() {
             }
             wordsPointsMap.set({ word: word, count: 1 }, wordSum[index])
         })
-        setArrayPointsMap(wordsPointsMap)
+        // setArrayPointsMap(wordsPointsMap)
+        if (playerLogin === receiverPlayer) {
+            setFirstUserPoints(prevState => ({
+                ...prevState,
+                login: receiverPlayer,
+                sumPoints: prevState.sumPoints + newPoints,
+                pointsMap: new Map([...prevState.pointsMap, ...wordsPointsMap])
+            }))
+        } else if (playerLogin === senderPlayer) {
+            setSecondUserPoints(prevState => ({
+                ...prevState,
+                login: senderPlayer,
+                sumPoints: prevState.sumPoints + newPoints,
+                pointsMap: new Map([...prevState.pointsMap, ...wordsPointsMap])
+            }))
+        }
     }
 
     const manageDraggableProperty = (condition) => {
@@ -196,6 +210,44 @@ function Board() {
         // }
     }, [letterMap])
 
+    useEffect(() => {
+        console.log("FIRST USER POINTS: ", firstUserPoints)
+        console.log("SECOND USER POINTS: ", secondUserPoints)
+        console.log("TEST: ", firstUserPoints.pointsMap)
+        console.log("TEST: ", secondUserPoints.pointsMap)
+
+        
+
+        socket.on('otrzymanePunktyDrugiego', (secondUserPointsCopy) => {
+            console.log("Otrzymano po stronie klienta pierwszego punkty drugiego: ", secondUserPointsCopy)
+            //secondUserPointsCopy.pointsMap = JSON.parse(secondUserPointsCopy.pointsMap)
+            //if (secondUserPointsCopy.login !== playerLogin) {
+                setSecondUserPoints(secondUserPointsCopy)
+            //}
+        })
+
+
+
+    })
+
+    useEffect(() => {
+        console.log("FIRST USER POINTS: ", firstUserPoints)
+        console.log("SECOND USER POINTS: ", secondUserPoints)
+        console.log("TEST: ", firstUserPoints.pointsMap)
+        console.log("TEST: ", secondUserPoints.pointsMap)
+
+        socket.on('otrzymanePunktyPierwszego', (firstUserPointsCopy) => {
+            console.log("Otrzymano po stronie klienta drugiego punkty pierwszego: ", firstUserPointsCopy)
+            //firstUserPointsCopy.pointsMap = JSON.parse(firstUserPointsCopy.pointsMap)
+           // if (firstUserPointsCopy.login !== playerLogin) {
+                setFirstUserPoints(firstUserPointsCopy)
+           // }
+        })
+
+
+        
+    })
+
     const modifyPreviousBoardElements = (x, y) => {
         const newBoardData = [...boardData]
         const droppedTile = newBoardData[y][x]
@@ -270,6 +322,20 @@ function Board() {
             setDraggedMain(null)
         }
     }
+
+    useEffect(() => {
+        const secondUserPointsCopy = {...secondUserPoints}
+        secondUserPointsCopy.pointsMap = Array.from(secondUserPointsCopy.pointsMap.entries())
+        socket.emit('punktyDrugiego', secondUserPointsCopy)
+
+        const firstUserPointsCopy = {...firstUserPoints}
+        firstUserPointsCopy.pointsMap = Array.from(firstUserPoints.pointsMap.entries())
+        socket.emit('punktyPierwszego', firstUserPointsCopy)
+
+        return () => {
+            socket.close()
+        }
+    }, [firstUserPoints, secondUserPoints])
     
     const takeDownLetters = (wordsCoordsArray) => {
         const newPreviousBoardElements = [...previousBoardElements];
@@ -329,7 +395,7 @@ function Board() {
                     const wordsCoordsArray = mapWordsToCoords(wordObjArray)
                     console.log("words coords array: ", wordsCoordsArray)
                     const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap)
-                    socket.emit('sendPointsToServer', { wordsSum, wordSum, playerLogin }) 
+                    //socket.emit('sendPointsToServer', { wordsSum, wordSum, playerLogin }) 
                     const wordsMapped = mapToWords(wordsCoordsArray)
                     if (words.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
@@ -337,6 +403,7 @@ function Board() {
                     }
                     const existInDb = await sendWordsToServer(words)
                     if (existInDb === true) {
+                        updatePoints(wordsSum, wordSum, wordsMapped);
                         updateAcceptedProperty(words)
 
                         socket.emit('initializePlayerLetters', turn, 7 - wordBlockLetters.length)
@@ -345,7 +412,6 @@ function Board() {
                         socket.emit('boardSend', { boardData, newTurn })
                         
                         //addLetters();
-                        updatePoints(wordsSum, wordSum, wordsMapped);
                     } else {
                         takeDownLetters(wordsCoordsArray)
                     }

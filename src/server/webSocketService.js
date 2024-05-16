@@ -79,18 +79,28 @@ const initializeWebSocket = (server) => {
             io.emit('boardReceive', { boardDataToSend, newTurn })
         })
 
-        socket.on('sendPointsToServer', ({ userPoints, arrayPointsMapJSON, toPlayer }) => {
-            console.log("suma pkt: ", userPoints)
-            console.log("array: ", JSON.parse(arrayPointsMapJSON))
-            console.log("to Player: ", toPlayer)
-            //console.log("Player Login: ", playerLogin)
-            //io.emit('sendPointsToClient', { wordsSum, wordSum, playerLogin
-            const socketId = userSockets.get(toPlayer)
-            if (socketId) {
-                io.to(userSockets.get(toPlayer)).emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
-            } else {
-                console.error('Socket not found')
-            }
+        // socket.on('sendPointsToServer', ({ userPoints, arrayPointsMapJSON, toPlayer }) => {
+        //     console.log("suma pkt: ", userPoints)
+        //     console.log("array: ", JSON.parse(arrayPointsMapJSON))
+        //     console.log("to Player: ", toPlayer)
+        //     //console.log("Player Login: ", playerLogin)
+        //     //io.emit('sendPointsToClient', { wordsSum, wordSum, playerLogin
+        //     const socketId = userSockets.get(toPlayer)
+        //     if (socketId) {
+        //         io.to(userSockets.get(toPlayer)).emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
+        //     } else {
+        //         console.error('Socket not found')
+        //     }
+        // })
+
+        socket.on('punktyPierwszego', (firstUserPointsCopy) => {
+            console.log("Punkty pierwszego odebrane po stronie serwera: ", firstUserPointsCopy)
+            io.emit('otrzymanePunktyPierwszego', firstUserPointsCopy)
+        })
+
+        socket.on('punktyDrugiego', (secondUserPointsCopy) => {
+            console.log("Punkty drugiego odebrane po stronie serwera: ", secondUserPointsCopy)
+            io.to(userSockets.get(secondUserPointsCopy.login)).emit('otrzymanePunktyDrugiego', secondUserPointsCopy)
         })
 
         socket.on('sendMessage', ({message, playerLogin}) => {
