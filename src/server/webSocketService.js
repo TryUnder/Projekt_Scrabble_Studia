@@ -100,7 +100,7 @@ const initializeWebSocket = (server) => {
 
         socket.on('punktyDrugiego', (secondUserPointsCopy) => {
             console.log("Punkty drugiego odebrane po stronie serwera: ", secondUserPointsCopy)
-            io.to(userSockets.get(secondUserPointsCopy.login)).emit('otrzymanePunktyDrugiego', secondUserPointsCopy)
+            io.emit('otrzymanePunktyDrugiego', secondUserPointsCopy)
         })
 
         socket.on('sendMessage', ({message, playerLogin}) => {

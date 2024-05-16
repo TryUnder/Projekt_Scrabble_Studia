@@ -2,8 +2,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     background-color: whitesmoke;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
 }
 
 .user-panel {
@@ -16,6 +18,16 @@
 .user-name-first, .user-name-second, .user-time-first, .user-time-second {
     text-align: center;
     font-weight: 700;
-    position: relative;
-    top: 35%;
+}
+
+.active-player {
+    color: black;
+}
+
+.non-active-player {
+    color: white;
+}
+
+.active-player-bcg {
+    background-color: #cbc0ce70;
 }
