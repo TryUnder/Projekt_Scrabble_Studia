@@ -60,18 +60,12 @@ function Board() {
             setTurn(newTurn)
         })
 
+        console.log("turn: ", turn)
     }, [])
 
     useEffect(() => {
         console.log("Letter Map: ", letterMap)
     }, [letterMap])
-
-    useEffect(() => {
-        const arrayPointsMapArray = Array.from(arrayPointsMap.entries());
-        const arrayPointsMapJSON = JSON.stringify(arrayPointsMapArray)
-        const toPlayer = playerLogin === receiverPlayer ? senderPlayer : receiverPlayer
-        socket.emit('sendPointsToServer', { points, arrayPointsMapJSON, toPlayer})
-    }, [arrayPointsMap, points])
 
     // useEffect(() => {
     //     const numberLetterToFetch = 7 - wordBlockLetters.length;
@@ -335,7 +329,7 @@ function Board() {
                     const wordsCoordsArray = mapWordsToCoords(wordObjArray)
                     console.log("words coords array: ", wordsCoordsArray)
                     const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap)
-                    
+                    socket.emit('sendPointsToServer', { wordsSum, wordSum, playerLogin }) 
                     const wordsMapped = mapToWords(wordsCoordsArray)
                     if (words.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")

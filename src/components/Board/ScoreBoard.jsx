@@ -3,7 +3,7 @@ import { react, useState, useContext } from 'react'
 import style from '../../css/Board/score_board.module.css'
 import { SocketContext } from '../SocketProvider.jsx'
 
-export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, secondUser, playerLogin }) => {
+export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, secondUser, playerLogin, socket }) => {
     const [ firstLoginName, setUsers ] = useState(firstUser)
     const [ secondLoginName, setSecondLoginName ] = useState(secondUser)
     const [ userPoints, setUserPoints] = useState(0)
@@ -12,7 +12,6 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
     const [ arrayPointsMapState, setArrayPointsMap ] = useState(new Map())
     const [ arrayPointsMapStateSecond, setArrayPointsMapSecond ] = useState(new Map())
     const [ playerLoginx, setPlayerLogin ] = useState(playerLogin)
-    const socket = useContext(SocketContext)
 
     useEffect(() => {
         console.log("NOWY CLG: ", points)
@@ -47,10 +46,10 @@ export const ScoreBoard = ({ points = 0 , arrayPointsMap, changeId, firstUser, s
     useEffect(() => {
         socket.on('sendPointsToClient', ({ userPoints, arrayPointsMapJSON, toPlayer }) => {
             if (toPlayer === playerLoginx) {
-                setUserPoints(userPoints)
+                setUserPoints(prevPoints => userPoints + prevPoints)
                 setArrayPointsMap(new Map(JSON.parse(arrayPointsMapJSON)))   
             } else if (toPlayer === secondLoginName) {
-                setSecondUserPoints(userPoints)
+                setSecondUserPoints(prevPoints => secondUserPoints + prevPoints)
                 setArrayPointsMapSecond(new Map(JSON.parse(arrayPointsMapJSON)))
             }})
             console.log("userPoints: got it", userPoints)

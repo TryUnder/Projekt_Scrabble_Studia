@@ -85,7 +85,12 @@ const initializeWebSocket = (server) => {
             console.log("to Player: ", toPlayer)
             //console.log("Player Login: ", playerLogin)
             //io.emit('sendPointsToClient', { wordsSum, wordSum, playerLogin
-            io.to(userSockets.get(toPlayer)).emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
+            const socketId = userSockets.get(toPlayer)
+            if (socketId) {
+                io.to(userSockets.get(toPlayer)).emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
+            } else {
+                console.error('Socket not found')
+            }
         })
 
         socket.on('sendMessage', ({message, playerLogin}) => {
