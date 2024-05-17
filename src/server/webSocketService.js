@@ -71,27 +71,26 @@ const initializeWebSocket = (server) => {
             }
         })
 
+        socket.on('increaseLetterCount', (arrayBcgCopy) => {
+            console.log("letter map przed: ", gameStateManager.letterMap)
+            for (let i = 0; i < arrayBcgCopy.length; i++) {
+                const count = gameStateManager.letterMap.get(arrayBcgCopy[i]).count
+                if (count >= 0) {
+                    gameStateManager.letterMap.get(arrayBcgCopy[i]).count += 1
+                }
+            }
+            console.log("letter map po: ", gameStateManager.letterMap)
+        })
+
         socket.on('boardSend', ({boardData, newTurn}) => {
-            console.log("Board Data sock: ", boardData[7][7])
-            console.log("Turn: sock ", newTurn)
             boardDataToSend = boardData
             newTurn = newTurn
             io.emit('boardReceive', { boardDataToSend, newTurn })
         })
 
-        // socket.on('sendPointsToServer', ({ userPoints, arrayPointsMapJSON, toPlayer }) => {
-        //     console.log("suma pkt: ", userPoints)
-        //     console.log("array: ", JSON.parse(arrayPointsMapJSON))
-        //     console.log("to Player: ", toPlayer)
-        //     //console.log("Player Login: ", playerLogin)
-        //     //io.emit('sendPointsToClient', { wordsSum, wordSum, playerLogin
-        //     const socketId = userSockets.get(toPlayer)
-        //     if (socketId) {
-        //         io.to(userSockets.get(toPlayer)).emit('sendPointsToClient', { userPoints, arrayPointsMapJSON, toPlayer })
-        //     } else {
-        //         console.error('Socket not found')
-        //     }
-        // })
+        socket.on('emitNewTurn', newTurn => {
+            io.emit('receiveNewTurn', newTurn)
+        })
 
         socket.on('punktyPierwszego', (firstUserPointsCopy) => {
             console.log("Punkty pierwszego odebrane po stronie serwera: ", firstUserPointsCopy)

@@ -22,16 +22,11 @@ function Board() {
     const [ letterMap, setLetterMap ] = useState(new Map())
     const [ change, setChange ] = useState(false)
 
-    //const [ pointsState, setPointsState ] = useState({ points: 0, changeId: 0})
-    // const [ sumPointsFirstUser, setPointsFirstUser ] = useState(0)
-    // const [ sumPointsSecondUser, setPointsSecondUser ] = useState(0)
-    // const [ pointsMapFirstUser, setPointsMapFirstUser ] = useState(new Map(null))
-    // const [ pointsMapSecondUser, setPointsMapSecondUser ] = useState(new Map(null))
-
     const location = useLocation()
     const { receiverPlayer, senderPlayer, time, login } = location.state
     const playerLogin = useMemo(() => login, [location.state])
     const [ turn, setTurn ] = useState(receiverPlayer)
+    const [ exchangeCount, setExchangeCount ] = useState(0)
 
     const [ firstUserPoints, setFirstUserPoints ] = useState({
         login: receiverPlayer,
@@ -70,6 +65,10 @@ function Board() {
 
         socket.on('boardReceive', ({ boardDataToSend, newTurn }) => {
             setBoardData(boardDataToSend)
+            setTurn(newTurn)
+        })
+
+        socket.on('receiveNewTurn', newTurn => {
             setTurn(newTurn)
         })
 
@@ -131,16 +130,6 @@ function Board() {
         })
     }
 
-    const increaseLetterCount = (letter) => {
-        const letterMapCopy = new Map(letterMap)
-        const count = letterMapCopy.get(letter).count
-
-        if (count >= 0) {
-            letterMapCopy.get(letter).count += 1;
-            setLetterMap(letterMapCopy)
-        } 
-    }
-
     const updateAcceptedProperty = (words) => {
         const boardDataCopy = [...boardData]
 
@@ -156,14 +145,18 @@ function Board() {
         setBoardData(boardDataCopy)
     }
 
-    const addLetters = () => {
-        initializeBlockLetters(wordBlockLetters, letterMap, setWordBlockLetters, setLetterMap);
-    }
-
-    const changeLettersCheckWords = async (event) => {
+    const handleChangeLetters = async (event) => {
         const ifExists = ifIsAcceptedFalseExist();
         if (ifExists !== undefined) {
             alert("Nie można wymienić liter podczas gdy inne znajdują się już na planszy")
+            setChange(false)
+            return
+        } else if (turn !== playerLogin) {
+            alert("Nie można wymienić liter, gdy nie jest twoja kolejka")
+            setChange(false)
+            return
+        } else if (exchangeCount >= 3) {
+            alert("Maksymalna liczba wymian wynosi 3")
             setChange(false)
             return
         }
@@ -194,18 +187,22 @@ function Board() {
                 return true; 
             });
     
-            arrayBcgCopy.forEach(letter => {
-                increaseLetterCount(letter)
-            })
-    
             setWordBlockLetters(filteredWordBlockLetters)
+            emitNewLettersRequest(filteredWordBlockLetters)
+            emitIncreaseLetterCount(arrayBcgCopy)
             setChange(false)
+            const newTurn = calculateNewTurn(turn)
+            emitNewTurn(newTurn)
+            setExchangeCount(prev => prev + 1)
     }
 
     useEffect(() => {
          setBoardData(initializeBoardData());
-    //     setLetterMap(initializeLetterMap());
     }, [])
+
+    useEffect(() => {
+        console.log("Login: ", playerLogin, " exchange count: ", exchangeCount)
+   }, [exchangeCount])
 
     const ifIsAcceptedFalseExist = () => {
         const checkIsAccepted =  boardData.flat().find(tile => tile.letter.value !== '' && tile.isAccepted === false)
@@ -348,6 +345,22 @@ function Board() {
         setPreviousBoardElements(newPreviousBoardElements)
     };
 
+    const emitNewLettersRequest = (wordBlockLetters) => {
+        socket.emit('initializePlayerLetters', turn, 7 - wordBlockLetters.length)
+    }
+
+    const emitIncreaseLetterCount = (arrayBcgCopy) => {
+        socket.emit('increaseLetterCount', arrayBcgCopy)
+    }
+
+    const emitNewTurn = (newTurn) => {
+        socket.emit('emitNewTurn', newTurn)
+    }
+
+    const calculateNewTurn = (turn) => {
+        return turn === receiverPlayer ? senderPlayer : receiverPlayer
+    }
+
     const checkWords = async (event) => {
         event.preventDefault();
         if (change === false && turn === playerLogin) {
@@ -366,10 +379,9 @@ function Board() {
                     const existInDb = await sendWordsToServer(filteredWords)
                     if (existInDb === true) {
                         updateAcceptedProperty(words)
-                        //addLetters();
                         updatePoints(wordsSum, wordSum, filteredWords);
-                        socket.emit('initializePlayerLetters', turn, 7 - wordBlockLetters.length)
-                        const newTurn = turn === receiverPlayer ? senderPlayer : receiverPlayer
+                        emitNewLettersRequest(wordBlockLetters)
+                        const newTurn = calculateNewTurn(turn)
                         setTurn(newTurn)
                         socket.emit('boardSend', { boardData, newTurn })
                     } else {
@@ -383,7 +395,6 @@ function Board() {
                     const wordsCoordsArray = mapWordsToCoords(wordObjArray)
                     console.log("words coords array: ", wordsCoordsArray)
                     const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap)
-                    //socket.emit('sendPointsToServer', { wordsSum, wordSum, playerLogin }) 
                     const wordsMapped = mapToWords(wordsCoordsArray)
                     if (words.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")
@@ -394,12 +405,10 @@ function Board() {
                         updatePoints(wordsSum, wordSum, wordsMapped);
                         updateAcceptedProperty(words)
 
-                        socket.emit('initializePlayerLetters', turn, 7 - wordBlockLetters.length)
-                        const newTurn = turn === receiverPlayer ? senderPlayer : receiverPlayer
+                        emitNewLettersRequest(wordBlockLetters)
+                        const newTurn = calculateNewTurn(turn)
                         setTurn(newTurn)
                         socket.emit('boardSend', { boardData, newTurn })
-                        
-                        //addLetters();
                     } else {
                         takeDownLetters(wordsCoordsArray)
                     }
@@ -425,7 +434,7 @@ function Board() {
                 {
                     <div className = {style2["icon-container"]}>
                         <button className = {`${style2["letter-style-change"]}`}
-                            onClick = { (event) => changeLettersCheckWords(event) }
+                            onClick = { (event) => handleChangeLetters(event) }
                         >
                             <i className = {`${["fas fa-solid fa-check"]} ${style2["icon-style"]}`}></i>
                         </button>
