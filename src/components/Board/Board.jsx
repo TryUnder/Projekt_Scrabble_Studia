@@ -27,6 +27,7 @@ function Board() {
     const playerLogin = useMemo(() => login, [location.state])
     const [ turn, setTurn ] = useState(receiverPlayer)
     const [ exchangeCount, setExchangeCount ] = useState(0)
+    const [ passRound, setPassRound ] = useState(0)
 
     const [ firstUserPoints, setFirstUserPoints ] = useState({
         login: receiverPlayer,
@@ -361,6 +362,14 @@ function Board() {
         return turn === receiverPlayer ? senderPlayer : receiverPlayer
     }
 
+    const handlePassRound = (event) => {
+        event.preventDefault();
+        const newTurn = calculateNewTurn(turn)
+        setTurn(newTurn)
+        emitNewTurn(newTurn)
+        setPassRound(prev => prev + 1)
+    }
+
     const checkWords = async (event) => {
         event.preventDefault();
         if (change === false && turn === playerLogin) {
@@ -451,7 +460,9 @@ function Board() {
                             
                             <i className = {`${["fas fa-solid fa-spell-check"]} ${style2["icon-style"]}`}></i>
                         </button>
-                        <button className = {`${style2["letter-style-change"]}`}>
+                        <button 
+                            className = {`${style2["letter-style-change"]}`}
+                            onClick = {(event) => turn === playerLogin? handlePassRound(event) : null}>
                             <i className = {`${["fas fa-solid fa-xmark"]} ${style2["icon-style"]}`}></i>
                         </button>
                     </div>
