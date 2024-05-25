@@ -395,6 +395,9 @@ function Board() {
                         socket.emit('boardSend', { boardData, newTurn })
                     } else {
                         takeDownLetters(wordsCoordsArray)
+                        const newTurn = calculateNewTurn(turn)
+                        setTurn(newTurn)
+                        emitNewTurn(newTurn)
                     }
                 } else {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
@@ -420,6 +423,9 @@ function Board() {
                         socket.emit('boardSend', { boardData, newTurn })
                     } else {
                         takeDownLetters(wordsCoordsArray)
+                        const newTurn = calculateNewTurn(turn)
+                        setTurn(newTurn)
+                        emitNewTurn(newTurn)
                     }
             }
             setChange(false)

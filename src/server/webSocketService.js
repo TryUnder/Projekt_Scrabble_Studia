@@ -54,21 +54,23 @@ const initializeWebSocket = (server) => {
 
                 if (letter !== null) {
                     playerArrayLetters.push(letter)
+                } else {
+                    break;
                 }
 
             }
 
-            //console.log("Map: ", gameStateManager.letterMap)
-            console.log("array first: ", gameStateManager.playerFirstLetters)
-            console.log("array second: ", gameStateManager.playerSecondLetters)
+            console.log("Letter Map", gameStateManager.letterMap)
             
             if (letter !== null) {
                 const map = gameStateManager.letterMap
                 const letterMapJSON = JSON.stringify(map)
-                //console.log("letter map json: ", letterMapJSON)
+
                 io.emit('getPlayerLetters', { playerLogin, playerArrayLetters })
-                playerArrayLetters = []
+                
             }
+
+            playerArrayLetters = []
         })
 
         socket.on('increaseLetterCount', (arrayBcgCopy) => {

@@ -28,20 +28,17 @@ class GameStateManager {
     }
 
     initializeLetter() {
-        if (this.letterMap.size <= 0) {
-            return null
+        const availableLetters = Array.from(this.letterMap.entries()).filter(([letter, data]) => data.count > 0);
+    
+        if (availableLetters.length === 0) {
+            return null;
         }
-
-        const randomNumber = Math.floor(Math.random() * this.letterMap.size)
-        const randomLetter = Array.from(this.letterMap.keys())[randomNumber]
-
-        const letterCount = this.letterMap.get(randomLetter).count
-        if (letterCount <= 0) {
-            return this.initializeLetter()
-        }
-
-        this.letterMap.get(randomLetter).count = letterCount - 1
-        return randomLetter
+    
+        const randomIndex = Math.floor(Math.random() * availableLetters.length);
+        const [randomLetter, letterData] = availableLetters[randomIndex];
+    
+        this.letterMap.get(randomLetter).count -= 1;
+        return randomLetter;
     }
 }
 
