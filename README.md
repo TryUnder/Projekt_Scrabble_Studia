@@ -1,6 +1,13 @@
-#Aplikacja Liternik
+<div align="center">
+  #Liternik
+  ##Gra logiczna oparta na grze Scrabble.
+  ### Autorzy
+      - Hubert Lewowicki
+      - Agata Orzechowska
 
-![alt text](https://ibb.co/6F80h6H)
+   ![logo_github](https://github.com/TryUnder/Projekt_Scrabble_Studia/assets/158187565/93e4aa87-51a9-423e-aa02-350eb4741a0b)
+</div>
+
 
 
 
