@@ -1,4 +1,8 @@
-# Projekt Aplikacji Liternik - gry logicznej nawiązującej do Scrabble
+#Aplikacja Liternik
+
+![Alt text](https://ibb.co/6F80h6H)
+
+
 
 ## 06.03.2024 - 13.03.2024 <br />
     * Utworzenie projektu w oparciu o react-vite 
