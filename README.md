@@ -1,6 +1,6 @@
 #Aplikacja Liternik
 
-![Alt text](https://ibb.co/6F80h6H)
+![alt text](https://ibb.co/6F80h6H)
 
 
 
