@@ -113,6 +113,11 @@ const initializeWebSocket = (server) => {
             socket.broadcast.emit('receiveMessage', newMessage); 
             socket.emit('receiveMessage', { ...newMessage, playerLogin }); 
         });
+
+        socket.on('timeEnded', ({ player }) => {
+            console.log(`Czas zakończył się dla gracza ${player}`)
+            io.emit('timeEndedClient', { player })
+        })
     })
 }
 

@@ -28,6 +28,8 @@ function Board() {
     const [ turn, setTurn ] = useState(receiverPlayer)
     const [ exchangeCount, setExchangeCount ] = useState(0)
     const [ passRound, setPassRound ] = useState(0)
+    const [ playerEndedTime, setPlayerEndedTime ] = useState(false)
+    const [ secondPlayerEndedTime, setSecondPlayerEndedTime ] = useState(false)
 
     const [ firstUserPoints, setFirstUserPoints ] = useState({
         login: receiverPlayer,
@@ -40,14 +42,14 @@ function Board() {
         sumPoints: 0,
         pointsMap: new Map()
     })
+    const socket = useContext(SocketContext)
 
     const memoizedScoreBoard = useMemo(() => <ScoreBoard firstUserPoints = { firstUserPoints } secondUserPoints = { secondUserPoints }
                                                          playerLogin = { playerLogin } />, 
                                             [firstUserPoints, secondUserPoints])
     const memoizedUserPanel = useMemo(() => <UserPanel receiverPlayer = {receiverPlayer} senderPlayer = {senderPlayer} 
-                                            time = {time} playerLogin = { playerLogin } turn = { turn } />, [time, turn])
-    const socket = useContext(SocketContext)
-
+                                            time = {time} playerLogin = { playerLogin } turn = { turn } socket = { socket } />, [time, turn])
+    
     useEffect(() => {
         setLetterMap(initializeLetterMap())
         console.log("board prev elements: ", previousBoardElements)
@@ -192,9 +194,11 @@ function Board() {
             emitNewLettersRequest(filteredWordBlockLetters)
             emitIncreaseLetterCount(arrayBcgCopy)
             setChange(false)
-            const newTurn = calculateNewTurn(turn)
-            emitNewTurn(newTurn)
-            setExchangeCount(prev => prev + 1)
+            if (checkPlayerTurnChange()) {
+                const newTurn = calculateNewTurn(turn)
+                setTurn(newTurn)
+                emitNewTurn(newTurn)
+            }
     }
 
     useEffect(() => {
@@ -306,6 +310,15 @@ function Board() {
                 }));
             }
         });
+
+        socket.on('timeEndedClient', ({ player }) => {
+            console.log(`Czas gracza: ${player} zakończył się`)
+            if (player === playerLogin) {
+                setPlayerEndedTime(true)
+            } else {
+                setSecondPlayerEndedTime(true)
+            }
+        });
     
         // Pamiętaj, aby usunąć zdarzenia, gdy komponent jest odmontowywany
         return () => {
@@ -318,6 +331,14 @@ function Board() {
         console.log("Punkty pierwszego: ", firstUserPoints)
         console.log("Punkty drugiego: ", secondUserPoints)
     }, [firstUserPoints, secondUserPoints])
+
+    useEffect(() => {
+        if (playerEndedTime === true) {
+            const newTurn = calculateNewTurn(turn)
+            setTurn(newTurn)
+            emitNewTurn(newTurn)
+        }
+    }, [playerEndedTime])
 
     const structuredClone = (obj) => {
         return JSON.parse(JSON.stringify(obj))
@@ -362,17 +383,26 @@ function Board() {
         return turn === receiverPlayer ? senderPlayer : receiverPlayer
     }
 
+    const checkPlayerTurnChange = () => {
+        if (secondPlayerEndedTime === true) {
+            return false
+        } else {
+            return true
+        }
+    }
+
     const handlePassRound = (event) => {
         event.preventDefault();
-        const newTurn = calculateNewTurn(turn)
-        setTurn(newTurn)
-        emitNewTurn(newTurn)
-        setPassRound(prev => prev + 1)
+        if (checkPlayerTurnChange()) {
+            const newTurn = calculateNewTurn(turn)
+            setTurn(newTurn)
+            emitNewTurn(newTurn)
+        }
     }
 
     const checkWords = async (event) => {
         event.preventDefault();
-        if (change === false && turn === playerLogin) {
+        if (change === false && turn === playerLogin && playerEndedTime === false) {
             handleBlank(boardData, setBoardData)
             const { words, wordObjArray } = findWords(boardData);
             if (!boardData[7][7].isAccepted === false) {
@@ -390,14 +420,20 @@ function Board() {
                         updateAcceptedProperty(words)
                         updatePoints(wordsSum, wordSum, filteredWords);
                         emitNewLettersRequest(wordBlockLetters)
-                        const newTurn = calculateNewTurn(turn)
-                        setTurn(newTurn)
-                        socket.emit('boardSend', { boardData, newTurn })
+                        if (checkPlayerTurnChange()) {
+                            const newTurn = calculateNewTurn(turn)
+                            setTurn(newTurn)
+                            emitNewTurn(newTurn)
+                            socket.emit('boardSend', { boardData, newTurn })
+                        }
                     } else {
                         takeDownLetters(wordsCoordsArray)
-                        const newTurn = calculateNewTurn(turn)
-                        setTurn(newTurn)
-                        emitNewTurn(newTurn)
+
+                        if (checkPlayerTurnChange()) {
+                            const newTurn = calculateNewTurn(turn)
+                            setTurn(newTurn)
+                            emitNewTurn(newTurn)
+                        }
                     }
                 } else {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
@@ -418,14 +454,19 @@ function Board() {
                         updateAcceptedProperty(words)
 
                         emitNewLettersRequest(wordBlockLetters)
-                        const newTurn = calculateNewTurn(turn)
-                        setTurn(newTurn)
-                        socket.emit('boardSend', { boardData, newTurn })
+                        if (checkPlayerTurnChange()) {
+                            const newTurn = calculateNewTurn(turn)
+                            setTurn(newTurn)
+                            emitNewTurn(newTurn)
+                            socket.emit('boardSend', { boardData, newTurn })
+                        }
                     } else {
                         takeDownLetters(wordsCoordsArray)
-                        const newTurn = calculateNewTurn(turn)
-                        setTurn(newTurn)
-                        emitNewTurn(newTurn)
+                        if (checkPlayerTurnChange()) {
+                            const newTurn = calculateNewTurn(turn)
+                            setTurn(newTurn)
+                            emitNewTurn(newTurn)
+                        }
                     }
             }
             setChange(false)
