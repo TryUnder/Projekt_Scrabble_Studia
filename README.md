@@ -9,7 +9,7 @@ Liternik to fascynująca webowa gra słowna inspirowana klasyczną grą w Scrabb
   <h1>Dokumentacja</h1>
 </div>
 
-## [Zasady gry](https://github.com/TryUnder/Projekt_Scrabble_Studia.wiki.git)
-## [Dokumentacja użytkowa](https://github.com/TryUnder/Projekt_Scrabble_Studia.wiki.git)
-## [Dokumentacja techniczna](https://github.com/TryUnder/Projekt_Scrabble_Studia.wiki.git)
+## [Zasady gry](https://github.com/TryUnder/Projekt_Scrabble_Studia/wiki/Zasady-gry)
+## [Dokumentacja użytkowa](https://github.com/TryUnder/Projekt_Scrabble_Studia/Dokumentacja-użytkowa)
+## [Dokumentacja techniczna](https://github.com/TryUnder/Projekt_Scrabble_Studia/Dokumentacja-techniczna)
 
