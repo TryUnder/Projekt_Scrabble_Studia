@@ -38,12 +38,8 @@ const loginUser = async(req, res) => {
             });
             
             if (user.userLogin) {
-                console.log("TEST")
-                
                 const socket = io('http://localhost:3000')
                 socket.emit('userLogin', user.userLogin)
-            } else {
-                console.log("nie dziala")
             }
 
             return res.redirect("/user-profile");
@@ -94,4 +90,20 @@ const getUserData = async (req, res) => {
     }
 }
 
-module.exports = { addUser, loginUser, logoutUser, getToken, getUserData } 
+const updateStatistics = async (req, res) => {
+    try {
+        verifyToken(req, res, async() => {
+            const playerLogin = req.body.playerName;
+            const infoMatch = req.body.info;
+            console.log("Player login: ", playerLogin)
+            console.log("Info match: ", infoMatch)
+            await User.updateStatistics(playerLogin, infoMatch);
+            res.status(200).json({ message: "Statystyki zostały zaktualizowane." })
+        })
+    } catch (error) {
+        console.error("Błąd podczas aktualizacji statystyk w kontrolerze. ", error)
+        res.status(500).json({ message: "Błąd kontrolera" })
+    }
+}
+
+module.exports = { addUser, loginUser, logoutUser, getToken, getUserData, updateStatistics } 

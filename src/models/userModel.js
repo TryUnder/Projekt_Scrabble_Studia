@@ -73,4 +73,19 @@ const getUserDataFromDB = async(id) => {
     }
 }
 
-module.exports = { addUser, loginUser, getUserDataFromDB }; 
+const updateStatistics = async(playerLogin, infoMatch) => {
+    try {
+        const conn = await pool.getConnection();
+        if (infoMatch === "win") {
+            await conn.query("UPDATE user SET LiczbaRozegranychPartii = LiczbaRozegranychPartii + 1, WygraneGry = WygraneGry + 1 WHERE login = (?)", playerLogin)
+        } else if (infoMatch === "lose") {
+            await conn.query("UPDATE user SET LiczbaRozegranychPartii = LiczbaRozegranychPartii + 1, PrzegraneGry = PrzegraneGry + 1 WHERE login = (?)", playerLogin)
+        } else if (infoMatch === "draw") {
+            await conn.query("UPDATE user SET LiczbaRozegranychPartii = LiczbaRozegranychPartii + 1, UkonczoneGry = UkonczoneGry + 1 WHERE login = (?)", playerLogin)
+        }
+    } catch (error) {
+        console.error("Błąd podczas aktualizacji statystyk gracza w modelu. ", error)
+    }
+}
+
+module.exports = { addUser, loginUser, getUserDataFromDB, updateStatistics }; 

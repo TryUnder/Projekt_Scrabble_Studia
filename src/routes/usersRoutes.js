@@ -5,6 +5,7 @@ const usersController = require('../controllers/userController.js')
 router.post('/register', usersController.addUser)
 router.post('/login', usersController.loginUser)
 router.post('/logout', usersController.logoutUser)
+router.post('/updateStatistics', usersController.updateStatistics)
 router.get('/verifyToken', usersController.getToken)
 router.get('/getUserData', usersController.getUserData)
 

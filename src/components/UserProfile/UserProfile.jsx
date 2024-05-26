@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SocketContext } from '../SocketProvider.jsx'
 
-const getTokenCookie = () => {
+export const getTokenCookie = () => {
     const cookies = document.cookie.split(';').map(cookie => cookie.trim());
     const tokenCookie = cookies.find(cookie => cookie.startsWith('token='));
 
@@ -220,6 +220,7 @@ const UserProfile = () => {
                                 console.log("e targetr value: ", e.target.value)}}
                                 >
                                     <option value=""> </option>
+                                    <option value = "30 seconds">30 sekund</option>
                                     <option value = "3 minutes">3 minuty</option>
                                     <option value = "6 minutes">6 minut</option>
                                     <option value = "9 minutes">9 minut</option>

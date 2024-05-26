@@ -13,6 +13,7 @@ function UserPanel({ receiverPlayer, senderPlayer, time, playerLogin, turn, sock
 
     const initiateTime = (time) => {
         switch(time) {
+            case "30 seconds": return moment().set({ hour: 0, minute: 0, second: 30 });
             case "3 minutes": return moment().set({ hour: 0, minute: 3, second: 0 });
             case "6 minutes": return moment().set({ hour: 0, minute: 6, second: 0 });
             case "9 minutes": return moment().set({ hour: 0, minute: 9, second: 0 });

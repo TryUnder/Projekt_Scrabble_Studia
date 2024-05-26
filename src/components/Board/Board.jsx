@@ -8,6 +8,7 @@ import UserPanel from './UserPanel'
 import { initializeBoardData, initializeLetterMap, initializeBlockLetters } from "./BoardUtils"
 import { sendWordsToServer, checkNeighbourhood, findWords, filterWords, 
     calculatePoints, mapWordsToCoords, mapToWords, handleBlank } from './ScrabbleAlgorithms';
+import { getTokenCookie } from '../UserProfile/UserProfile'
 import { Tile } from './Tile'
 import { ScoreBoard } from './ScoreBoard'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -79,8 +80,21 @@ function Board() {
         console.log("turn: ", turn)
     }, [])
 
-    const updateStatistics = (playerName, info) => {
-    
+    const updateStatistics = async (playerName, info) => {
+        try {
+            const response = await axios.post("/api/updateStatistics", {
+                playerName: playerName,
+                info: info,
+                token: getTokenCookie(),
+                headers: {
+                    Authorization: `Bearer ${getTokenCookie()}`
+                }
+            }).then(() => {
+                navigate("/user-profile")
+            })
+        } catch (error) {
+            console.error("Wystąpił podczas aktualizacji statystyk po stronie klienta: ", error)
+        }
     }
 
     useEffect(() => {
@@ -89,13 +103,14 @@ function Board() {
             const secondUserPointsSum = secondUserPoints.sumPoints;
             if (firstUserPointsSum > secondUserPointsSum) {
                 if (window.confirm(`Gracz ${receiverPlayer} wygrał z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
-                    updateStatistics(receiverPlayer, "win")
+                    playerLogin === receiverPlayer ? updateStatistics(receiverPlayer, "win") : updateStatistics(senderPlayer, "lose")
                 } else {
                     navigate("/")
                 }
             } else if (firstUserPointsSum < secondUserPointsSum) {
                 if (window.confirm(`Gracz ${senderPlayer} wygrał z wynikiem ${secondUserPointsSum} do ${firstUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
-                    updateStatistics(receiverPlayer, "lose")
+                    //updateStatistics(receiverPlayer, "lose")
+                    playerLogin === senderPlayer ? updateStatistics(senderPlayer, "win") : updateStatistics(receiverPlayer, "lose")
                 } else {
                     navigate("/")
                 }
@@ -413,14 +428,6 @@ function Board() {
             return turn
         } else {
             return turn === receiverPlayer ? senderPlayer : receiverPlayer
-        }
-    }
-
-    const checkPlayerTurnChange = () => {
-        if (secondPlayerEndedTime === true) {
-            return false
-        } else {
-            return true
         }
     }
 
