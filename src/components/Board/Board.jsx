@@ -79,25 +79,29 @@ function Board() {
         console.log("turn: ", turn)
     }, [])
 
+    const updateStatistics = (playerName, info) => {
+    
+    }
+
     useEffect(() => {
         if (playerEndedTime && secondPlayerEndedTime) {
             const firstUserPointsSum = firstUserPoints.sumPoints;
             const secondUserPointsSum = secondUserPoints.sumPoints;
             if (firstUserPointsSum > secondUserPointsSum) {
                 if (window.confirm(`Gracz ${receiverPlayer} wygrał z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
-                    
+                    updateStatistics(receiverPlayer, "win")
                 } else {
                     navigate("/")
                 }
             } else if (firstUserPointsSum < secondUserPointsSum) {
                 if (window.confirm(`Gracz ${senderPlayer} wygrał z wynikiem ${secondUserPointsSum} do ${firstUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
-
+                    updateStatistics(receiverPlayer, "lose")
                 } else {
                     navigate("/")
                 }
             } else {
                 if (window.confirm(`Remis. Czy chcesz przejść do statystyk?`)) {
-
+                    updateStatistics(playerLogin, "draw")
                 } else {
                     navigate("/")
                 }
@@ -222,6 +226,7 @@ function Board() {
             emitIncreaseLetterCount(arrayBcgCopy)
             setChange(false)
             const newTurn = calculateNewTurn(turn)
+            setExchangeCount(prevCount => prevCount + 1)
             setTurn(newTurn)
             emitNewTurn(newTurn)
     }
