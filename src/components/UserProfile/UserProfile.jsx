@@ -170,9 +170,9 @@ const UserProfile = () => {
                     <div className={style["player-stats"]}>
                         <div className={style["all-games"]}>
                             <div className={style["all-games-header"]}>
-                                Ukończone gry
+                                Remisy
                             </div>
-                            <span>{ userInfo ? userInfo.UkonczoneGry : "Ładowanie" }</span>
+                            <span>{ userInfo ? userInfo.ZremisowaneGry : "Ładowanie" }</span>
                         </div>
                         <div className={style["won-games"]}>
                             <div className={style["won-games-header"]}>

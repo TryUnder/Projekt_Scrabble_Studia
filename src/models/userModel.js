@@ -13,7 +13,7 @@ const addUser = async (login, password) => {
         if (loginExists) {
             return null;
         }
-        const rows = await conn.query("INSERT INTO user (login, password, CreationDate, LiczbaRozegranychPartii, UkonczoneGry, WygraneGry, PrzegraneGry) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        const rows = await conn.query("INSERT INTO user (login, password, CreationDate, LiczbaRozegranychPartii, ZremisowaneGry, WygraneGry, PrzegraneGry) VALUES (?, ?, ?, ?, ?, ?, ?)",
             [login, hashedPassword, new Date(), 0, 0, 0, 0])
         conn.release()
         return rows;
@@ -64,7 +64,7 @@ const loginUser = async (login, plainTextPassword) => {
 const getUserDataFromDB = async(id) => {
     try {
         const conn = await pool.getConnection();
-        const userInfo = await conn.query("SELECT Login, CreationDate, LiczbaRozegranychPartii, UkonczoneGry, WygraneGry, PrzegraneGry FROM user WHERE id = (?)", id);
+        const userInfo = await conn.query("SELECT Login, CreationDate, LiczbaRozegranychPartii, ZremisowaneGry, WygraneGry, PrzegraneGry FROM user WHERE id = (?)", id);
         conn.release()
         return userInfo;
     } catch (error) {
@@ -81,7 +81,7 @@ const updateStatistics = async(playerLogin, infoMatch) => {
         } else if (infoMatch === "lose") {
             await conn.query("UPDATE user SET LiczbaRozegranychPartii = LiczbaRozegranychPartii + 1, PrzegraneGry = PrzegraneGry + 1 WHERE login = (?)", playerLogin)
         } else if (infoMatch === "draw") {
-            await conn.query("UPDATE user SET LiczbaRozegranychPartii = LiczbaRozegranychPartii + 1, UkonczoneGry = UkonczoneGry + 1 WHERE login = (?)", playerLogin)
+            await conn.query("UPDATE user SET LiczbaRozegranychPartii = LiczbaRozegranychPartii + 1, ZremisowaneGry = ZremisowaneGry + 1 WHERE login = (?)", playerLogin)
         }
     } catch (error) {
         console.error("Błąd podczas aktualizacji statystyk gracza w modelu. ", error)

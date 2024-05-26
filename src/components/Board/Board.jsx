@@ -102,26 +102,16 @@ function Board() {
             const firstUserPointsSum = firstUserPoints.sumPoints;
             const secondUserPointsSum = secondUserPoints.sumPoints;
             if (firstUserPointsSum > secondUserPointsSum) {
-                if (window.confirm(`Gracz ${receiverPlayer} wygrał z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
-                    playerLogin === receiverPlayer ? updateStatistics(receiverPlayer, "win") : updateStatistics(senderPlayer, "lose")
-                } else {
-                    navigate("/")
-                }
+                alert(`Gracz ${receiverPlayer} wygrał z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}`)
+                playerLogin === receiverPlayer ? updateStatistics(receiverPlayer, "win") : updateStatistics(senderPlayer, "lose")
             } else if (firstUserPointsSum < secondUserPointsSum) {
-                if (window.confirm(`Gracz ${senderPlayer} wygrał z wynikiem ${secondUserPointsSum} do ${firstUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
-                    //updateStatistics(receiverPlayer, "lose")
-                    playerLogin === senderPlayer ? updateStatistics(senderPlayer, "win") : updateStatistics(receiverPlayer, "lose")
-                } else {
-                    navigate("/")
-                }
+                alert(`Gracz ${senderPlayer} wygrał z wynikiem ${secondUserPointsSum} do ${firstUserPointsSum}`)
+                playerLogin === senderPlayer ? updateStatistics(senderPlayer, "win") : updateStatistics(receiverPlayer, "lose")
             } else {
-                if (window.confirm(`Remis. Czy chcesz przejść do statystyk?`)) {
-                    updateStatistics(playerLogin, "draw")
-                } else {
-                    navigate("/")
-                }
-            }   
-        }
+                alert(`Zremisowałeś z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}`)
+                updateStatistics(playerLogin, "draw")
+            }  
+        } 
     }, [playerEndedTime, secondPlayerEndedTime])
 
     const updatePoints = (newPoints, wordSum, words) => {
