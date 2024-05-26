@@ -1,6 +1,6 @@
 import style from '../../css/Board/style_main_view.module.css'
 import style2 from '../../css/Board/word_block.module.css'
-import React, { useEffect, useState, useMemo, useContext, useCallback } from 'react'
+import React, { useEffect, useState, useMemo, useContext } from 'react'
 import axios from 'axios'
 
 import WordBlockLetters from "./WordsBlock"
@@ -10,7 +10,7 @@ import { sendWordsToServer, checkNeighbourhood, findWords, filterWords,
     calculatePoints, mapWordsToCoords, mapToWords, handleBlank } from './ScrabbleAlgorithms';
 import { Tile } from './Tile'
 import { ScoreBoard } from './ScoreBoard'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { SocketContext } from '../SocketProvider.jsx'
 
 function Board() {
@@ -43,6 +43,7 @@ function Board() {
         pointsMap: new Map()
     })
     const socket = useContext(SocketContext)
+    const navigate = useNavigate()
 
     const memoizedScoreBoard = useMemo(() => <ScoreBoard firstUserPoints = { firstUserPoints } secondUserPoints = { secondUserPoints }
                                                          playerLogin = { playerLogin } />, 
@@ -77,6 +78,32 @@ function Board() {
 
         console.log("turn: ", turn)
     }, [])
+
+    useEffect(() => {
+        if (playerEndedTime && secondPlayerEndedTime) {
+            const firstUserPointsSum = firstUserPoints.sumPoints;
+            const secondUserPointsSum = secondUserPoints.sumPoints;
+            if (firstUserPointsSum > secondUserPointsSum) {
+                if (window.confirm(`Gracz ${receiverPlayer} wygrał z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
+                    
+                } else {
+                    navigate("/")
+                }
+            } else if (firstUserPointsSum < secondUserPointsSum) {
+                if (window.confirm(`Gracz ${senderPlayer} wygrał z wynikiem ${secondUserPointsSum} do ${firstUserPointsSum}. Czy chcesz przejść do statystyk?`)) {
+
+                } else {
+                    navigate("/")
+                }
+            } else {
+                if (window.confirm(`Remis. Czy chcesz przejść do statystyk?`)) {
+
+                } else {
+                    navigate("/")
+                }
+            }   
+        }
+    }, [playerEndedTime, secondPlayerEndedTime])
 
     const updatePoints = (newPoints, wordSum, words) => {
         const wordsPointsMap = new Map();
@@ -194,11 +221,9 @@ function Board() {
             emitNewLettersRequest(filteredWordBlockLetters)
             emitIncreaseLetterCount(arrayBcgCopy)
             setChange(false)
-            if (checkPlayerTurnChange()) {
-                const newTurn = calculateNewTurn(turn)
-                setTurn(newTurn)
-                emitNewTurn(newTurn)
-            }
+            const newTurn = calculateNewTurn(turn)
+            setTurn(newTurn)
+            emitNewTurn(newTurn)
     }
 
     useEffect(() => {
@@ -320,7 +345,6 @@ function Board() {
             }
         });
     
-        // Pamiętaj, aby usunąć zdarzenia, gdy komponent jest odmontowywany
         return () => {
             socket.off('punktyPierwszego');
             socket.off('punktyDrugiego');
@@ -380,7 +404,11 @@ function Board() {
     }
 
     const calculateNewTurn = (turn) => {
-        return turn === receiverPlayer ? senderPlayer : receiverPlayer
+        if (secondPlayerEndedTime === true) {
+            return turn
+        } else {
+            return turn === receiverPlayer ? senderPlayer : receiverPlayer
+        }
     }
 
     const checkPlayerTurnChange = () => {
@@ -393,11 +421,9 @@ function Board() {
 
     const handlePassRound = (event) => {
         event.preventDefault();
-        if (checkPlayerTurnChange()) {
-            const newTurn = calculateNewTurn(turn)
-            setTurn(newTurn)
-            emitNewTurn(newTurn)
-        }
+        const newTurn = calculateNewTurn(turn)
+        setTurn(newTurn)
+        emitNewTurn(newTurn)
     }
 
     const checkWords = async (event) => {
@@ -420,20 +446,15 @@ function Board() {
                         updateAcceptedProperty(words)
                         updatePoints(wordsSum, wordSum, filteredWords);
                         emitNewLettersRequest(wordBlockLetters)
-                        if (checkPlayerTurnChange()) {
-                            const newTurn = calculateNewTurn(turn)
-                            setTurn(newTurn)
-                            emitNewTurn(newTurn)
-                            socket.emit('boardSend', { boardData, newTurn })
-                        }
+                        const newTurn = calculateNewTurn(turn)
+                        socket.emit('boardSend', { boardData, newTurn })
+                        setTurn(newTurn)
+                        emitNewTurn(newTurn)
                     } else {
                         takeDownLetters(wordsCoordsArray)
-
-                        if (checkPlayerTurnChange()) {
-                            const newTurn = calculateNewTurn(turn)
-                            setTurn(newTurn)
-                            emitNewTurn(newTurn)
-                        }
+                        const newTurn = calculateNewTurn(turn)
+                        setTurn(newTurn)
+                        emitNewTurn(newTurn)
                     }
                 } else {
                     alert("Nowe słowo musi być przyłączone do już istniejących")
@@ -454,19 +475,15 @@ function Board() {
                         updateAcceptedProperty(words)
 
                         emitNewLettersRequest(wordBlockLetters)
-                        if (checkPlayerTurnChange()) {
-                            const newTurn = calculateNewTurn(turn)
-                            setTurn(newTurn)
-                            emitNewTurn(newTurn)
-                            socket.emit('boardSend', { boardData, newTurn })
-                        }
+                        const newTurn = calculateNewTurn(turn)
+                        socket.emit('boardSend', { boardData, newTurn })
+                        setTurn(newTurn)
+                        emitNewTurn(newTurn)
                     } else {
                         takeDownLetters(wordsCoordsArray)
-                        if (checkPlayerTurnChange()) {
-                            const newTurn = calculateNewTurn(turn)
-                            setTurn(newTurn)
-                            emitNewTurn(newTurn)
-                        }
+                        const newTurn = calculateNewTurn(turn)
+                        setTurn(newTurn)
+                        emitNewTurn(newTurn)
                     }
             }
             setChange(false)
