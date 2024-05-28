@@ -27,8 +27,12 @@ class GameStateManager {
         return this.letterMap
     }
 
+    getAvailableLetters() {
+        return Array.from(this.letterMap.entries()).filter(([letter, data]) => data.count > 0);
+    }
+
     initializeLetter() {
-        const availableLetters = Array.from(this.letterMap.entries()).filter(([letter, data]) => data.count > 0);
+        const availableLetters = this.getAvailableLetters();
     
         if (availableLetters.length === 0) {
             return null;

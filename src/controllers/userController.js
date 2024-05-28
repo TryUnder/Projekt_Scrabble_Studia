@@ -25,15 +25,15 @@ const loginUser = async(req, res) => {
 
     try {
         const user = await User.loginUser(login, password);
-        if (user.userToken) {
+        if (user && user.userToken) {
             res.cookie("token", user.userToken, {
                 httpOnly: false,
-                maxAge: 3600 * 1000,
+                maxAge: 3600 * 1000 * 2,
                 secure: false
             });
             res.cookie("id", user.userId, {
                 httpOnly: false,
-                maxAge: 3600 * 1000,
+                maxAge: 3600 * 1000 * 2,
                 secure: false
             });
             

@@ -30,21 +30,14 @@ const loginUser = async (login, plainTextPassword) => {
         
         const passwordMatch = await bcrypt.compare(plainTextPassword, hashedPassword.map(e => e.password).toString())
 
-        if (passwordMatch) {
-            console.log("Hasło poprawne.")
-        } else {
-            console.log("Hasło błędne.")
-        }
-
         if (!(login && passwordMatch)) {
-            console.log("Błędne dane")
             return null;
         }
 
         const id = await conn.query("SELECT id FROM user WHERE login = (?)", login)
         
         const token = jwt.sign( { login }, process.env.JWT_SECRET, {
-            expiresIn: 3600
+            expiresIn: 7200
         });
 
         const user = {
@@ -58,6 +51,7 @@ const loginUser = async (login, plainTextPassword) => {
 
     } catch (error) {
         console.error("Błąd podczas logowania użytkownika", error)
+        res.status(500).json({ message: "Wystąpił błąd podczas logowania użytkownika" })
     }
 }
 
@@ -69,7 +63,6 @@ const getUserDataFromDB = async(id) => {
         return userInfo;
     } catch (error) {
         console.error("Błąd podczas pobierania danych o użytkowniku z bazy danych.")
-        //throw error;
     }
 }
 

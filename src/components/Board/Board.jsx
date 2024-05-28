@@ -31,6 +31,7 @@ function Board() {
     const [ passRound, setPassRound ] = useState(0)
     const [ playerEndedTime, setPlayerEndedTime ] = useState(false)
     const [ secondPlayerEndedTime, setSecondPlayerEndedTime ] = useState(false)
+    const [ letterMapSize, setLetterMapSize ] = useState(10000)
 
     const [ firstUserPoints, setFirstUserPoints ] = useState({
         login: receiverPlayer,
@@ -54,11 +55,6 @@ function Board() {
     
     useEffect(() => {
         setLetterMap(initializeLetterMap())
-        console.log("board prev elements: ", previousBoardElements)
-        console.log("LOGIN rec: ", receiverPlayer)
-        console.log("LOGIN send: ", senderPlayer)
-        console.log("TIME: ", time)
-        console.log("PLAYER: ", playerLogin)
 
         const numberLetterToFetch = 7 - wordBlockLetters.length
         socket.emit('initializePlayerLetters', playerLogin, numberLetterToFetch)
@@ -77,7 +73,13 @@ function Board() {
             setTurn(newTurn)
         })
 
-        console.log("turn: ", turn)
+        socket.on('emptyLetterMap', ({ letterMapSize }) => {
+            console.log("letter map size po stronie klienta: ", letterMapSize)
+            if (letterMapSize === 0) {
+                setLetterMapSize(letterMapSize)
+            }
+        })
+
     }, [])
 
     const updateStatistics = async (playerName, info) => {
@@ -98,21 +100,21 @@ function Board() {
     }
 
     useEffect(() => {
-        if (playerEndedTime && secondPlayerEndedTime) {
+        if ((playerEndedTime && secondPlayerEndedTime) || letterMapSize === 0) {
             const firstUserPointsSum = firstUserPoints.sumPoints;
             const secondUserPointsSum = secondUserPoints.sumPoints;
             if (firstUserPointsSum > secondUserPointsSum) {
-                alert(`Gracz ${receiverPlayer} wygrał z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}`)
+                alert(`Gracz ${receiverPlayer} wygrał grę!`)
                 playerLogin === receiverPlayer ? updateStatistics(receiverPlayer, "win") : updateStatistics(senderPlayer, "lose")
             } else if (firstUserPointsSum < secondUserPointsSum) {
-                alert(`Gracz ${senderPlayer} wygrał z wynikiem ${secondUserPointsSum} do ${firstUserPointsSum}`)
+                alert(`Gracz ${senderPlayer} wygrał grę!`)
                 playerLogin === senderPlayer ? updateStatistics(senderPlayer, "win") : updateStatistics(receiverPlayer, "lose")
             } else {
                 alert(`Zremisowałeś z wynikiem ${firstUserPointsSum} do ${secondUserPointsSum}`)
                 updateStatistics(playerLogin, "draw")
             }  
         } 
-    }, [playerEndedTime, secondPlayerEndedTime])
+    }, [playerEndedTime, secondPlayerEndedTime, letterMapSize])
 
     const updatePoints = (newPoints, wordSum, words) => {
         const wordsPointsMap = new Map();
@@ -240,10 +242,6 @@ function Board() {
          setBoardData(initializeBoardData());
     }, [])
 
-    useEffect(() => {
-        console.log("Login: ", playerLogin, " exchange count: ", exchangeCount)
-   }, [exchangeCount])
-
     const ifIsAcceptedFalseExist = () => {
         const checkIsAccepted =  boardData.flat().find(tile => tile.letter.value !== '' && tile.isAccepted === false)
         return checkIsAccepted
@@ -347,7 +345,6 @@ function Board() {
         });
 
         socket.on('timeEndedClient', ({ player }) => {
-            console.log(`Czas gracza: ${player} zakończył się`)
             if (player === playerLogin) {
                 setPlayerEndedTime(true)
             } else {
@@ -360,11 +357,6 @@ function Board() {
             socket.off('punktyDrugiego');
         };
     }, [socket]);
-
-    useEffect(() => {
-        console.log("Punkty pierwszego: ", firstUserPoints)
-        console.log("Punkty drugiego: ", secondUserPoints)
-    }, [firstUserPoints, secondUserPoints])
 
     useEffect(() => {
         if (playerEndedTime === true) {
@@ -464,7 +456,6 @@ function Board() {
             } else if (boardData[7][7].isAccepted === false) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, false)
                     const wordsCoordsArray = mapWordsToCoords(wordObjArray)
-                    console.log("words coords array: ", wordsCoordsArray)
                     const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap)
                     const wordsMapped = mapToWords(wordsCoordsArray)
                     if (words.length === 0) {

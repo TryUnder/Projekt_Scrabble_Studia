@@ -6,7 +6,6 @@ export const sendWordsToServer = async (words) => {
     try {
         const response = await axios.post("/api/checkWords", words)
         const responseData = response.data
-        console.log("response: ", responseData)
         return responseData
     } catch (error) {
         console.error("Błąd podczas wysyłania words na serwer: ", error)
@@ -221,8 +220,6 @@ export const filterWords = (wordObjArray, wordObjAcceptedArray, test = true) => 
 };
 
 export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
-    console.log(wordsCoordsArray)
-    console.log(boardData)
 
     const getLetterPoints = (letter, letterMap) => {
         return letterMap.get(letter).points
@@ -260,16 +257,13 @@ export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
     let wordsSum = 0
     let wordSum = [];
     wordsCoordsArray.map((word, wordIndex) => {
-        console.log("length: ", word.length)
         wordSum[wordIndex] = 0
         let multiplier = 1;
         word.map((letterObj, letterIndex) => {
             wordSum[wordIndex] += (getLetterPoints(letterObj.letter, letterMap) * getLetterBonuses(letterObj.x, letterObj.y, boardData))
-            console.log(`X: ${letterObj.x}, Y: ${letterObj.y}`)
             multiplier *= getWordBonuses(letterObj.x, letterObj.y, boardData)
             if (letterIndex === word.length - 1) {
                 wordSum[wordIndex] *= multiplier;
-                console.log(`Word Sum na pozycji ${wordIndex} : `, wordSum[wordIndex])
                 wordsSum += wordSum[wordIndex];
             }
         })

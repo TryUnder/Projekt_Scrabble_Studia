@@ -43,7 +43,6 @@ const initializeWebSocket = (server) => {
                 io.emit('senderPlayerNavigate', { receiverPlayer, senderPlayer, time })
                 gameStateManager.setPlayer1(senderPlayer)
                 gameStateManager.setPlayer2(receiverPlayer)
-                //gameStateManager.PrintPlayers()
             }
         })
 
@@ -55,12 +54,13 @@ const initializeWebSocket = (server) => {
                 if (letter !== null) {
                     playerArrayLetters.push(letter)
                 } else {
+                    console.log("pusty letter map")
+                    const letterMapSize = gameStateManager.getAvailableLetters().length
+                    io.emit('emptyLetterMap', { letterMapSize })
                     break;
                 }
 
             }
-
-            console.log("Letter Map", gameStateManager.letterMap)
             
             if (letter !== null) {
                 const map = gameStateManager.letterMap
@@ -74,14 +74,12 @@ const initializeWebSocket = (server) => {
         })
 
         socket.on('increaseLetterCount', (arrayBcgCopy) => {
-            console.log("letter map przed: ", gameStateManager.letterMap)
             for (let i = 0; i < arrayBcgCopy.length; i++) {
                 const count = gameStateManager.letterMap.get(arrayBcgCopy[i]).count
                 if (count >= 0) {
                     gameStateManager.letterMap.get(arrayBcgCopy[i]).count += 1
                 }
             }
-            console.log("letter map po: ", gameStateManager.letterMap)
         })
 
         socket.on('boardSend', ({boardData, newTurn}) => {
@@ -95,12 +93,10 @@ const initializeWebSocket = (server) => {
         })
 
         socket.on('punktyPierwszego', (firstUserPointsCopy) => {
-            console.log("Punkty pierwszego odebrane po stronie serwera: ", firstUserPointsCopy)
             io.emit('otrzymanePunktyPierwszego', firstUserPointsCopy)
         })
 
         socket.on('punktyDrugiego', (secondUserPointsCopy) => {
-            console.log("Punkty drugiego odebrane po stronie serwera: ", secondUserPointsCopy)
             io.emit('otrzymanePunktyDrugiego', secondUserPointsCopy)
         })
 
@@ -115,7 +111,6 @@ const initializeWebSocket = (server) => {
         });
 
         socket.on('timeEnded', ({ player }) => {
-            console.log(`Czas zakończył się dla gracza ${player}`)
             io.emit('timeEndedClient', { player })
         })
     })

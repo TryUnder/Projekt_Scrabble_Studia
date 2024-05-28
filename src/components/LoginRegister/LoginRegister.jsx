@@ -95,6 +95,11 @@ const LoginRegister = () => {
             navigate("/user-profile")
         } catch (error) {
             console.error("Błąd podczas wysyłania danych do backendu (logowanie): ", error)
+            if (error.response && error.response.status === 401) {
+                alert("Błędny login lub hasło.")
+            } else {
+                alert("Wystąpił błąd podczas logowania. Spróbuj ponownie.")
+            }
             document.location.reload()
         }
     }
