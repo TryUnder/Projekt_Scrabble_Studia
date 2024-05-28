@@ -138,8 +138,7 @@ const ViewRules = () => {
                         Gracz zostaje nagrodzony za ułożone słowo. Wartość wypłaty jest sumą wartości liter tworzących słowo  
                         wraz z uwzględnieniem premii literowych <br />i słownych. Pola literowe podwajają, lub potrajają wartości położonych na nich liter.  
                         Jeśli chociaż jedna litera zostaje umieszczona na polu słownym, to cała wartość wyrazu zostaje odpowiednio podwojona, bądź potrojona.  
-                        Masełko położone na którymkolwiek polu premiowym, zostaje wliczone <br />w punktację, bo ma wartość zależną od wybranej litery.  
-                        Gracz któremu uda się w jednym ruchu wykorzystać wszystkie siedem płytek, otrzymuje dodatkową premię w wysokości 50 punktów.  
+                        Masełko położone na którymkolwiek polu premiowym, zostaje wliczone <br />w punktację, bo ma wartość zależną od wybranej litery.    
                         <br /> 
                         PS: Liczba punktów przydzielana za Masełko jest uzależniona od litery, którą użytkownik wybierze.
                     </span>

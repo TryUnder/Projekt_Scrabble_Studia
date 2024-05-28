@@ -74,7 +74,6 @@ function Board() {
         })
 
         socket.on('emptyLetterMap', ({ letterMapSize }) => {
-            console.log("letter map size po stronie klienta: ", letterMapSize)
             if (letterMapSize === 0) {
                 setLetterMapSize(letterMapSize)
             }
