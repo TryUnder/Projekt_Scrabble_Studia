@@ -1,6 +1,6 @@
 class GameStateManager {
-    constructor(letterMap) {
-        this.letterMap = letterMap;
+    constructor() {
+        this.letterMap = null
         this.player1 = ''
         this.player2 = ''
         this.playerFirstLetters = []
@@ -13,6 +13,10 @@ class GameStateManager {
 
     setPlayer2(player2) {
         this.player2 = player2;
+    }
+
+    initializeLetterMap(letterMap) {
+        this.letterMap = letterMap
     }
 
     PrintLetterMap() {

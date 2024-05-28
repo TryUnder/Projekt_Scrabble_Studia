@@ -14,8 +14,7 @@ const initializeLetterMap = () => {
 
 const initializeWebSocket = (server) => {
     io = socketIo(server)
-    const gameStateManager = new GameStateManager(initializeLetterMap())
-    gameStateManager.PrintLetterMap()
+    var gameStateManager = new GameStateManager()
 
     io.on('connection', (socket) => {
         socket.emit('loggedInUsers', Array.from(userSockets.keys()))
@@ -41,6 +40,7 @@ const initializeWebSocket = (server) => {
         socket.on('acceptedProposal', ({ receiverPlayer, senderPlayer, time }) => {
             if (userSockets.has(senderPlayer)) {
                 io.emit('senderPlayerNavigate', { receiverPlayer, senderPlayer, time })
+                gameStateManager.initializeLetterMap(initializeLetterMap())
                 gameStateManager.setPlayer1(senderPlayer)
                 gameStateManager.setPlayer2(receiverPlayer)
             }

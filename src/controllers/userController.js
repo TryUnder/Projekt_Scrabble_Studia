@@ -95,8 +95,6 @@ const updateStatistics = async (req, res) => {
         verifyToken(req, res, async() => {
             const playerLogin = req.body.playerName;
             const infoMatch = req.body.info;
-            console.log("Player login: ", playerLogin)
-            console.log("Info match: ", infoMatch)
             await User.updateStatistics(playerLogin, infoMatch);
             res.status(200).json({ message: "Statystyki zostały zaktualizowane." })
         })
