@@ -1,0 +1,46 @@
+.background {
+    background-image: url('https://i.ibb.co/xXQgVLm/liternik-zdjecie.png');
+    background-size: cover;
+    background-position: center top;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.content {
+    text-align: center;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.heading {
+    font-size: 46px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.paragraph {
+    font-size: 23px;
+    margin-top: 20px;
+}
+
+.link {
+    color: #eec0fa;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.link:hover {
+    text-decoration: underline;
+}

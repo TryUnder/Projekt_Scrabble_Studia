@@ -2,13 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 
 import Header from './components/Board/Header'
-import UserPanel from './components/Board/UserPanel'
 import Board from './components/Board/Board'
-import { ScoreBoard } from "./components/Board/ScoreBoard"
-import WordsBlock from "./components/Board/WordsBlock"
 import ChatBlock from "./components/Board/ChatBlock"
 import LoginRegister from "./components/LoginRegister/LoginRegister"
 import UserProfile from './components/UserProfile/UserProfile'
+import WelcomePage from './components/WelcomePage/WelcomePage'
 
 import ExtendedRules from './components/LoginRegister/ExtendedRules'
 
@@ -24,6 +22,7 @@ function App() {
             <Route path="/user-profile" element = { <UserProfile /> } />
         </Route>
 
+        <Route path="/" element = { <WelcomePage /> } />
         <Route path="/login-register" element = { <LoginRegister /> } />
         <Route path="/extended-rules" element = { <ExtendedRules /> } />
       </Routes>
@@ -36,10 +35,7 @@ function MainGamePage() {
     <div className="App">
           <div className={styleMainView["grid-container"]}>
               <Header></Header>
-              {/* <UserPanel></UserPanel> */}
-              <Board></Board>
-              {/* <WordsBlock></WordsBlock> */}
-              
+              <Board></Board>         
               <ChatBlock></ChatBlock>
           </div>
     </div>

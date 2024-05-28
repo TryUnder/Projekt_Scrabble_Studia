@@ -54,7 +54,6 @@ const initializeWebSocket = (server) => {
                 if (letter !== null) {
                     playerArrayLetters.push(letter)
                 } else {
-                    console.log("pusty letter map")
                     const letterMapSize = gameStateManager.getAvailableLetters().length
                     io.emit('emptyLetterMap', { letterMapSize })
                     break;

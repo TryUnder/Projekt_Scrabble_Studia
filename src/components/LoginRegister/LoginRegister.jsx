@@ -67,7 +67,6 @@ const LoginRegister = () => {
         
         try {
             const response = await axios.post('/api/register', formData)
-            console.log(response.data)
             alert("Konto zostało pomyślnie utworzone.")
             setFormData({
                 login: "",
@@ -85,7 +84,6 @@ const LoginRegister = () => {
 
         try {
             const response = await axios.post('/api/login', formData)
-            console.log(response.data)
 
             setFormData({
                 login: "",

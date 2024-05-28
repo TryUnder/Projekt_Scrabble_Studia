@@ -219,7 +219,7 @@ export const filterWords = (wordObjArray, wordObjAcceptedArray, test = true) => 
     return { filteredWords, wordsCoordsArray }
 };
 
-export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
+export const calculatePoints = (wordsCoordsArray, boardData, letterMap, wordBlockLetters) => {
 
     const getLetterPoints = (letter, letterMap) => {
         return letterMap.get(letter).points
@@ -268,5 +268,9 @@ export const calculatePoints = (wordsCoordsArray, boardData, letterMap) => {
             }
         })
     })
+    
+    if (wordBlockLetters !== undefined && wordBlockLetters.length === 0) {
+        wordsSum += 50
+    }
     return { wordsSum, wordSum }
 }

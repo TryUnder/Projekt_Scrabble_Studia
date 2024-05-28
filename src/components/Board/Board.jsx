@@ -429,7 +429,7 @@ function Board() {
                 if (checkNeighbourhood(words, boardData)) {
                     const { isAcceptedWords, wordObjAcceptedArray } = findWords(boardData, true)
                     const { filteredWords, wordsCoordsArray }  = filterWords(wordObjArray, wordObjAcceptedArray)
-                    const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap) 
+                    const { wordsSum, wordSum } = calculatePoints(wordsCoordsArray, boardData, letterMap, wordBlockLetters) 
 
                     if (filteredWords.length === 0) {
                         alert("Żadne słowo nie zostało ułożone")

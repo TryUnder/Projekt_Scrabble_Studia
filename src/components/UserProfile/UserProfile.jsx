@@ -73,7 +73,7 @@ const UserProfile = () => {
             socket.emit('userLogout', userInfo.Login)
             document.location.reload();
         } catch (error) {
-            console.log("Błąd podczas wylogowania", error)
+            console.error("Błąd podczas wylogowania", error)
         }
     }
 
@@ -139,7 +139,6 @@ const UserProfile = () => {
     useEffect(() => {
         if (socket) {
             socket.on('gameAccept', ({ language, time, board, receiverPlayer, senderPlayer }) => {
-                console.log("Game accept: ", language, time, board, receiverPlayer, senderPlayer);
                 acceptRejectProposal(receiverPlayer, senderPlayer, time);
             });
     
@@ -216,8 +215,7 @@ const UserProfile = () => {
                                 name = "time" 
                                 id = "time-select" 
                                 className = {style["time-menu-select"]}
-                                onChange = {e => {setTimeSelect(e.target.value)
-                                console.log("e targetr value: ", e.target.value)}}
+                                onChange = {e => {setTimeSelect(e.target.value)}}
                                 >
                                     <option value=""> </option>
                                     <option value = "30 seconds">30 sekund</option>
